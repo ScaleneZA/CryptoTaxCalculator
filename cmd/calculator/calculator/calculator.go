@@ -1,78 +1,37 @@
-package main
+package calculator
 
-import (
+import(
 	"fmt"
 	"math"
 	"time"
 )
 
-type transactionType int
-const (
-	typeBuy = 0
-	typeSell	= 1
-)
-
-type transaction struct {
-	typ transactionType
-	amount float64
-	timestamp int64
-	// TODO: Make this dynamic if possible
-	wholePriceAtPoint float64
-}
-
-func main() {
-	transactions := []transaction{
-		{
-			typ:    typeBuy,
-			amount: 0.56,
-			timestamp: 1519812503,
-			wholePriceAtPoint: 100,
-		},
-		{
-			typ:    typeBuy,
-			amount: 1.2,
-			timestamp: 1535450903,
-			wholePriceAtPoint: 200,
-		},
-		{
-			typ: typeSell,
-			amount: 0.25,
-			timestamp: 1656410903,
-			wholePriceAtPoint: 300,
-		},
-		{
-			typ: typeSell,
-			amount: 1.25,
-			timestamp: 1687946903,
-			wholePriceAtPoint: 400,
-		},
-	}
-
-	var tally []transaction
+func Calculate(transactions []Transaction) {
+	var tally []Transaction
 	taxableAmounts := make(map[int]float64)
 
 	for j, t := range transactions {
-		if t.typ == typeBuy {
+		if t.Typ == TypeBuy {
 			tally = append(tally, t)
 			continue
 		}
 
-		toSubtract := t.amount
+		toSubtract := t.Amount
 		for i, tt := range tally {
 			// Skip tallys that have already been counted
-			if tt.amount <= 0 {
+			if tt.Amount <= 0 {
 				continue
 			}
 
-			amount := tt.amount - toSubtract
+			amount := tt.Amount - toSubtract
 
-			absAmnt := math.Min(tt.amount, toSubtract)
-			zarValueB := zarValue(tt.timestamp, absAmnt, tt.wholePriceAtPoint)
-			zarValueS := zarValue(t.timestamp, absAmnt, t.wholePriceAtPoint)
+			absAmnt := math.Min(tt.Amount, toSubtract)
+			zarValueB := zarValue(tt.Timestamp, absAmnt, tt.WholePriceAtPoint)
+			zarValueS := zarValue(t.Timestamp, absAmnt, t.WholePriceAtPoint)
 
 			fmt.Println(j, "Event value when bought:", "(R", zarValueB, ")", "Event value when sold:", "(R", zarValueS, ") Taxable amount: R", zarValueS-zarValueB)
 
-			taxableAmounts[taxableYear(t.timestamp)] += zarValueS-zarValueB
+			taxableAmounts[taxableYear(t.Timestamp)] += zarValueS-zarValueB
 
 			// Amount is greater than the current tally item, fall over to the next item
 			if amount <= 0 {
@@ -82,7 +41,7 @@ func main() {
 				toSubtract = 0
 			}
 
-			tally[i].amount = amount
+			tally[i].Amount = amount
 
 			if toSubtract <= 0 {
 				break
