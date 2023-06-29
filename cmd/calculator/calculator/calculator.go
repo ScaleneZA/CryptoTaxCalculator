@@ -6,11 +6,11 @@ import(
 	"time"
 )
 
-func Calculate(transactions []Transaction) {
+func Calculate(transactions []Transaction) map[int]float64{
 	var tally []Transaction
 	taxableAmounts := make(map[int]float64)
 
-	for j, t := range transactions {
+	for _, t := range transactions {
 		if t.Typ == TypeBuy {
 			tally = append(tally, t)
 			continue
@@ -23,26 +23,24 @@ func Calculate(transactions []Transaction) {
 				continue
 			}
 
-			amount := tt.Amount - toSubtract
-
-			absAmnt := math.Min(tt.Amount, toSubtract)
-			zarValueB := zarValue(tt.Timestamp, absAmnt, tt.WholePriceAtPoint)
-			zarValueS := zarValue(t.Timestamp, absAmnt, t.WholePriceAtPoint)
-
-			fmt.Println(j, "Event value when bought:", "(R", zarValueB, ")", "Event value when sold:", "(R", zarValueS, ") Taxable amount: R", zarValueS-zarValueB)
-
-			taxableAmounts[taxableYear(t.Timestamp)] += zarValueS-zarValueB
+			newAmount := tt.Amount - toSubtract
+			actualSubtracted := toSubtract
 
 			// Amount is greater than the current tally item, fall over to the next item
-			if amount <= 0 {
-				toSubtract = math.Abs(amount)
-				amount = 0
+			if newAmount <= 0 {
+				actualSubtracted = math.Min(tt.Amount, toSubtract)
+				toSubtract = math.Abs(newAmount)
+				newAmount = 0
 			} else {
+				// Nothing else to subtract after this round.
 				toSubtract = 0
 			}
 
-			tally[i].Amount = amount
+			fiatValueWhenBought := zarValue(tt.Timestamp, actualSubtracted, tt.WholePriceAtPoint)
+			fiatValueWhenSold := zarValue(t.Timestamp, actualSubtracted, t.WholePriceAtPoint)
+			taxableAmounts[taxableYear(t.Timestamp)] += fiatValueWhenSold-fiatValueWhenBought
 
+			tally[i].Amount = newAmount
 			if toSubtract <= 0 {
 				break
 			} else if i+2 > len(tally)  {
@@ -52,6 +50,7 @@ func Calculate(transactions []Transaction) {
 	}
 
 	fmt.Println(taxableAmounts)
+	return taxableAmounts
 }
 
 func taxableYear(timestamp int64) int{
