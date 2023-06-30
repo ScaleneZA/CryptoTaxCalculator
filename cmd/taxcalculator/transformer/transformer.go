@@ -2,6 +2,7 @@ package transformer
 
 import (
     "errors"
+    "fmt"
     "math"
     "sort"
     "strconv"
@@ -17,14 +18,25 @@ func Transform(filename string, typ TransformType) ([]sharedtypes.Transaction, e
     }
 
     var ts []sharedtypes.Transaction
-    switch typ {
-    case TransformTypeTest:
-        ts, err = transformTest(rows)
-        if err != nil {
-            return nil, err
+    headerCount := 0
+    for i, r := range rows {
+        var t sharedtypes.Transaction
+        switch typ {
+        case TransformTypeTest:
+            t, err = transformTestRow(r)
+            if err != nil {
+                if headerCount < 1 {
+                    fmt.Println(fmt.Sprintf("Skipping row %d may be header", i))
+                    headerCount++
+                    continue
+                }
+                return nil, err
+            }
+        default:
+            return nil, errors.New("invalid transaction type")
         }
-    default:
-        return nil, errors.New("invalid transaction type")
+
+        ts = append(ts, t)
     }
 
     sort.Slice(ts, func(i, j int) bool {
@@ -35,44 +47,34 @@ func Transform(filename string, typ TransformType) ([]sharedtypes.Transaction, e
 }
 
 // TODO: Extract common code by using a mapping for the columns.
-func transformTest(rows [][]string) ([]sharedtypes.Transaction, error) {
-    var ts []sharedtypes.Transaction
-    for i, r := range rows {
-        amount, err := strconv.ParseFloat(r[2], 64)
-        if err != nil {
-            // Skip potential first row headers
-            if i == 0 {
-                continue
-            }
-            return nil, err
-        }
-
-        timestamp, err := strconv.Atoi(r[3])
-        if err != nil {
-            panic(err)
-            return nil, err
-        }
-
-        typ := sharedtypes.TypeBuy
-        if amount < 0 {
-            amount = math.Abs(amount)
-            typ = sharedtypes.TypeSell
-        }
-
-        wholePrice, err := strconv.ParseFloat(r[4], 64)
-        if err != nil {
-            return nil, err
-        }
-
-        ts = append(ts, sharedtypes.Transaction{
-            Typ:               typ,
-            Amount:            amount,
-            Timestamp:         int64(timestamp),
-            WholePriceAtPoint: wholePrice,
-        })
+func transformTestRow(r []string) (sharedtypes.Transaction, error) {
+    amount, err := strconv.ParseFloat(r[2], 64)
+    if err != nil {
+        return sharedtypes.Transaction{}, err
     }
 
-    return ts, nil
+    timestamp, err := strconv.Atoi(r[3])
+    if err != nil {
+        return sharedtypes.Transaction{}, err
+    }
+
+    typ := sharedtypes.TypeBuy
+    if amount < 0 {
+        amount = math.Abs(amount)
+        typ = sharedtypes.TypeSell
+    }
+
+    wholePrice, err := strconv.ParseFloat(r[4], 64)
+    if err != nil {
+        return sharedtypes.Transaction{}, err
+    }
+
+    return sharedtypes.Transaction{
+        Typ:               typ,
+        Amount:            amount,
+        Timestamp:         int64(timestamp),
+        WholePriceAtPoint: wholePrice,
+    }, nil
 }
 
 // TODO: Pull this out to its own package perhaps?
