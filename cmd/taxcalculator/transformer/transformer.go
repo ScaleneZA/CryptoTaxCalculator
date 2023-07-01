@@ -1,12 +1,14 @@
 package transformer
 
 import (
+    "encoding/csv"
     "errors"
     "fmt"
+    "os"
+    "sort"
+
     "github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/sharedtypes"
     "github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/transformer/sources"
-    "github.com/xuri/excelize/v2"
-    "sort"
 )
 
 func Transform(filename string, typ TransformType) ([]sharedtypes.Transaction, error) {
@@ -46,8 +48,10 @@ func Transform(filename string, typ TransformType) ([]sharedtypes.Transaction, e
 func sourceFromType(typ TransformType) (sources.Source, error) {
     var src sources.Source
     switch typ {
-    case TransformTypeTest:
-        src = sources.TestSource{}
+    case TransformTypeBasic:
+        src = sources.BasicSource{}
+    case TransformTypeLuno:
+        src = sources.LunoSource{}
     default:
         return nil, errors.New("invalid source")
     }
@@ -57,17 +61,14 @@ func sourceFromType(typ TransformType) (sources.Source, error) {
 
 // TODO: Pull this out to its own package perhaps?
 func readFile(filename string) ([][]string, error) {
-    f, err := excelize.OpenFile(filename)
+    file, err := os.Open(filename)
     if err != nil {
         return nil, err
     }
-    defer func() {
-        // Close the spreadsheet.
-        if err := f.Close(); err != nil {
-            panic(err)
-        }
-    }()
-    rows, err := f.GetRows("Sheet1")
+    defer file.Close()
+
+    reader := csv.NewReader(file)
+    rows, err := reader.ReadAll()
     if err != nil {
         return nil, err
     }

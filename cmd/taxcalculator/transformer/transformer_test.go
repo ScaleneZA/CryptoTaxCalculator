@@ -11,11 +11,13 @@ func TestTransform(t *testing.T) {
 	testCases := []struct {
 		name     string
 		seedFile string
+		typ      transformer.TransformType
 		expected []sharedtypes.Transaction
 	}{
 		{
-			name:     "Standard happy path",
-			seedFile: "./testData/example.xlsx",
+			name:     "Basic Example",
+			typ:      transformer.TransformTypeBasic,
+			seedFile: "./testData/basic.csv",
 			expected: []sharedtypes.Transaction{
 				{
 					Currency:          "ETH",
@@ -48,8 +50,9 @@ func TestTransform(t *testing.T) {
 			},
 		},
 		{
-			name:     "Unordered, no header happy path",
-			seedFile: "./testData/example_unordered_no_header.xlsx",
+			name:     "Basic Example - Unordered, no header happy path",
+			typ:      transformer.TransformTypeBasic,
+			seedFile: "./testData/basic_unordered_no_header.csv",
 			expected: []sharedtypes.Transaction{
 				{
 					Currency:          "ETH",
@@ -80,12 +83,18 @@ func TestTransform(t *testing.T) {
 					WholePriceAtPoint: 400,
 				},
 			},
+		},
+		{
+			name:     "Luno",
+			typ:      transformer.TransformTypeLuno,
+			seedFile: "./testData/LUNO_XBT.csv",
+			expected: []sharedtypes.Transaction{},
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			ts, err := transformer.Transform(tc.seedFile, transformer.TransformTypeTest)
+			ts, err := transformer.Transform(tc.seedFile, tc.typ)
 			assert.NoError(t, err)
 
 			assert.Equal(t, tc.expected, ts)

@@ -3,5 +3,7 @@ package transformer
 type TransformType int
 
 const (
-	TransformTypeTest = 0
+	TransformTypeUnknown = 0
+	TransformTypeBasic   = 1
+	TransformTypeLuno    = 2
 )

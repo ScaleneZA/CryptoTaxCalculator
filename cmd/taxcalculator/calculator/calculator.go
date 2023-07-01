@@ -53,10 +53,12 @@ func Calculate(transactions []sharedtypes.Transaction) map[int]map[string]float6
 			yearEndTotals[taxableYear(t.Timestamp)][tt.Currency] += fiatValueWhenSold - fiatValueWhenBought
 
 			tally[i].Amount = newAmount
-			if toSubtract <= 0 {
+			if toSubtract <= float64(0) {
 				break
+
+				// TODO(Fix this for multi-currencies)
 			} else if i+2 > len(tally) {
-				panic(fmt.Sprintf("FATAL: Trying to sell asset that we don't have. Amount over: %f", toSubtract))
+				fmt.Println(fmt.Sprintf("WARNING: Trying to sell asset that we don't have. Amount over: %f", toSubtract))
 			}
 		}
 	}
