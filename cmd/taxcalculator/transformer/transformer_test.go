@@ -84,7 +84,6 @@ func TestTransform(t *testing.T) {
 				},
 			},
 		},
-
 		{
 			name:     "Basic Example - Multi-currency",
 			typ:      transformer.TransformTypeBasic,
@@ -134,12 +133,62 @@ func TestTransform(t *testing.T) {
 				},
 			},
 		},
-		// {
-		// 	name:     "Luno",
-		// 	typ:      transformer.TransformTypeLuno,
-		// 	seedFile: "./testData/LUNO_XBT.csv",
-		// 	expected: []sharedtypes.Transaction{},
-		// },
+		{
+			name:     "Luno",
+			typ:      transformer.TransformTypeLuno,
+			seedFile: "./testData/LUNO_XBT.csv",
+			expected: []sharedtypes.Transaction{
+				{
+					Currency:          "BTC",
+					Typ:               sharedtypes.TypeBuy,
+					Amount:            0.99579,
+					Timestamp:         1453347106,
+					WholePriceAtPoint: 7531.708492754497,
+				},
+				{
+					Currency:          "BTC",
+					Typ:               sharedtypes.TypeBuy,
+					Amount:            1.37329,
+					Timestamp:         1453624978,
+					WholePriceAtPoint: 7281.783163060971,
+				},
+				{
+					Currency:          "BTC",
+					Typ:               sharedtypes.TypeBuy,
+					Amount:            0.073002,
+					Timestamp:         1466570728,
+					WholePriceAtPoint: 10699.980822443222,
+				},
+				{
+					Currency:          "BTC",
+					Typ:               sharedtypes.TypeBuy,
+					Amount:            0.38,
+					Timestamp:         1466571536,
+					WholePriceAtPoint: 10705,
+				},
+				{
+					Currency:          "BTC",
+					Typ:               sharedtypes.TypeFee,
+					Amount:            0.0038,
+					Timestamp:         1466571536,
+					WholePriceAtPoint: 10734.21052631579,
+				},
+				{
+					Currency:          "BTC",
+					Typ:               sharedtypes.TypeBuy,
+					Amount:            1.74346,
+					Timestamp:         1480915521,
+					WholePriceAtPoint: 11471.441845525564,
+				},
+				{
+					Currency:          "BTC",
+					Typ:               sharedtypes.TypeSell,
+					Amount:            1,
+					Timestamp:         1484542490,
+					WholePriceAtPoint: 12051,
+				},
+			},
+		},
 	}
 
 	for _, tc := range testCases {

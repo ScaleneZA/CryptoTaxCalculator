@@ -3,14 +3,16 @@ package sharedtypes
 type TransactionType int
 
 const (
-	TypeBuy             TransactionType = 0
-	TypeSell            TransactionType = 1
-	TypeSendExternal    TransactionType = 2
-	TypeReceiveExternal TransactionType = 3
+	TypeUnknown         TransactionType = 0
+	TypeBuy             TransactionType = 1
+	TypeSell            TransactionType = 2
+	TypeSendExternal    TransactionType = 3
+	TypeReceiveExternal TransactionType = 4
+	TypeFee             TransactionType = 5
 
 	// TypeSendInternal and TypeSendExternal do not affect the tally.
-	TypeSendInternal    TransactionType = 4
-	TypeReceiveInternal TransactionType = 5
+	TypeSendInternal    TransactionType = 6
+	TypeReceiveInternal TransactionType = 7
 )
 
 func (tt TransactionType) ShouldIncreaseTally() bool {
@@ -19,7 +21,7 @@ func (tt TransactionType) ShouldIncreaseTally() bool {
 
 // Reminder: Decreasing the tally does not always affect tax.
 func (tt TransactionType) ShouldDecreaseTally() bool {
-	return tt == TypeSell || tt == TypeSendExternal
+	return tt == TypeSell || tt == TypeSendExternal || tt == TypeFee
 }
 
 type Transaction struct {

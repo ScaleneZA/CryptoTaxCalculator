@@ -10,6 +10,10 @@ import (
 
 type LunoSource struct{}
 
+var currencyMap = map[string]string{
+	"XBT": "BTC",
+}
+
 func (s LunoSource) TransformRow(row []string) (sharedtypes.Transaction, error) {
 	amount, err := strconv.ParseFloat(row[5], 64)
 	if err != nil {
@@ -35,10 +39,19 @@ func (s LunoSource) TransformRow(row []string) (sharedtypes.Transaction, error) 
 	wholePrice := fiatValue / amount
 
 	return sharedtypes.Transaction{
-		Currency:          row[4],
+		Currency:          mapCurrency(row[4]),
 		Typ:               typ,
 		Amount:            amount,
 		Timestamp:         tim.Unix(),
 		WholePriceAtPoint: wholePrice,
 	}, nil
+}
+
+func mapCurrency(s string) string {
+	cur, ok := currencyMap[s]
+	if ok {
+		return cur
+	}
+
+	return s
 }
