@@ -182,7 +182,7 @@ func TestTransform(t *testing.T) {
 				},
 				{
 					Currency:          "BTC",
-					Typ:               sharedtypes.TypeSell,
+					Typ:               sharedtypes.TypeSendExternal,
 					Amount:            1,
 					Timestamp:         1484542490,
 					WholePriceAtPoint: 12051,
@@ -238,7 +238,7 @@ func TestTransform(t *testing.T) {
 				},
 				{
 					Currency:          "BTC",
-					Typ:               sharedtypes.TypeBuy,
+					Typ:               sharedtypes.TypeReceiveInternal,
 					Amount:            0.09093,
 					Timestamp:         1619701433,
 					WholePriceAtPoint: 803903.9920818213,
@@ -273,7 +273,7 @@ func TestTransform(t *testing.T) {
 				},
 				{
 					Currency:          "BTC",
-					Typ:               sharedtypes.TypeSendExternal,
+					Typ:               sharedtypes.TypeFee,
 					Amount:            0.00002327,
 					Timestamp:         1652554670,
 					WholePriceAtPoint: 488611.94671250536,
