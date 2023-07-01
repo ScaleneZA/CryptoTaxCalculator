@@ -7,9 +7,10 @@ import (
 	"time"
 )
 
-func Calculate(transactions []sharedtypes.Transaction) map[int]float64 {
+func Calculate(transactions []sharedtypes.Transaction) map[int]map[string]float64 {
 	var tally []sharedtypes.Transaction
-	taxableAmounts := make(map[int]float64)
+	// TODO(Export this as a type)
+	taxableAmounts := make(map[int]map[string]float64)
 
 	for _, t := range transactions {
 		// TODO: Throw error if current transaction has a date before the previous one.
@@ -23,6 +24,10 @@ func Calculate(transactions []sharedtypes.Transaction) map[int]float64 {
 		for i, tt := range tally {
 			// Skip tallys that have already been counted
 			if tt.Amount <= 0 {
+				continue
+			}
+
+			if tt.Currency != t.Currency {
 				continue
 			}
 
@@ -41,7 +46,11 @@ func Calculate(transactions []sharedtypes.Transaction) map[int]float64 {
 
 			fiatValueWhenBought := zarValue(tt.Timestamp, actualSubtracted, tt.WholePriceAtPoint)
 			fiatValueWhenSold := zarValue(t.Timestamp, actualSubtracted, t.WholePriceAtPoint)
-			taxableAmounts[taxableYear(t.Timestamp)] += fiatValueWhenSold - fiatValueWhenBought
+
+			if taxableAmounts[taxableYear(t.Timestamp)] == nil {
+				taxableAmounts[taxableYear(t.Timestamp)] = make(map[string]float64)
+			}
+			taxableAmounts[taxableYear(t.Timestamp)][tt.Currency] += fiatValueWhenSold - fiatValueWhenBought
 
 			tally[i].Amount = newAmount
 			if toSubtract <= 0 {

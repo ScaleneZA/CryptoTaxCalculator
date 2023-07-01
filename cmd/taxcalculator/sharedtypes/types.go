@@ -8,6 +8,7 @@ const (
 )
 
 type Transaction struct {
+	Currency  string
 	Typ       TransactionType
 	Amount    float64
 	Timestamp int64

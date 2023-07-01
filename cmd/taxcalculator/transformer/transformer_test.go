@@ -18,24 +18,28 @@ func TestTransform(t *testing.T) {
 			seedFile: "./testData/example.xlsx",
 			expected: []sharedtypes.Transaction{
 				{
+					Currency:          "ETH",
 					Typ:               sharedtypes.TypeBuy,
 					Amount:            0.56,
 					Timestamp:         1519812503,
 					WholePriceAtPoint: 100,
 				},
 				{
+					Currency:          "ETH",
 					Typ:               sharedtypes.TypeBuy,
 					Amount:            1.2,
 					Timestamp:         1535450903,
 					WholePriceAtPoint: 200,
 				},
 				{
+					Currency:          "ETH",
 					Typ:               sharedtypes.TypeSell,
 					Amount:            0.25,
 					Timestamp:         1656410903,
 					WholePriceAtPoint: 300,
 				},
 				{
+					Currency:          "ETH",
 					Typ:               sharedtypes.TypeSell,
 					Amount:            1.25,
 					Timestamp:         1687946903,
@@ -48,24 +52,28 @@ func TestTransform(t *testing.T) {
 			seedFile: "./testData/example_unordered_no_header.xlsx",
 			expected: []sharedtypes.Transaction{
 				{
+					Currency:          "ETH",
 					Typ:               sharedtypes.TypeBuy,
 					Amount:            0.56,
 					Timestamp:         1519812503,
 					WholePriceAtPoint: 100,
 				},
 				{
+					Currency:          "ETH",
 					Typ:               sharedtypes.TypeBuy,
 					Amount:            1.2,
 					Timestamp:         1535450903,
 					WholePriceAtPoint: 200,
 				},
 				{
+					Currency:          "ETH",
 					Typ:               sharedtypes.TypeSell,
 					Amount:            0.25,
 					Timestamp:         1656410903,
 					WholePriceAtPoint: 300,
 				},
 				{
+					Currency:          "ETH",
 					Typ:               sharedtypes.TypeSell,
 					Amount:            1.25,
 					Timestamp:         1687946903,
