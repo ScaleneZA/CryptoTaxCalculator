@@ -10,7 +10,7 @@ import (
 func Calculate(transactions []sharedtypes.Transaction) map[int]map[string]float64 {
 	var tally []sharedtypes.Transaction
 	// TODO(Export this as a type)
-	taxableAmounts := make(map[int]map[string]float64)
+	yearEndTotals := make(map[int]map[string]float64)
 
 	for _, t := range transactions {
 		// TODO: Throw error if current transaction has a date before the previous one.
@@ -47,10 +47,10 @@ func Calculate(transactions []sharedtypes.Transaction) map[int]map[string]float6
 			fiatValueWhenBought := zarValue(tt.Timestamp, actualSubtracted, tt.WholePriceAtPoint)
 			fiatValueWhenSold := zarValue(t.Timestamp, actualSubtracted, t.WholePriceAtPoint)
 
-			if taxableAmounts[taxableYear(t.Timestamp)] == nil {
-				taxableAmounts[taxableYear(t.Timestamp)] = make(map[string]float64)
+			if yearEndTotals[taxableYear(t.Timestamp)] == nil {
+				yearEndTotals[taxableYear(t.Timestamp)] = make(map[string]float64)
 			}
-			taxableAmounts[taxableYear(t.Timestamp)][tt.Currency] += fiatValueWhenSold - fiatValueWhenBought
+			yearEndTotals[taxableYear(t.Timestamp)][tt.Currency] += fiatValueWhenSold - fiatValueWhenBought
 
 			tally[i].Amount = newAmount
 			if toSubtract <= 0 {
@@ -61,8 +61,16 @@ func Calculate(transactions []sharedtypes.Transaction) map[int]map[string]float6
 		}
 	}
 
-	fmt.Println(taxableAmounts)
-	return taxableAmounts
+	for year, amounts := range yearEndTotals {
+		var yearTotal float64
+		for _, amount := range amounts {
+			yearTotal += amount
+		}
+		yearEndTotals[year]["TOTAL"] = yearTotal
+	}
+
+	fmt.Println(yearEndTotals)
+	return yearEndTotals
 }
 
 func taxableYear(timestamp int64) int {
