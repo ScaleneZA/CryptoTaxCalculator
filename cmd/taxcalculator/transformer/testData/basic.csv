@@ -1,0 +1,5 @@
+Transaction ID,Currency,Amount,Timestamp,Historyical Price At Point
+1,ETH,0.56,1519812503,100
+2,ETH,1.2,1535450903,200
+3,ETH,-0.25,1656410903,300
+4,ETH,-1.25,1687946903,400
