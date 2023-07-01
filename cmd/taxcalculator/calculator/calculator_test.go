@@ -12,7 +12,7 @@ func TestCalculate(t *testing.T) {
 	testCases := []struct {
 		name     string
 		seed     []sharedtypes.Transaction
-		expected map[int]map[string]float64
+		expected calculator.YearEndTotals
 	}{
 		{
 			name: "Happy Path",
@@ -60,7 +60,7 @@ func TestCalculate(t *testing.T) {
 					WholePriceAtPoint: 2000,
 				},
 			},
-			expected: map[int]map[string]float64{
+			expected: calculator.YearEndTotals{
 				2023: {
 					"ETH":   50,
 					"TOTAL": 50,
@@ -76,7 +76,9 @@ func TestCalculate(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			assert.Equal(t, tc.expected, calculator.Calculate(tc.seed))
+			actual, err := calculator.Calculate(tc.seed)
+			assert.NoError(t, err)
+			assert.Equal(t, tc.expected, actual)
 		})
 	}
 }

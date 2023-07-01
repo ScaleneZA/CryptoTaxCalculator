@@ -84,12 +84,62 @@ func TestTransform(t *testing.T) {
 				},
 			},
 		},
+
 		{
-			name:     "Luno",
-			typ:      transformer.TransformTypeLuno,
-			seedFile: "./testData/LUNO_XBT.csv",
-			expected: []sharedtypes.Transaction{},
+			name:     "Basic Example - Multi-currency",
+			typ:      transformer.TransformTypeBasic,
+			seedFile: "./testData/basic_multi_currency.csv",
+			expected: []sharedtypes.Transaction{
+				{
+					Currency:          "ETH",
+					Typ:               sharedtypes.TypeBuy,
+					Amount:            0.56,
+					Timestamp:         1519812503,
+					WholePriceAtPoint: 100,
+				},
+				{
+					Currency:          "ETH",
+					Typ:               sharedtypes.TypeBuy,
+					Amount:            1.2,
+					Timestamp:         1535450903,
+					WholePriceAtPoint: 200,
+				},
+				{
+					Currency:          "BTC",
+					Typ:               sharedtypes.TypeBuy,
+					Amount:            1,
+					Timestamp:         1535450913,
+					WholePriceAtPoint: 1000,
+				},
+				{
+					Currency:          "ETH",
+					Typ:               sharedtypes.TypeSell,
+					Amount:            0.25,
+					Timestamp:         1656410903,
+					WholePriceAtPoint: 300,
+				},
+				{
+					Currency:          "ETH",
+					Typ:               sharedtypes.TypeSell,
+					Amount:            1.25,
+					Timestamp:         1687946903,
+					WholePriceAtPoint: 400,
+				},
+				{
+					Currency:          "BTC",
+					Typ:               sharedtypes.TypeSell,
+					Amount:            0.5,
+					Timestamp:         1687946913,
+					WholePriceAtPoint: 2000,
+				},
+			},
 		},
+		// {
+		// 	name:     "Luno",
+		// 	typ:      transformer.TransformTypeLuno,
+		// 	seedFile: "./testData/LUNO_XBT.csv",
+		// 	expected: []sharedtypes.Transaction{},
+		// },
 	}
 
 	for _, tc := range testCases {

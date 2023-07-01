@@ -15,6 +15,9 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	tax := calculator.Calculate(ts)
+	tax, err := calculator.Calculate(ts)
+	if err != nil {
+		panic(err)
+	}
 	fmt.Println(tax)
 }

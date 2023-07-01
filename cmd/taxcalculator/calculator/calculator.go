@@ -1,71 +1,49 @@
 package calculator
 
 import (
+	"errors"
 	"fmt"
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/sharedtypes"
 	"math"
 	"time"
+
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/sharedtypes"
 )
 
 /*
 Next Steps:
 * Multi-file
+* Way to initialize at a point in time
 * Fetch whole price if not supplied
 * Separate Sends, Receives, Buys, Sells - Can maybe use a "Known Addresses" feature.
 *   - Any Send/Receive to/from a known address does not affect the tally?
 */
 
-func Calculate(transactions []sharedtypes.Transaction) map[int]map[string]float64 {
-	var tally []sharedtypes.Transaction
-	// TODO(Export this as a type)
-	yearEndTotals := make(map[int]map[string]float64)
+func Calculate(transactions []sharedtypes.Transaction) (YearEndTotals, error) {
+	yearEndTotals := make(YearEndTotals)
 
-	for j, t := range transactions {
-		// TODO: Throw error if current transaction has a date before the previous one.
+	for currency := range uniqueCurrencies(transactions) {
+		var tally []sharedtypes.Transaction
+		var lastTimestamp int64
 
-		if t.Typ == sharedtypes.TypeBuy {
-			tally = append(tally, t)
-			continue
-		}
-
-		toSubtract := t.Amount
-		for i, tt := range tally {
-			// Skip tallys that have already been counted
-			if tt.Amount <= 0 {
+		for _, t := range transactions {
+			if t.Currency != currency {
 				continue
 			}
 
-			if tt.Currency != t.Currency {
+			if t.Timestamp < lastTimestamp {
+				return nil, errors.New("Transaction Slice not ordered correctly")
+			}
+			lastTimestamp = t.Timestamp
+
+			if t.Typ.ShouldIncreaseTally() {
+				tally = append(tally, t)
+			}
+
+			if !t.Typ.ShouldDecreaseTally() {
 				continue
 			}
 
-			newAmount := tt.Amount - toSubtract
-			actualSubtracted := toSubtract
-
-			// Amount is greater than the current tally item, fall over to the next item
-			if newAmount <= 0 {
-				actualSubtracted = math.Min(tt.Amount, toSubtract)
-				toSubtract = math.Abs(newAmount)
-				newAmount = 0
-			} else {
-				// Nothing else to subtract after this round.
-				toSubtract = 0
-			}
-
-			fiatValueWhenBought := zarValue(tt.Timestamp, actualSubtracted, tt.WholePriceAtPoint)
-			fiatValueWhenSold := zarValue(t.Timestamp, actualSubtracted, t.WholePriceAtPoint)
-
-			if yearEndTotals[taxableYear(t.Timestamp)] == nil {
-				yearEndTotals[taxableYear(t.Timestamp)] = make(map[string]float64)
-			}
-			yearEndTotals[taxableYear(t.Timestamp)][tt.Currency] += fiatValueWhenSold - fiatValueWhenBought
-
-			tally[i].Amount = newAmount
-			if toSubtract <= float64(0) {
-				break
-			} else if i+1 >= len(tally) {
-				fmt.Println(fmt.Sprintf("WARNING: Trying to sell asset that we don't have (row-index: %d). Amount over: %f", j, toSubtract))
-			}
+			eatFromTallyUntilSatisfied(t, tally, yearEndTotals)
 		}
 	}
 
@@ -78,7 +56,58 @@ func Calculate(transactions []sharedtypes.Transaction) map[int]map[string]float6
 	}
 
 	fmt.Println(yearEndTotals)
-	return yearEndTotals
+	return yearEndTotals, nil
+}
+
+func eatFromTallyUntilSatisfied(currentTransaction sharedtypes.Transaction, tally []sharedtypes.Transaction, yet YearEndTotals) YearEndTotals {
+	toSubtract := currentTransaction.Amount
+	for i, tt := range tally {
+		// Skip tallys that have already been counted
+		if tt.Amount <= 0 {
+			continue
+		}
+
+		newAmount := tt.Amount - toSubtract
+		actualSubtracted := toSubtract
+
+		// Amount is greater than the current tally item, fall over to the next item
+		if newAmount <= 0 {
+			actualSubtracted = math.Min(tt.Amount, toSubtract)
+			toSubtract = math.Abs(newAmount)
+			newAmount = 0
+		} else {
+			// Nothing else to subtract after this round.
+			toSubtract = 0
+		}
+
+		fiatValueWhenBought := zarValue(tt.Timestamp, actualSubtracted, tt.WholePriceAtPoint)
+		fiatValueWhenSold := zarValue(currentTransaction.Timestamp, actualSubtracted, currentTransaction.WholePriceAtPoint)
+
+		// Yuck
+		if yet[taxableYear(currentTransaction.Timestamp)] == nil {
+			yet[taxableYear(currentTransaction.Timestamp)] = make(map[string]float64)
+		}
+		yet[taxableYear(currentTransaction.Timestamp)][tt.Currency] += fiatValueWhenSold - fiatValueWhenBought
+
+		tally[i].Amount = newAmount
+		if toSubtract <= float64(0) {
+			break
+		} else if i+1 >= len(tally) {
+			fmt.Println(fmt.Sprintf("WARNING: Trying to sell asset that we don't have. Amount over: %f", toSubtract))
+		}
+	}
+
+	return yet
+}
+
+func uniqueCurrencies(transactions []sharedtypes.Transaction) map[string]bool {
+	currencies := make(map[string]bool)
+
+	for _, t := range transactions {
+		currencies[t.Currency] = true
+	}
+
+	return currencies
 }
 
 func taxableYear(timestamp int64) int {
