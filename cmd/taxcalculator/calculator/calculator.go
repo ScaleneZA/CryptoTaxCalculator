@@ -7,12 +7,20 @@ import (
 	"time"
 )
 
+/*
+Next Steps:
+* Multi-file
+* Fetch whole price if not supplied
+* Separate Sends, Receives, Buys, Sells - Can maybe use a "Known Addresses" feature.
+*   - Any Send/Receive to/from a known address does not affect the tally?
+*/
+
 func Calculate(transactions []sharedtypes.Transaction) map[int]map[string]float64 {
 	var tally []sharedtypes.Transaction
 	// TODO(Export this as a type)
 	yearEndTotals := make(map[int]map[string]float64)
 
-	for _, t := range transactions {
+	for j, t := range transactions {
 		// TODO: Throw error if current transaction has a date before the previous one.
 
 		if t.Typ == sharedtypes.TypeBuy {
@@ -55,10 +63,8 @@ func Calculate(transactions []sharedtypes.Transaction) map[int]map[string]float6
 			tally[i].Amount = newAmount
 			if toSubtract <= float64(0) {
 				break
-
-				// TODO(Fix this for multi-currencies)
-			} else if i+2 > len(tally) {
-				fmt.Println(fmt.Sprintf("WARNING: Trying to sell asset that we don't have. Amount over: %f", toSubtract))
+			} else if i+1 >= len(tally) {
+				fmt.Println(fmt.Sprintf("WARNING: Trying to sell asset that we don't have (row-index: %d). Amount over: %f", j, toSubtract))
 			}
 		}
 	}
