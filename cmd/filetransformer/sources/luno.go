@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/sharedtypes"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/sharedtypes"
 )
 
 type LunoSource struct{}
@@ -37,18 +37,15 @@ func (s LunoSource) TransformRow(row []string) (sharedtypes.Transaction, error) 
 
 	return sharedtypes.Transaction{
 		Currency:          mapCurrency(row[4]),
-		DetectedType:      inferType(row, amount, nil),
+		DetectedType:      inferType(row, amount),
 		Amount:            math.Abs(amount),
 		Timestamp:         tim.Unix(),
 		WholePriceAtPoint: wholePrice,
 	}, nil
 }
 
-func inferType(row []string, amount float64, internalAddresses map[string]bool) sharedtypes.TransactionType {
+func inferType(row []string, amount float64) sharedtypes.TransactionType {
 	if amount < 0 {
-		if internalAddresses[row[8]] {
-			return sharedtypes.TypeSendInternal
-		}
 		if strings.Contains(row[3], "Sold") {
 			return sharedtypes.TypeSell
 		}
@@ -57,14 +54,15 @@ func inferType(row []string, amount float64, internalAddresses map[string]bool) 
 			return sharedtypes.TypeFee
 		}
 
-		return sharedtypes.TypeSendExternal
+		// Currently no way to infer external sends, safer to assume internal and let user override.
+		return sharedtypes.TypeSendInternal
 	}
 
 	if strings.Contains(row[3], "Bought") {
 		return sharedtypes.TypeBuy
 	}
 
-	// Currently no way to infer external receives, assume all internal for now.
+	// Currently no way to infer external receives, safer to assume internal and let user override.
 	return sharedtypes.TypeReceiveInternal
 }
 

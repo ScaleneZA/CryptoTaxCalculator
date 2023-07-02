@@ -7,8 +7,8 @@ import (
     "os"
     "sort"
 
-    "github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/filetransformer/sources"
-    "github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/sharedtypes"
+    "github.com/ScaleneZA/CryptoTaxCalculator/cmd/filetransformer/sources"
+    "github.com/ScaleneZA/CryptoTaxCalculator/cmd/sharedtypes"
 )
 
 func Transform(filename string, typ TransformType) ([]sharedtypes.Transaction, error) {

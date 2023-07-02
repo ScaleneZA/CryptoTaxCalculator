@@ -4,7 +4,7 @@ import (
 	"math"
 	"strconv"
 
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/sharedtypes"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/sharedtypes"
 )
 
 type BasicSource struct{}

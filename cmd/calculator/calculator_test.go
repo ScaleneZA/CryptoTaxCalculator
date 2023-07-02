@@ -1,8 +1,8 @@
 package calculator_test
 
 import (
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/calculator"
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/sharedtypes"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/calculator"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/sharedtypes"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

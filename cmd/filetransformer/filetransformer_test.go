@@ -1,8 +1,8 @@
 package filetransformer_test
 
 import (
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/filetransformer"
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/sharedtypes"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/filetransformer"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/sharedtypes"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -182,7 +182,7 @@ func TestTransform(t *testing.T) {
 				},
 				{
 					Currency:          "BTC",
-					DetectedType:      sharedtypes.TypeSendExternal,
+					DetectedType:      sharedtypes.TypeSendInternal,
 					Amount:            1,
 					Timestamp:         1484542490,
 					WholePriceAtPoint: 12051,
@@ -266,7 +266,7 @@ func TestTransform(t *testing.T) {
 				},
 				{
 					Currency:          "BTC",
-					DetectedType:      sharedtypes.TypeSendExternal,
+					DetectedType:      sharedtypes.TypeSendInternal,
 					Amount:            0.00101206,
 					Timestamp:         1652554670,
 					WholePriceAtPoint: 488775.36904926586,
