@@ -10,7 +10,7 @@ const (
 	TypeReceiveExternal TransactionType = 4
 	TypeFee             TransactionType = 5
 
-	// TypeSendInternal and TypeSendExternal do not affect the tally.
+	// TypeSendInternal and TypeReceiveInternal do not affect the tally.
 	TypeSendInternal    TransactionType = 6
 	TypeReceiveInternal TransactionType = 7
 )

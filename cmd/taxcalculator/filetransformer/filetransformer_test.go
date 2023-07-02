@@ -1,8 +1,8 @@
-package transformer_test
+package filetransformer_test
 
 import (
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/filetransformer"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/sharedtypes"
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/transformer"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -11,12 +11,12 @@ func TestTransform(t *testing.T) {
 	testCases := []struct {
 		name     string
 		seedFile string
-		typ      transformer.TransformType
+		typ      filetransformer.TransformType
 		expected []sharedtypes.Transaction
 	}{
 		{
 			name:     "Basic Example",
-			typ:      transformer.TransformTypeBasic,
+			typ:      filetransformer.TransformTypeBasic,
 			seedFile: "./testData/basic.csv",
 			expected: []sharedtypes.Transaction{
 				{
@@ -51,7 +51,7 @@ func TestTransform(t *testing.T) {
 		},
 		{
 			name:     "Basic Example - Unordered, no header happy path",
-			typ:      transformer.TransformTypeBasic,
+			typ:      filetransformer.TransformTypeBasic,
 			seedFile: "./testData/basic_unordered_no_header.csv",
 			expected: []sharedtypes.Transaction{
 				{
@@ -86,7 +86,7 @@ func TestTransform(t *testing.T) {
 		},
 		{
 			name:     "Basic Example - Multi-currency",
-			typ:      transformer.TransformTypeBasic,
+			typ:      filetransformer.TransformTypeBasic,
 			seedFile: "./testData/basic_multi_currency.csv",
 			expected: []sharedtypes.Transaction{
 				{
@@ -135,7 +135,7 @@ func TestTransform(t *testing.T) {
 		},
 		{
 			name:     "Luno",
-			typ:      transformer.TransformTypeLuno,
+			typ:      filetransformer.TransformTypeLuno,
 			seedFile: "./testData/LUNO_XBT.csv",
 			expected: []sharedtypes.Transaction{
 				{
@@ -284,7 +284,9 @@ func TestTransform(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			ts, err := transformer.Transform(tc.seedFile, tc.typ)
+			vrs, err := filetransformer.ImportFile(tc.seedFile)
+			assert.NoError(t, err)
+			ts, err := filetransformer.Transform(vrs, tc.typ)
 			assert.NoError(t, err)
 
 			assert.Equal(t, tc.expected, ts)

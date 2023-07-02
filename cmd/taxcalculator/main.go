@@ -5,13 +5,13 @@ import (
 	"os"
 
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/calculator"
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/transformer"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/filetransformer"
 )
 
 func main() {
 	pwd, _ := os.Getwd()
 
-	ts, err := transformer.Transform(pwd+"/cmd/taxcalculator/transformer/testData/LUNO_XBT.csv", transformer.TransformTypeLuno)
+	ts, err := filetransformer.Transform(pwd+"/cmd/taxcalculator/transformer/testData/LUNO_XBT.csv", filetransformer.TransformTypeLuno)
 	if err != nil {
 		panic(err)
 	}
