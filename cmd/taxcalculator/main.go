@@ -11,7 +11,7 @@ import (
 func main() {
 	pwd, _ := os.Getwd()
 
-	ts, err := filetransformer.Transform(pwd+"/cmd/taxcalculator/transformer/testData/LUNO_XBT.csv", filetransformer.TransformTypeLuno)
+	ts, err := filetransformer.Transform(pwd+"/cmd/taxcalculator/filetransformer/testData/LUNO_XBT.csv", filetransformer.TransformTypeLuno)
 	if err != nil {
 		panic(err)
 	}

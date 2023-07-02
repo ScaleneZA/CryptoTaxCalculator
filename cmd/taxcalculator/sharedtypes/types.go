@@ -25,10 +25,19 @@ func (tt TransactionType) ShouldDecreaseTally() bool {
 }
 
 type Transaction struct {
-	Currency  string
-	Typ       TransactionType
-	Amount    float64
-	Timestamp int64
+	Currency      string
+	DetectedType  TransactionType
+	OverridedType TransactionType
+	Amount        float64
+	Timestamp     int64
 	// TODO: Make this dynamic if possible
 	WholePriceAtPoint float64
+}
+
+func (t Transaction) FinalType() TransactionType {
+	if t.OverridedType != TypeUnknown {
+		return t.OverridedType
+	}
+
+	return t.DetectedType
 }

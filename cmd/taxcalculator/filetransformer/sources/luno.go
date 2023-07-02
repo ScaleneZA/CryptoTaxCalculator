@@ -37,7 +37,7 @@ func (s LunoSource) TransformRow(row []string) (sharedtypes.Transaction, error) 
 
 	return sharedtypes.Transaction{
 		Currency:          mapCurrency(row[4]),
-		Typ:               inferType(row, amount, nil),
+		DetectedType:      inferType(row, amount, nil),
 		Amount:            math.Abs(amount),
 		Timestamp:         tim.Unix(),
 		WholePriceAtPoint: wholePrice,

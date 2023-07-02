@@ -14,8 +14,7 @@ Next Steps:
 * Multi-file
 * Way to initialize at a point in time
 * Fetch whole price if not supplied
-* Separate Sends, Receives, Buys, Sells - Can maybe use a "Known Addresses" feature.
-*   - Any Send/Receive to/from a known address does not affect the tally?
+* Separate Sends, Receives, Buys, Sells - Override detected types
 */
 
 func Calculate(transactions []sharedtypes.Transaction) (YearEndTotals, error) {
@@ -35,11 +34,11 @@ func Calculate(transactions []sharedtypes.Transaction) (YearEndTotals, error) {
 			}
 			lastTimestamp = t.Timestamp
 
-			if t.Typ.ShouldIncreaseTally() {
+			if t.FinalType().ShouldIncreaseTally() {
 				tally = append(tally, t)
 			}
 
-			if !t.Typ.ShouldDecreaseTally() {
+			if !t.FinalType().ShouldDecreaseTally() {
 				continue
 			}
 

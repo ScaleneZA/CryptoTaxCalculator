@@ -33,7 +33,7 @@ func (s BasicSource) TransformRow(row []string) (sharedtypes.Transaction, error)
 
 	return sharedtypes.Transaction{
 		Currency:          row[1],
-		Typ:               typ,
+		DetectedType:      typ,
 		Amount:            amount,
 		Timestamp:         int64(timestamp),
 		WholePriceAtPoint: wholePrice,
