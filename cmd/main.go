@@ -9,7 +9,7 @@ import (
 
 func main() {
 	http.HandleFunc("/", webhandlers.Home)
-	http.HandleFunc("/ajax/upload_transform", webhandlers.UploadTransform)
+	http.HandleFunc("/ajax/upload", webhandlers.UploadTransform)
 	http.HandleFunc("/ajax/calculate", webhandlers.Calculate)
 
 	err := http.ListenAndServe(":8080", nil)

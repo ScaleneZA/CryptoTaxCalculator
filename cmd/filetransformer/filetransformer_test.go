@@ -1,10 +1,12 @@
 package filetransformer_test
 
 import (
+	"os"
+	"testing"
+
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/filetransformer"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/sharedtypes"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestTransform(t *testing.T) {
@@ -284,7 +286,11 @@ func TestTransform(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			ts, err := filetransformer.Transform(tc.seedFile, tc.typ)
+			file, err := os.Open(tc.seedFile)
+			assert.NoError(t, err)
+			defer file.Close()
+
+			ts, err := filetransformer.Transform(file, tc.typ)
 			assert.NoError(t, err)
 
 			assert.Equal(t, tc.expected, ts)

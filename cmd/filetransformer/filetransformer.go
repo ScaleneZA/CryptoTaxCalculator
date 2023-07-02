@@ -4,15 +4,16 @@ import (
     "encoding/csv"
     "errors"
     "fmt"
-    "os"
+    "io"
     "sort"
 
     "github.com/ScaleneZA/CryptoTaxCalculator/cmd/filetransformer/sources"
     "github.com/ScaleneZA/CryptoTaxCalculator/cmd/sharedtypes"
 )
 
-func Transform(filename string, typ TransformType) ([]sharedtypes.Transaction, error) {
-    rows, err := importFile(filename)
+func Transform(file io.Reader, typ TransformType) ([]sharedtypes.Transaction, error) {
+    reader := csv.NewReader(file)
+    rows, err := reader.ReadAll()
     if err != nil {
         return nil, err
     }
@@ -43,17 +44,6 @@ func Transform(filename string, typ TransformType) ([]sharedtypes.Transaction, e
     })
 
     return ts, nil
-}
-
-func importFile(filename string) ([][]string, error) {
-    file, err := os.Open(filename)
-    if err != nil {
-        return nil, err
-    }
-    defer file.Close()
-
-    reader := csv.NewReader(file)
-    return reader.ReadAll()
 }
 
 func sourceFromType(typ TransformType) (sources.Source, error) {
