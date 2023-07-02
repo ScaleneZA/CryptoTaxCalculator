@@ -284,9 +284,7 @@ func TestTransform(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			vrs, err := filetransformer.ImportFile(tc.seedFile)
-			assert.NoError(t, err)
-			ts, err := filetransformer.Transform(vrs, tc.typ)
+			ts, err := filetransformer.Transform(tc.seedFile, tc.typ)
 			assert.NoError(t, err)
 
 			assert.Equal(t, tc.expected, ts)

@@ -8,7 +8,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/filetransformer/filevalidator"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/sharedtypes"
 )
 
@@ -18,9 +17,7 @@ var currencyMap = map[string]string{
 	"XBT": "BTC",
 }
 
-func (s LunoSource) TransformRow(vr filevalidator.ValidatedRow) (sharedtypes.Transaction, error) {
-	row := vr.Raw
-
+func (s LunoSource) TransformRow(row []string) (sharedtypes.Transaction, error) {
 	amount, err := strconv.ParseFloat(row[5], 64)
 	if err != nil {
 		return sharedtypes.Transaction{}, err

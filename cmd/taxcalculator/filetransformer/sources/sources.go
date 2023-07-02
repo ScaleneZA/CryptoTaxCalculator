@@ -1,10 +1,9 @@
 package sources
 
 import (
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/filetransformer/filevalidator"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/sharedtypes"
 )
 
 type Source interface {
-	TransformRow(vr filevalidator.ValidatedRow) (sharedtypes.Transaction, error)
+	TransformRow(row []string) (sharedtypes.Transaction, error)
 }

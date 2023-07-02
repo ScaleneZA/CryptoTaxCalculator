@@ -4,15 +4,12 @@ import (
 	"math"
 	"strconv"
 
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/filetransformer/filevalidator"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/sharedtypes"
 )
 
 type BasicSource struct{}
 
-func (s BasicSource) TransformRow(vr filevalidator.ValidatedRow) (sharedtypes.Transaction, error) {
-	row := vr.Raw
-
+func (s BasicSource) TransformRow(row []string) (sharedtypes.Transaction, error) {
 	amount, err := strconv.ParseFloat(row[2], 64)
 	if err != nil {
 		return sharedtypes.Transaction{}, err
