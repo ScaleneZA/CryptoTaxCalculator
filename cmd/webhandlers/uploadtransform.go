@@ -1,11 +1,13 @@
 package webhandlers
 
 import (
-	"fmt"
+	"html/template"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/filetransformer"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/sharedtypes"
 )
 
 func UploadTransform(w http.ResponseWriter, r *http.Request) {
@@ -21,24 +23,41 @@ func UploadTransform(w http.ResponseWriter, r *http.Request) {
 	log.Printf("File Size: %+v\n", handler.Size)
 	log.Printf("MIME Header: %+v\n", handler.Header)
 
-	fmt.Fprintf(w, "Successfully Uploaded File\n")
+	typInt, err := strconv.Atoi(r.FormValue("type"))
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Internal Server Error: Failed to parse type", http.StatusInternalServerError)
+	}
 
-	ts, err := filetransformer.Transform(file, filetransformer.TransformTypeBasic)
+	ts, err := filetransformer.Transform(file, filetransformer.TransformType(typInt))
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Internal Server Error: Failed to tranform", http.StatusInternalServerError)
 	}
 
-	for _, t := range ts {
-		fmt.Fprintf(w, "Amount:%f\n", t.Amount)
+	tmpl, err := template.ParseFiles("web/templates/overrides.html")
+	if err != nil {
+		log.Println("Error:", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	// Define any data you want to pass to the template
+	data := struct {
+		Title                    string
+		Transactions             []sharedtypes.Transaction
+		OverrideTransactionTypes []sharedtypes.TransactionType
+	}{
+		Title:                    "Overrides",
+		Transactions:             ts,
+		OverrideTransactionTypes: sharedtypes.ValidTransactionTypes(),
+	}
+
+	// Execute the template with the data
+	err = tmpl.Execute(w, data)
+	if err != nil {
+		log.Println("Error:", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
 	}
 }
-
-// func transform(filename string) {
-// 	pwd, _ := os.Getwd()
-
-// 	_, err := filetransformer.Transform(pwd+"/cmd/filetransformer/testData/LUNO_XBT.csv", filetransformer.TransformTypeLuno)
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// }

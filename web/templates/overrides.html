@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>{{.Title}}</title>
+  </head>
+  <body>
+    <table>
+      {{ range $t := .Transactions }}
+        <tr>
+          <td>{{ $t.Timestamp }}</td>
+          <td>{{ $t.Currency }}</td>
+          <td>{{ $t.Amount }}</td>
+          <td>
+            <select name="OverrideType?">
+              {{ range $tt := $.OverrideTransactionTypes }}
+                <option {{ if eq .Int $t.DetectedType.Int }} selected {{ end }} value={{ .Int }} >{{ .String }}</option>
+              {{ end }}
+            </select>
+          </td>
+        </tr>
+      {{ end }}
+    </table>
+  </body>
+</html>

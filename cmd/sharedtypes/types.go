@@ -3,17 +3,53 @@ package sharedtypes
 type TransactionType int
 
 const (
-	TypeUnknown         TransactionType = 0
-	TypeBuy             TransactionType = 1
-	TypeSell            TransactionType = 2
-	TypeSendExternal    TransactionType = 3
-	TypeReceiveExternal TransactionType = 4
-	TypeFee             TransactionType = 5
+	TypeUnknown TransactionType = 0
 
 	// TypeSendInternal and TypeReceiveInternal do not affect the tally.
-	TypeSendInternal    TransactionType = 6
-	TypeReceiveInternal TransactionType = 7
+	TypeSendInternal    TransactionType = 1
+	TypeReceiveInternal TransactionType = 2
+
+	TypeBuy             TransactionType = 3
+	TypeSell            TransactionType = 4
+	TypeSendExternal    TransactionType = 5
+	TypeReceiveExternal TransactionType = 6
+	TypeFee             TransactionType = 7
+
+	typeSentinel TransactionType = 8
 )
+
+func ValidTransactionTypes() []TransactionType {
+	var types []TransactionType
+	for i := int(TypeUnknown) + 1; i < int(typeSentinel); i++ {
+		types = append(types, TransactionType(i))
+	}
+
+	return types
+}
+
+var transactionTypeStrings = map[TransactionType]string{
+	TypeUnknown:         "Unknown",
+	TypeBuy:             "Buy",
+	TypeSell:            "Sell",
+	TypeSendExternal:    "Send (external)",
+	TypeReceiveExternal: "Receive (external)",
+	TypeFee:             "Fee",
+	TypeSendInternal:    "Transfer (send)",
+	TypeReceiveInternal: "Transfer (receieve)",
+}
+
+func (tt TransactionType) String() string {
+	str, ok := transactionTypeStrings[tt]
+	if ok {
+		return str
+	}
+
+	return "Unknown"
+}
+
+func (tt TransactionType) Int() int {
+	return int(tt)
+}
 
 func (tt TransactionType) ShouldIncreaseTally() bool {
 	return tt == TypeBuy || tt == TypeReceiveExternal

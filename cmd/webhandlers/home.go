@@ -4,6 +4,8 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/filetransformer"
 )
 
 func Home(w http.ResponseWriter, r *http.Request) {
@@ -16,9 +18,11 @@ func Home(w http.ResponseWriter, r *http.Request) {
 
 	// Define any data you want to pass to the template
 	data := struct {
-		Title string
+		Title          string
+		TransformTypes []filetransformer.TransformType
 	}{
-		Title: "My Web App",
+		Title:          "Tax Calculator",
+		TransformTypes: filetransformer.ValidTransformTypes(),
 	}
 
 	// Execute the template with the data
