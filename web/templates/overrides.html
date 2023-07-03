@@ -1,7 +1,7 @@
 {{ define "content" }}
 <div class="container">
   {{ range $t := .Transactions }}
-    <div class="row border-top p-1 {{ if .DetectedType.ShouldCheck }}bg-warning{{ end }}">
+    <div class="row border-top p-1 {{ if .DetectedType.ShouldCheck }}bg-check{{ end }}">
       <div class="col">{{ $t.Timestamp }}</div>
       <div class="col">{{ $t.Currency }}</div>
       <div class="col">{{ $t.Amount }}</div>
@@ -15,9 +15,14 @@
     </div>
   {{ end }}
 </div>
+<style>
+  .bg-check {
+    background-color: #ffe5d0;
+  }
+</style>
 <script>
-  $(".bg-warning").on('click', function(e){
-    $(this).removeClass('bg-warning')
+  $(".row").on('click', function(e){
+    $(this).removeClass('bg-check')
   })
 </script>
 {{ end }}
