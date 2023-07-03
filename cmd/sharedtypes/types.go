@@ -60,6 +60,11 @@ func (tt TransactionType) ShouldDecreaseTally() bool {
 	return tt == TypeSell || tt == TypeSendExternal || tt == TypeFee
 }
 
+// ShouldCheck supplies types that need double checking by the user.
+func (tt TransactionType) ShouldCheck() bool {
+	return tt == TypeSendInternal || tt == TypeReceiveInternal
+}
+
 type Transaction struct {
 	Currency      string
 	DetectedType  TransactionType

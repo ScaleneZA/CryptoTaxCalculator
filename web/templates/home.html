@@ -1,24 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>{{.Title}}</title>
-  </head>
-  <body>
-    <form
-      enctype="multipart/form-data"
-      action="http://localhost:8080/ajax/upload"
-      method="post"
-    >
-      <input type="file" name="myFile" />
-      <select name="type">
-        {{ range $tt := $.TransformTypes }}
-            <option value={{ .Int }} >{{ .String }}</option>
-        {{ end }}
-      </select>
-      <input type="submit" value="upload" />
-    </form>
-  </body>
-</html>
+{{ define "content" }}
+<form
+  enctype="multipart/form-data"
+  action="http://localhost:8080/ajax/upload"
+  method="post"
+>
+  <input class="form-control form-control-lg" id="myFile" name="myFile" type="file">
+  <select name="type" class="form-select">
+    {{ range $tt := $.TransformTypes }}
+    <option value={{ .Int }} >{{ .String }}</option>
+    {{ end }}
+  </select>
+  <input type="submit" class="btn btn-primary" value="upload" />
+</form>
+{{ end }}

@@ -35,7 +35,7 @@ func UploadTransform(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal Server Error: Failed to tranform", http.StatusInternalServerError)
 	}
 
-	tmpl, err := template.ParseFiles("web/templates/overrides.html")
+	tmpl, err := template.ParseFiles("web/templates/overrides.html", "web/templates/base.html")
 	if err != nil {
 		log.Println("Error:", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -54,7 +54,7 @@ func UploadTransform(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Execute the template with the data
-	err = tmpl.Execute(w, data)
+	err = tmpl.ExecuteTemplate(w, "base", data)
 	if err != nil {
 		log.Println("Error:", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
