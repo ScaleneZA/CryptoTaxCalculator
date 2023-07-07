@@ -1,6 +1,7 @@
 package sources
 
 import (
+	"github.com/google/uuid"
 	"math"
 	"strconv"
 
@@ -32,6 +33,7 @@ func (s BasicSource) TransformRow(row []string) (sharedtypes.Transaction, error)
 	}
 
 	return sharedtypes.Transaction{
+		UID:               uuid.NewString(),
 		Currency:          row[1],
 		DetectedType:      typ,
 		Amount:            amount,

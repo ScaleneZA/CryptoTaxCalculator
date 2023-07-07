@@ -66,6 +66,7 @@ func (tt TransactionType) ShouldCheck() bool {
 }
 
 type Transaction struct {
+	UID           string
 	Currency      string
 	DetectedType  TransactionType
 	OverridedType TransactionType

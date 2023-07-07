@@ -1,12 +1,13 @@
 {{ define "content" }}
 <div class="container">
   {{ range $t := .Transactions }}
-    <div class="row border-top p-1 {{ if .DetectedType.ShouldCheck }}bg-check{{ end }}">
+    <div data-uid="{{ $t.UID }}" class="row border-top p-1 {{ if .DetectedType.ShouldCheck }}bg-check{{ end }}">
+      <div class="col">{{ $t.UID }}</div>
       <div class="col">{{ $t.Timestamp }}</div>
       <div class="col">{{ $t.Currency }}</div>
       <div class="col">{{ $t.Amount }}</div>
       <div class="col">
-        <select name="OverrideType?" class="form-select form-select-sm">
+        <select class="form-select form-select-sm">
           {{ range $tt := $.OverrideTransactionTypes }}
             <option {{ if eq .Int $t.DetectedType.Int }} selected {{ end }} value={{ .Int }} >{{ .String }}</option>
           {{ end }}
@@ -14,6 +15,7 @@
       </div>
     </div>
   {{ end }}
+  <a id="calculate" class="btn btn-primary">Calculate</a>
 </div>
 <style>
   .bg-check {
@@ -21,8 +23,25 @@
   }
 </style>
 <script>
+  var transactions = JSON.parse({{.TransactionsJSON}})
+
   $(".row").on('click', function(e){
     $(this).removeClass('bg-check')
+  })
+
+  $('select').on('change', function(e){
+    let uid = $(this).closest('.row').attr("data-uid")
+    let val = $(this).val()
+    $.each(transactions, function(key, t) {
+      if (t.UID == uid) {
+        transactions[key].OverridedType = parseInt(val)
+        return false
+      }
+    })
+  })
+
+  $("#calculate").on("click", function(e){
+    
   })
 </script>
 {{ end }}

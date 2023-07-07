@@ -3,6 +3,7 @@ package sources
 // TODO(add const configuration here)
 
 import (
+	"github.com/google/uuid"
 	"math"
 	"strconv"
 	"strings"
@@ -36,6 +37,7 @@ func (s LunoSource) TransformRow(row []string) (sharedtypes.Transaction, error) 
 	wholePrice := fiatValue / math.Abs(amount)
 
 	return sharedtypes.Transaction{
+		UID:               uuid.NewString(),
 		Currency:          mapCurrency(row[4]),
 		DetectedType:      inferType(row, amount),
 		Amount:            math.Abs(amount),

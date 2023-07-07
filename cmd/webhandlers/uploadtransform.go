@@ -1,6 +1,7 @@
 package webhandlers
 
 import (
+	"encoding/json"
 	"html/template"
 	"log"
 	"net/http"
@@ -35,6 +36,12 @@ func UploadTransform(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal Server Error: Failed to tranform", http.StatusInternalServerError)
 	}
 
+	jsonData, err := json.Marshal(ts)
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
 	tmpl, err := template.ParseFiles("web/templates/overrides.html", "web/templates/base.html")
 	if err != nil {
 		log.Println("Error:", err)
@@ -42,18 +49,18 @@ func UploadTransform(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Define any data you want to pass to the template
 	data := struct {
 		Title                    string
-		Transactions             []sharedtypes.Transaction
 		OverrideTransactionTypes []sharedtypes.TransactionType
+		Transactions             []sharedtypes.Transaction
+		TransactionsJSON         string
 	}{
 		Title:                    "Overrides",
-		Transactions:             ts,
 		OverrideTransactionTypes: sharedtypes.ValidTransactionTypes(),
+		Transactions:             ts,
+		TransactionsJSON:         string(jsonData),
 	}
 
-	// Execute the template with the data
 	err = tmpl.ExecuteTemplate(w, "base", data)
 	if err != nil {
 		log.Println("Error:", err)
