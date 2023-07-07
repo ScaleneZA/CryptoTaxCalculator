@@ -4,7 +4,7 @@
   action="http://localhost:8080/ajax/upload"
   method="post"
 >
-  <input class="form-control form-control-lg" id="myFile" name="myFile" type="file">
+  <input class="form-control form-control-lg" id="myFile" name="files" type="file" multiple>
   <select name="type" class="form-select">
     {{ range $tt := $.TransformTypes }}
     <option value={{ .Int }} >{{ .String }}</option>

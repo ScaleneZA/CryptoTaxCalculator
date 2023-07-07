@@ -1,6 +1,7 @@
 package filetransformer_test
 
 import (
+	"io"
 	"os"
 	"testing"
 
@@ -11,15 +12,15 @@ import (
 
 func TestTransform(t *testing.T) {
 	testCases := []struct {
-		name     string
-		seedFile string
-		typ      filetransformer.TransformType
-		expected []sharedtypes.Transaction
+		name      string
+		seedFiles []string
+		typ       filetransformer.TransformType
+		expected  []sharedtypes.Transaction
 	}{
 		{
-			name:     "Basic Example",
-			typ:      filetransformer.TransformTypeBasic,
-			seedFile: "./testData/basic.csv",
+			name:      "Basic Example",
+			typ:       filetransformer.TransformTypeBasic,
+			seedFiles: []string{"./testData/basic.csv"},
 			expected: []sharedtypes.Transaction{
 				{
 					Currency:          "ETH",
@@ -52,9 +53,9 @@ func TestTransform(t *testing.T) {
 			},
 		},
 		{
-			name:     "Basic Example - Unordered, no header happy path",
-			typ:      filetransformer.TransformTypeBasic,
-			seedFile: "./testData/basic_unordered_no_header.csv",
+			name:      "Basic Example - Unordered, no header happy path",
+			typ:       filetransformer.TransformTypeBasic,
+			seedFiles: []string{"./testData/basic_unordered_no_header.csv"},
 			expected: []sharedtypes.Transaction{
 				{
 					Currency:          "ETH",
@@ -87,9 +88,75 @@ func TestTransform(t *testing.T) {
 			},
 		},
 		{
-			name:     "Basic Example - Multi-currency",
-			typ:      filetransformer.TransformTypeBasic,
-			seedFile: "./testData/basic_multi_currency.csv",
+			name: "Basic Example - Two files",
+			typ:  filetransformer.TransformTypeBasic,
+			seedFiles: []string{
+				"./testData/basic.csv",
+				"./testData/basic_unordered_no_header.csv",
+			},
+			expected: []sharedtypes.Transaction{
+				{
+					Currency:          "ETH",
+					DetectedType:      sharedtypes.TypeBuy,
+					Amount:            0.56,
+					Timestamp:         1519812503,
+					WholePriceAtPoint: 100,
+				},
+				{
+					Currency:          "ETH",
+					DetectedType:      sharedtypes.TypeBuy,
+					Amount:            0.56,
+					Timestamp:         1519812503,
+					WholePriceAtPoint: 100,
+				},
+				{
+					Currency:          "ETH",
+					DetectedType:      sharedtypes.TypeBuy,
+					Amount:            1.2,
+					Timestamp:         1535450903,
+					WholePriceAtPoint: 200,
+				},
+				{
+					Currency:          "ETH",
+					DetectedType:      sharedtypes.TypeBuy,
+					Amount:            1.2,
+					Timestamp:         1535450903,
+					WholePriceAtPoint: 200,
+				},
+				{
+					Currency:          "ETH",
+					DetectedType:      sharedtypes.TypeSell,
+					Amount:            0.25,
+					Timestamp:         1656410903,
+					WholePriceAtPoint: 300,
+				},
+				{
+					Currency:          "ETH",
+					DetectedType:      sharedtypes.TypeSell,
+					Amount:            0.25,
+					Timestamp:         1656410903,
+					WholePriceAtPoint: 300,
+				},
+				{
+					Currency:          "ETH",
+					DetectedType:      sharedtypes.TypeSell,
+					Amount:            1.25,
+					Timestamp:         1687946903,
+					WholePriceAtPoint: 400,
+				},
+				{
+					Currency:          "ETH",
+					DetectedType:      sharedtypes.TypeSell,
+					Amount:            1.25,
+					Timestamp:         1687946903,
+					WholePriceAtPoint: 400,
+				},
+			},
+		},
+		{
+			name:      "Basic Example - Multi-currency",
+			typ:       filetransformer.TransformTypeBasic,
+			seedFiles: []string{"./testData/basic_multi_currency.csv"},
 			expected: []sharedtypes.Transaction{
 				{
 					Currency:          "ETH",
@@ -136,9 +203,9 @@ func TestTransform(t *testing.T) {
 			},
 		},
 		{
-			name:     "Luno",
-			typ:      filetransformer.TransformTypeLuno,
-			seedFile: "./testData/LUNO_XBT.csv",
+			name:      "Luno",
+			typ:       filetransformer.TransformTypeLuno,
+			seedFiles: []string{"./testData/LUNO_XBT.csv"},
 			expected: []sharedtypes.Transaction{
 				{
 					Currency:          "BTC",
@@ -286,14 +353,22 @@ func TestTransform(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			file, err := os.Open(tc.seedFile)
-			assert.NoError(t, err)
-			defer file.Close()
+			var files []io.Reader
+			for _, sf := range tc.seedFiles {
+				file, err := os.Open(sf)
+				assert.NoError(t, err)
+				defer file.Close()
 
-			ts, err := filetransformer.Transform(file, tc.typ)
+				files = append(files, file)
+			}
+
+			ts, err := filetransformer.Transform(files, tc.typ)
 			assert.NoError(t, err)
 
-			assert.Equal(t, tc.expected, ts)
+			for i, exp := range tc.expected {
+				exp.UID = ts[i].UID
+				assert.Equal(t, exp, ts[i])
+			}
 		})
 	}
 
