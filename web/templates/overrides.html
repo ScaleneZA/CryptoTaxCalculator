@@ -1,5 +1,8 @@
 {{ define "content" }}
 <div class="container">
+  <div id="result"></div>
+</div>
+<div class="container">
   {{ range $t := .Transactions }}
     <div data-uid="{{ $t.UID }}" class="row border-top p-1 {{ if .DetectedType.ShouldCheck }}bg-check{{ end }}">
       <div class="col">{{ $t.UID }}</div>
@@ -41,7 +44,21 @@
   })
 
   $("#calculate").on("click", function(e){
-    
+    $.ajax({
+      url: "/ajax/calculate",
+      type: "POST",
+      data: JSON.stringify(transactions),
+      contentType: "application/json",
+      success: function(response) {
+        $("#result").html(JSON.stringify(response))
+        // Handle the response from the server
+        console.log(response);
+      },
+      error: function(xhr, status, error) {
+        // Handle the error
+        console.error(error);
+      }
+    })
   })
 </script>
 {{ end }}
