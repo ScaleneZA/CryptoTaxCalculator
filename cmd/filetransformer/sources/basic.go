@@ -1,9 +1,11 @@
 package sources
 
 import (
-	"github.com/google/uuid"
+	"crypto/md5"
+	"encoding/hex"
 	"math"
 	"strconv"
+	"strings"
 
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/sharedtypes"
 )
@@ -32,8 +34,11 @@ func (s BasicSource) TransformRow(row []string) (sharedtypes.Transaction, error)
 		return sharedtypes.Transaction{}, err
 	}
 
+	hash := md5.Sum([]byte(strings.Join(row[:], ",")))
+	hashString := hex.EncodeToString(hash[:])
+
 	return sharedtypes.Transaction{
-		UID:               uuid.NewString(),
+		UID:               hashString,
 		Transformer:       sharedtypes.TransformTypeBasic,
 		Currency:          row[1],
 		DetectedType:      typ,

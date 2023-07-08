@@ -10,7 +10,7 @@
       <div class="col">{{ $t.Currency }}</div>
       <div class="col">{{ $t.Amount }}</div>
       <div class="col">
-        <select class="form-select form-select-sm">
+        <select class="form-select form-select-sm override-transaction-type">
           {{ range $tt := $.OverrideTransactionTypes }}
             <option {{ if eq .Int $t.DetectedType.Int }} selected {{ end }} value={{ .Int }} >{{ .String }}</option>
           {{ end }}
@@ -28,6 +28,36 @@
 <script>
   var transactions = JSON.parse({{.TransactionsJSON}})
 
+  $(document).ready(function() {
+    if (localStorage.getItem('transactions')) {
+      var storedJsonString = localStorage.getItem('transactions');
+      var storedJsonObject = JSON.parse(storedJsonString);
+
+      $.each(transactions, function(key, t1) {
+        $.each(storedJsonObject, function(key, t2) {
+          if (t1.UID === t2.UID) {
+            if (parseInt(t2.OverridedType) <= 0) {
+              return false
+            }
+            if (t1.OverridedType === t2.OverridedType) {
+              return false
+            }
+
+            transactions[key].OverridedType = t2.OverridedType
+            let e = $('[data-uid=' + t1.UID + ']').find('.override-transaction-type')
+            e.val(t2.OverridedType)
+
+            if (transactions[key].OverridedType === transactions[key].DetectedType) {
+              e.removeClass('text-success')
+            } else {
+              e.addClass('text-success')
+            }
+          }
+        })
+      })
+    }
+  });
+
   $(".row").on('click', function(e){
     $(this).removeClass('bg-check')
   })
@@ -35,12 +65,20 @@
   $('select').on('change', function(e){
     let uid = $(this).closest('.row').attr("data-uid")
     let val = $(this).val()
+    let that = this
     $.each(transactions, function(key, t) {
-      if (t.UID == uid) {
+      if (t.UID === uid) {
         transactions[key].OverridedType = parseInt(val)
+        if (transactions[key].OverridedType === transactions[key].DetectedType) {
+          $(that).removeClass('text-success')
+        } else {
+          $(that).addClass('text-success')
+        }
         return false
       }
     })
+
+    localStorage.setItem('transactions', JSON.stringify(transactions));
   })
 
   $("#calculate").on("click", function(e){

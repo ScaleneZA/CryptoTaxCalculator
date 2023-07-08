@@ -3,7 +3,8 @@ package sources
 // TODO(add const configuration here)
 
 import (
-	"github.com/google/uuid"
+	"crypto/md5"
+	"encoding/hex"
 	"math"
 	"strconv"
 	"strings"
@@ -36,8 +37,11 @@ func (s LunoSource) TransformRow(row []string) (sharedtypes.Transaction, error) 
 
 	wholePrice := fiatValue / math.Abs(amount)
 
+	hash := md5.Sum([]byte(strings.Join(row[:], ",")))
+	hashString := hex.EncodeToString(hash[:])
+
 	return sharedtypes.Transaction{
-		UID:               uuid.NewString(),
+		UID:               hashString,
 		Transformer:       sharedtypes.TransformTypeLuno,
 		Currency:          mapCurrency(row[4]),
 		DetectedType:      inferType(row, amount),
