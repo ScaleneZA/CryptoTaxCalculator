@@ -14,15 +14,16 @@ func TestTransform(t *testing.T) {
 	testCases := []struct {
 		name      string
 		seedFiles []string
-		typ       filetransformer.TransformType
+		typ       sharedtypes.TransformType
 		expected  []sharedtypes.Transaction
 	}{
 		{
 			name:      "Basic Example",
-			typ:       filetransformer.TransformTypeBasic,
+			typ:       sharedtypes.TransformTypeBasic,
 			seedFiles: []string{"./testData/basic.csv"},
 			expected: []sharedtypes.Transaction{
 				{
+					Transformer:       sharedtypes.TransformTypeBasic,
 					Currency:          "ETH",
 					DetectedType:      sharedtypes.TypeBuy,
 					Amount:            0.56,
@@ -30,6 +31,7 @@ func TestTransform(t *testing.T) {
 					WholePriceAtPoint: 100,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeBasic,
 					Currency:          "ETH",
 					DetectedType:      sharedtypes.TypeBuy,
 					Amount:            1.2,
@@ -37,6 +39,7 @@ func TestTransform(t *testing.T) {
 					WholePriceAtPoint: 200,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeBasic,
 					Currency:          "ETH",
 					DetectedType:      sharedtypes.TypeSell,
 					Amount:            0.25,
@@ -44,6 +47,7 @@ func TestTransform(t *testing.T) {
 					WholePriceAtPoint: 300,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeBasic,
 					Currency:          "ETH",
 					DetectedType:      sharedtypes.TypeSell,
 					Amount:            1.25,
@@ -54,10 +58,11 @@ func TestTransform(t *testing.T) {
 		},
 		{
 			name:      "Basic Example - Unordered, no header happy path",
-			typ:       filetransformer.TransformTypeBasic,
+			typ:       sharedtypes.TransformTypeBasic,
 			seedFiles: []string{"./testData/basic_unordered_no_header.csv"},
 			expected: []sharedtypes.Transaction{
 				{
+					Transformer:       sharedtypes.TransformTypeBasic,
 					Currency:          "ETH",
 					DetectedType:      sharedtypes.TypeBuy,
 					Amount:            0.56,
@@ -65,6 +70,7 @@ func TestTransform(t *testing.T) {
 					WholePriceAtPoint: 100,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeBasic,
 					Currency:          "ETH",
 					DetectedType:      sharedtypes.TypeBuy,
 					Amount:            1.2,
@@ -72,6 +78,7 @@ func TestTransform(t *testing.T) {
 					WholePriceAtPoint: 200,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeBasic,
 					Currency:          "ETH",
 					DetectedType:      sharedtypes.TypeSell,
 					Amount:            0.25,
@@ -79,6 +86,7 @@ func TestTransform(t *testing.T) {
 					WholePriceAtPoint: 300,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeBasic,
 					Currency:          "ETH",
 					DetectedType:      sharedtypes.TypeSell,
 					Amount:            1.25,
@@ -89,13 +97,14 @@ func TestTransform(t *testing.T) {
 		},
 		{
 			name: "Basic Example - Two files",
-			typ:  filetransformer.TransformTypeBasic,
+			typ:  sharedtypes.TransformTypeBasic,
 			seedFiles: []string{
 				"./testData/basic.csv",
 				"./testData/basic_unordered_no_header.csv",
 			},
 			expected: []sharedtypes.Transaction{
 				{
+					Transformer:       sharedtypes.TransformTypeBasic,
 					Currency:          "ETH",
 					DetectedType:      sharedtypes.TypeBuy,
 					Amount:            0.56,
@@ -103,6 +112,7 @@ func TestTransform(t *testing.T) {
 					WholePriceAtPoint: 100,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeBasic,
 					Currency:          "ETH",
 					DetectedType:      sharedtypes.TypeBuy,
 					Amount:            0.56,
@@ -110,6 +120,7 @@ func TestTransform(t *testing.T) {
 					WholePriceAtPoint: 100,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeBasic,
 					Currency:          "ETH",
 					DetectedType:      sharedtypes.TypeBuy,
 					Amount:            1.2,
@@ -117,6 +128,7 @@ func TestTransform(t *testing.T) {
 					WholePriceAtPoint: 200,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeBasic,
 					Currency:          "ETH",
 					DetectedType:      sharedtypes.TypeBuy,
 					Amount:            1.2,
@@ -124,6 +136,7 @@ func TestTransform(t *testing.T) {
 					WholePriceAtPoint: 200,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeBasic,
 					Currency:          "ETH",
 					DetectedType:      sharedtypes.TypeSell,
 					Amount:            0.25,
@@ -131,6 +144,7 @@ func TestTransform(t *testing.T) {
 					WholePriceAtPoint: 300,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeBasic,
 					Currency:          "ETH",
 					DetectedType:      sharedtypes.TypeSell,
 					Amount:            0.25,
@@ -138,6 +152,7 @@ func TestTransform(t *testing.T) {
 					WholePriceAtPoint: 300,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeBasic,
 					Currency:          "ETH",
 					DetectedType:      sharedtypes.TypeSell,
 					Amount:            1.25,
@@ -145,6 +160,7 @@ func TestTransform(t *testing.T) {
 					WholePriceAtPoint: 400,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeBasic,
 					Currency:          "ETH",
 					DetectedType:      sharedtypes.TypeSell,
 					Amount:            1.25,
@@ -155,10 +171,11 @@ func TestTransform(t *testing.T) {
 		},
 		{
 			name:      "Basic Example - Multi-currency",
-			typ:       filetransformer.TransformTypeBasic,
+			typ:       sharedtypes.TransformTypeBasic,
 			seedFiles: []string{"./testData/basic_multi_currency.csv"},
 			expected: []sharedtypes.Transaction{
 				{
+					Transformer:       sharedtypes.TransformTypeBasic,
 					Currency:          "ETH",
 					DetectedType:      sharedtypes.TypeBuy,
 					Amount:            0.56,
@@ -166,6 +183,7 @@ func TestTransform(t *testing.T) {
 					WholePriceAtPoint: 100,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeBasic,
 					Currency:          "ETH",
 					DetectedType:      sharedtypes.TypeBuy,
 					Amount:            1.2,
@@ -173,6 +191,7 @@ func TestTransform(t *testing.T) {
 					WholePriceAtPoint: 200,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeBasic,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeBuy,
 					Amount:            1,
@@ -180,6 +199,7 @@ func TestTransform(t *testing.T) {
 					WholePriceAtPoint: 1000,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeBasic,
 					Currency:          "ETH",
 					DetectedType:      sharedtypes.TypeSell,
 					Amount:            0.25,
@@ -187,6 +207,7 @@ func TestTransform(t *testing.T) {
 					WholePriceAtPoint: 300,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeBasic,
 					Currency:          "ETH",
 					DetectedType:      sharedtypes.TypeSell,
 					Amount:            1.25,
@@ -194,6 +215,7 @@ func TestTransform(t *testing.T) {
 					WholePriceAtPoint: 400,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeBasic,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeSell,
 					Amount:            0.5,
@@ -204,10 +226,11 @@ func TestTransform(t *testing.T) {
 		},
 		{
 			name:      "Luno",
-			typ:       filetransformer.TransformTypeLuno,
+			typ:       sharedtypes.TransformTypeLuno,
 			seedFiles: []string{"./testData/LUNO_XBT.csv"},
 			expected: []sharedtypes.Transaction{
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeBuy,
 					Amount:            0.99579,
@@ -215,6 +238,7 @@ func TestTransform(t *testing.T) {
 					WholePriceAtPoint: 7531.708492754497,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeBuy,
 					Amount:            1.37329,
@@ -222,6 +246,7 @@ func TestTransform(t *testing.T) {
 					WholePriceAtPoint: 7281.783163060971,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeBuy,
 					Amount:            0.073002,
@@ -229,6 +254,7 @@ func TestTransform(t *testing.T) {
 					WholePriceAtPoint: 10699.980822443222,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeBuy,
 					Amount:            0.38,
@@ -236,6 +262,7 @@ func TestTransform(t *testing.T) {
 					WholePriceAtPoint: 10705,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeFee,
 					Amount:            0.0038,
@@ -243,6 +270,7 @@ func TestTransform(t *testing.T) {
 					WholePriceAtPoint: 10734.21052631579,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeBuy,
 					Amount:            1.74346,
@@ -250,6 +278,7 @@ func TestTransform(t *testing.T) {
 					WholePriceAtPoint: 11471.441845525564,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeSendInternal,
 					Amount:            1,
@@ -257,6 +286,7 @@ func TestTransform(t *testing.T) {
 					WholePriceAtPoint: 12051,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeBuy,
 					Amount:            0.244261,
@@ -264,6 +294,7 @@ func TestTransform(t *testing.T) {
 					WholePriceAtPoint: 12898.989195982984,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeFee,
 					Amount:            0.002442,
@@ -271,6 +302,7 @@ func TestTransform(t *testing.T) {
 					WholePriceAtPoint: 12895.167895167893,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeSendInternal,
 					Amount:            0.0285,
@@ -278,6 +310,7 @@ func TestTransform(t *testing.T) {
 					WholePriceAtPoint: 12710.877192982456,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeSendInternal,
 					Amount:            0.0283,
@@ -285,6 +318,7 @@ func TestTransform(t *testing.T) {
 					WholePriceAtPoint: 12991.872791519436,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeSendInternal,
 					Amount:            1,
@@ -292,6 +326,7 @@ func TestTransform(t *testing.T) {
 					WholePriceAtPoint: 16616,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeSell,
 					Amount:            0.08,
@@ -299,6 +334,7 @@ func TestTransform(t *testing.T) {
 					WholePriceAtPoint: 635178.375,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeReceiveInternal,
 					Amount:            0.09034,
@@ -306,6 +342,7 @@ func TestTransform(t *testing.T) {
 					WholePriceAtPoint: 800433.9163161389,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeReceiveInternal,
 					Amount:            0.09093,
@@ -313,6 +350,7 @@ func TestTransform(t *testing.T) {
 					WholePriceAtPoint: 803903.9920818213,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeSell,
 					Amount:            0.76043057,
@@ -320,6 +358,7 @@ func TestTransform(t *testing.T) {
 					WholePriceAtPoint: 825713.6742937623,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeSell,
 					Amount:            0.52295337,
@@ -327,6 +366,7 @@ func TestTransform(t *testing.T) {
 					WholePriceAtPoint: 669275.732939631,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeSendInternal,
 					Amount:            0.00072384,
@@ -334,6 +374,7 @@ func TestTransform(t *testing.T) {
 					WholePriceAtPoint: 718901.9672855879,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeSendInternal,
 					Amount:            0.00101206,
@@ -341,6 +382,7 @@ func TestTransform(t *testing.T) {
 					WholePriceAtPoint: 488775.36904926586,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeFee,
 					Amount:            0.00002327,
@@ -377,23 +419,24 @@ func TestTransform(t *testing.T) {
 func TestTransformAll(t *testing.T) {
 	testCases := []struct {
 		name      string
-		seedFiles map[filetransformer.TransformType][]string
-		typ       filetransformer.TransformType
+		seedFiles map[sharedtypes.TransformType][]string
+		typ       sharedtypes.TransformType
 		expected  []sharedtypes.Transaction
 	}{
 		{
 			name: "Basic Example - Two different provider files",
-			typ:  filetransformer.TransformTypeBasic,
-			seedFiles: map[filetransformer.TransformType][]string{
-				filetransformer.TransformTypeBasic: {
+			typ:  sharedtypes.TransformTypeBasic,
+			seedFiles: map[sharedtypes.TransformType][]string{
+				sharedtypes.TransformTypeBasic: {
 					"./testData/basic.csv",
 				},
-				filetransformer.TransformTypeLuno: {
+				sharedtypes.TransformTypeLuno: {
 					"./testData/LUNO_XBT.csv",
 				},
 			},
 			expected: []sharedtypes.Transaction{
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeBuy,
 					Amount:            0.99579,
@@ -401,6 +444,7 @@ func TestTransformAll(t *testing.T) {
 					WholePriceAtPoint: 7531.708492754497,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeBuy,
 					Amount:            1.37329,
@@ -408,6 +452,7 @@ func TestTransformAll(t *testing.T) {
 					WholePriceAtPoint: 7281.783163060971,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeBuy,
 					Amount:            0.073002,
@@ -415,6 +460,7 @@ func TestTransformAll(t *testing.T) {
 					WholePriceAtPoint: 10699.980822443222,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeBuy,
 					Amount:            0.38,
@@ -422,6 +468,7 @@ func TestTransformAll(t *testing.T) {
 					WholePriceAtPoint: 10705,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeFee,
 					Amount:            0.0038,
@@ -429,6 +476,7 @@ func TestTransformAll(t *testing.T) {
 					WholePriceAtPoint: 10734.21052631579,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeBuy,
 					Amount:            1.74346,
@@ -436,6 +484,7 @@ func TestTransformAll(t *testing.T) {
 					WholePriceAtPoint: 11471.441845525564,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeSendInternal,
 					Amount:            1,
@@ -443,6 +492,7 @@ func TestTransformAll(t *testing.T) {
 					WholePriceAtPoint: 12051,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeBuy,
 					Amount:            0.244261,
@@ -450,6 +500,7 @@ func TestTransformAll(t *testing.T) {
 					WholePriceAtPoint: 12898.989195982984,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeFee,
 					Amount:            0.002442,
@@ -457,6 +508,7 @@ func TestTransformAll(t *testing.T) {
 					WholePriceAtPoint: 12895.167895167893,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeSendInternal,
 					Amount:            0.0285,
@@ -464,6 +516,7 @@ func TestTransformAll(t *testing.T) {
 					WholePriceAtPoint: 12710.877192982456,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeSendInternal,
 					Amount:            0.0283,
@@ -471,6 +524,7 @@ func TestTransformAll(t *testing.T) {
 					WholePriceAtPoint: 12991.872791519436,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeSendInternal,
 					Amount:            1,
@@ -478,6 +532,7 @@ func TestTransformAll(t *testing.T) {
 					WholePriceAtPoint: 16616,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeBasic,
 					Currency:          "ETH",
 					DetectedType:      sharedtypes.TypeBuy,
 					Amount:            0.56,
@@ -485,6 +540,7 @@ func TestTransformAll(t *testing.T) {
 					WholePriceAtPoint: 100,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeBasic,
 					Currency:          "ETH",
 					DetectedType:      sharedtypes.TypeBuy,
 					Amount:            1.2,
@@ -492,6 +548,7 @@ func TestTransformAll(t *testing.T) {
 					WholePriceAtPoint: 200,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeSell,
 					Amount:            0.08,
@@ -499,6 +556,7 @@ func TestTransformAll(t *testing.T) {
 					WholePriceAtPoint: 635178.375,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeReceiveInternal,
 					Amount:            0.09034,
@@ -506,6 +564,7 @@ func TestTransformAll(t *testing.T) {
 					WholePriceAtPoint: 800433.9163161389,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeReceiveInternal,
 					Amount:            0.09093,
@@ -513,6 +572,7 @@ func TestTransformAll(t *testing.T) {
 					WholePriceAtPoint: 803903.9920818213,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeSell,
 					Amount:            0.76043057,
@@ -520,6 +580,7 @@ func TestTransformAll(t *testing.T) {
 					WholePriceAtPoint: 825713.6742937623,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeSell,
 					Amount:            0.52295337,
@@ -527,6 +588,7 @@ func TestTransformAll(t *testing.T) {
 					WholePriceAtPoint: 669275.732939631,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeSendInternal,
 					Amount:            0.00072384,
@@ -534,6 +596,7 @@ func TestTransformAll(t *testing.T) {
 					WholePriceAtPoint: 718901.9672855879,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeSendInternal,
 					Amount:            0.00101206,
@@ -541,6 +604,7 @@ func TestTransformAll(t *testing.T) {
 					WholePriceAtPoint: 488775.36904926586,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeLuno,
 					Currency:          "BTC",
 					DetectedType:      sharedtypes.TypeFee,
 					Amount:            0.00002327,
@@ -548,6 +612,7 @@ func TestTransformAll(t *testing.T) {
 					WholePriceAtPoint: 488611.94671250536,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeBasic,
 					Currency:          "ETH",
 					DetectedType:      sharedtypes.TypeSell,
 					Amount:            0.25,
@@ -555,6 +620,7 @@ func TestTransformAll(t *testing.T) {
 					WholePriceAtPoint: 300,
 				},
 				{
+					Transformer:       sharedtypes.TransformTypeBasic,
 					Currency:          "ETH",
 					DetectedType:      sharedtypes.TypeSell,
 					Amount:            1.25,
@@ -567,7 +633,7 @@ func TestTransformAll(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			files := make(map[filetransformer.TransformType][]io.Reader)
+			files := make(map[sharedtypes.TransformType][]io.Reader)
 			for typ, fs := range tc.seedFiles {
 				for _, sf := range fs {
 					file, err := os.Open(sf)

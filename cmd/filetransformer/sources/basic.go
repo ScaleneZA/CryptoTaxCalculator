@@ -34,6 +34,7 @@ func (s BasicSource) TransformRow(row []string) (sharedtypes.Transaction, error)
 
 	return sharedtypes.Transaction{
 		UID:               uuid.NewString(),
+		Transformer:       sharedtypes.TransformTypeBasic,
 		Currency:          row[1],
 		DetectedType:      typ,
 		Amount:            amount,

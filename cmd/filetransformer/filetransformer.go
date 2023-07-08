@@ -11,7 +11,7 @@ import (
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/sharedtypes"
 )
 
-func TransformAll(typeFiles map[TransformType][]io.Reader) ([]sharedtypes.Transaction, error) {
+func TransformAll(typeFiles map[sharedtypes.TransformType][]io.Reader) ([]sharedtypes.Transaction, error) {
 	var ts []sharedtypes.Transaction
 
 	for typ, files := range typeFiles {
@@ -26,7 +26,7 @@ func TransformAll(typeFiles map[TransformType][]io.Reader) ([]sharedtypes.Transa
 	return sortTransactions(ts), nil
 }
 
-func Transform(files []io.Reader, typ TransformType) ([]sharedtypes.Transaction, error) {
+func Transform(files []io.Reader, typ sharedtypes.TransformType) ([]sharedtypes.Transaction, error) {
 	var ts []sharedtypes.Transaction
 	for _, file := range files {
 		reader := csv.NewReader(file)
@@ -62,18 +62,21 @@ func Transform(files []io.Reader, typ TransformType) ([]sharedtypes.Transaction,
 
 func sortTransactions(ts []sharedtypes.Transaction) []sharedtypes.Transaction {
 	sort.Slice(ts, func(i, j int) bool {
+		if ts[i].Timestamp == ts[j].Timestamp {
+			return ts[i].DetectedType < ts[j].DetectedType
+		}
 		return ts[i].Timestamp < ts[j].Timestamp
 	})
 
 	return ts
 }
 
-func sourceFromType(typ TransformType) (sources.Source, error) {
+func sourceFromType(typ sharedtypes.TransformType) (sources.Source, error) {
 	var src sources.Source
 	switch typ {
-	case TransformTypeBasic:
+	case sharedtypes.TransformTypeBasic:
 		src = sources.BasicSource{}
-	case TransformTypeLuno:
+	case sharedtypes.TransformTypeLuno:
 		src = sources.LunoSource{}
 	default:
 		return nil, errors.New("invalid source")

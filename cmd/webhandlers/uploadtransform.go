@@ -19,8 +19,8 @@ func UploadTransform(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fs := make(map[filetransformer.TransformType][]io.Reader)
-	for _, typ := range filetransformer.ValidTransformTypes() {
+	fs := make(map[sharedtypes.TransformType][]io.Reader)
+	for _, typ := range sharedtypes.SelectableTransformTypes() {
 		files, ok := r.MultipartForm.File["files-"+strconv.Itoa(int(typ))]
 		if !ok {
 			continue

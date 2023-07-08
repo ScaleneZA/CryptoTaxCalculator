@@ -5,8 +5,8 @@
 <div class="container">
   {{ range $t := .Transactions }}
     <div data-uid="{{ $t.UID }}" class="row border-top p-1 {{ if .DetectedType.ShouldCheck }}bg-check{{ end }}">
-      <div class="col">{{ $t.UID }}</div>
       <div class="col">{{ $t.Timestamp }}</div>
+      <div class="col">{{ $t.Transformer }}</div>
       <div class="col">{{ $t.Currency }}</div>
       <div class="col">{{ $t.Amount }}</div>
       <div class="col">

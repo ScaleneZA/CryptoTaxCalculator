@@ -38,6 +38,7 @@ func (s LunoSource) TransformRow(row []string) (sharedtypes.Transaction, error) 
 
 	return sharedtypes.Transaction{
 		UID:               uuid.NewString(),
+		Transformer:       sharedtypes.TransformTypeLuno,
 		Currency:          mapCurrency(row[4]),
 		DetectedType:      inferType(row, amount),
 		Amount:            math.Abs(amount),
