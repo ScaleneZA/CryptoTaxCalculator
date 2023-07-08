@@ -11,6 +11,21 @@ import (
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/sharedtypes"
 )
 
+func TransformAll(typeFiles map[TransformType][]io.Reader) ([]sharedtypes.Transaction, error) {
+	var ts []sharedtypes.Transaction
+
+	for typ, files := range typeFiles {
+		tts, err := Transform(files, typ)
+		if err != nil {
+			return nil, err
+		}
+
+		ts = append(ts, tts...)
+	}
+
+	return sortTransactions(ts), nil
+}
+
 func Transform(files []io.Reader, typ TransformType) ([]sharedtypes.Transaction, error) {
 	var ts []sharedtypes.Transaction
 	for _, file := range files {
@@ -42,11 +57,15 @@ func Transform(files []io.Reader, typ TransformType) ([]sharedtypes.Transaction,
 
 	}
 
+	return sortTransactions(ts), nil
+}
+
+func sortTransactions(ts []sharedtypes.Transaction) []sharedtypes.Transaction {
 	sort.Slice(ts, func(i, j int) bool {
 		return ts[i].Timestamp < ts[j].Timestamp
 	})
 
-	return ts, nil
+	return ts
 }
 
 func sourceFromType(typ TransformType) (sources.Source, error) {

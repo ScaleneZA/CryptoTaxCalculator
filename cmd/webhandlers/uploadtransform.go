@@ -19,31 +19,30 @@ func UploadTransform(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var fs []io.Reader
-	files := r.MultipartForm.File["files"]
-	for _, fileHeader := range files {
-		file, err := fileHeader.Open()
-		if err != nil {
-			log.Println(err)
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-			return
+	fs := make(map[filetransformer.TransformType][]io.Reader)
+	for _, typ := range filetransformer.ValidTransformTypes() {
+		files, ok := r.MultipartForm.File["files-"+strconv.Itoa(int(typ))]
+		if !ok {
+			continue
 		}
-		defer file.Close()
+		for _, fileHeader := range files {
+			file, err := fileHeader.Open()
+			if err != nil {
+				log.Println(err)
+				http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+				return
+			}
+			defer file.Close()
 
-		log.Printf("Uploaded File: %+v\n", fileHeader.Filename)
-		log.Printf("File Size: %+v\n", fileHeader.Size)
-		log.Printf("MIME Header: %+v\n", fileHeader.Header)
+			log.Printf("Uploaded File: %+v\n", fileHeader.Filename)
+			log.Printf("File Size: %+v\n", fileHeader.Size)
+			log.Printf("MIME Header: %+v\n", fileHeader.Header)
 
-		fs = append(fs, file)
+			fs[typ] = append(fs[typ], file)
+		}
 	}
 
-	typInt, err := strconv.Atoi(r.FormValue("type"))
-	if err != nil {
-		log.Println(err)
-		http.Error(w, "Internal Server Error: Failed to parse type", http.StatusInternalServerError)
-	}
-
-	ts, err := filetransformer.Transform(fs, filetransformer.TransformType(typInt))
+	ts, err := filetransformer.TransformAll(fs)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Internal Server Error: Failed to tranform", http.StatusInternalServerError)

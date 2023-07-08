@@ -1,15 +1,23 @@
 {{ define "content" }}
-<form
-  enctype="multipart/form-data"
-  action="http://localhost:8080/ajax/upload"
-  method="post"
->
-  <input class="form-control form-control-lg" id="myFile" name="files" type="file" multiple>
-  <select name="type" class="form-select">
+<div class="container">
+  <form
+          enctype="multipart/form-data"
+          action="http://localhost:8080/ajax/upload"
+          method="post"
+  >
     {{ range $tt := $.TransformTypes }}
-    <option value={{ .Int }} >{{ .String }}</option>
+    <div class="row">
+      <div class="col">
+        <h2>{{ .String }}</h2>
+      </div>
+      <div class="col">
+        <input class="form-control form-control-lg" id="myFile" name="files-{{.Int}}" type="file" multiple>
+      </div>
+
+    </div>
     {{ end }}
-  </select>
-  <input type="submit" class="btn btn-primary" value="upload" />
-</form>
+
+    <input type="submit" class="btn btn-primary" value="upload" />
+  </form>
+</div>
 {{ end }}
