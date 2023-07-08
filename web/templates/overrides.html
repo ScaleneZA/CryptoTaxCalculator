@@ -1,8 +1,13 @@
 {{ define "content" }}
+<div class="p-2"></div>
 <div class="container">
-  <div id="result"></div>
-</div>
-<div class="container">
+  <div class="row">
+    <div class="col"><h4>Timestamp</h4></div>
+    <div class="col"><h4>Transformer</h4></div>
+    <div class="col"><h4>Currency</h4></div>
+    <div class="col"><h4>Amount</h4></div>
+    <div class="col"><h4>Transation Type</h4></div>
+  </div>
   {{ range $t := .Transactions }}
     <div data-uid="{{ $t.UID }}" class="row border-top p-1 {{ if .DetectedType.ShouldCheck }}bg-check{{ end }}">
       <div class="col">{{ $t.Timestamp }}</div>
@@ -20,6 +25,26 @@
   {{ end }}
   <a id="calculate" class="btn btn-primary">Calculate</a>
 </div>
+
+<div class="modal" tabindex="-1" role="dialog" id="result-modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Calculations</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <div id="result"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <style>
   .bg-check {
     background-color: #ffe5d0;
@@ -28,6 +53,10 @@
 <script>
   var transactions = JSON.parse({{.TransactionsJSON}})
 
+  /*
+   * Forgive me for this horrible hacky JS. I need to use some Javascript Framework with
+   * 2 way binding to clean this up. Not worth it just for a single page though.
+   */
   $(document).ready(function() {
     if (localStorage.getItem('transactions')) {
       var storedJsonString = localStorage.getItem('transactions');
@@ -44,12 +73,14 @@
             }
 
             transactions[key].OverridedType = t2.OverridedType
-            let e = $('[data-uid=' + t1.UID + ']').find('.override-transaction-type')
+            let parent = $('[data-uid=' + t1.UID + ']')
+            let e = parent.find('.override-transaction-type')
             e.val(t2.OverridedType)
 
             if (transactions[key].OverridedType === transactions[key].DetectedType) {
               e.removeClass('text-success')
             } else {
+              parent.removeClass('bg-check')
               e.addClass('text-success')
             }
           }
@@ -88,6 +119,7 @@
       data: JSON.stringify(transactions),
       contentType: "application/json",
       success: function(response) {
+        $('#result-modal').modal('show')
         $("#result").html(JSON.stringify(response))
         // Handle the response from the server
         console.log(response);
