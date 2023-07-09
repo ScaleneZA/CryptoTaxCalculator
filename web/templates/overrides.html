@@ -138,7 +138,7 @@
     $.each(allYearTaxes, function(year, calcs) {
       html += '<tr><td colspan=2><h4>' + year + '</h4></td></tr>'
       $.each(calcs, function(currency, amount) {
-        html += '<tr><td class="border-right">' + currency + '</td><td>R' + amount.toFixed(2) + '</td></tr>'
+        html += '<tr><td>' + currency + '</td><td>R' + amount.toFixed(2) + '</td></tr>'
       })
       html += '<tr class="border-top"></tr>'
     })
