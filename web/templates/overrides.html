@@ -36,7 +36,7 @@
         </button>
       </div>
       <div class="modal-body">
-          <div id="result"></div>
+          <div id="result" class="container-fluid"></div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -59,8 +59,8 @@
    */
   $(document).ready(function() {
     if (localStorage.getItem('transactions')) {
-      var storedJsonString = localStorage.getItem('transactions');
-      var storedJsonObject = JSON.parse(storedJsonString);
+      var storedJsonString = localStorage.getItem('transactions')
+      var storedJsonObject = JSON.parse(storedJsonString)
 
       $.each(transactions, function(key, t1) {
         $.each(storedJsonObject, function(key, t2) {
@@ -87,7 +87,7 @@
         })
       })
     }
-  });
+  })
 
   $(".row").on('click', function(e){
     $(this).removeClass('bg-check')
@@ -109,7 +109,7 @@
       }
     })
 
-    localStorage.setItem('transactions', JSON.stringify(transactions));
+    localStorage.setItem('transactions', JSON.stringify(transactions))
   })
 
   $("#calculate").on("click", function(e){
@@ -119,16 +119,32 @@
       data: JSON.stringify(transactions),
       contentType: "application/json",
       success: function(response) {
+        html = convertTaxesToHTML(response)
+
         $('#result-modal').modal('show')
-        $("#result").html(JSON.stringify(response))
-        // Handle the response from the server
-        console.log(response);
+        $("#result").html(html)
+
+        console.log(response)
       },
       error: function(xhr, status, error) {
         // Handle the error
-        console.error(error);
+        console.error(error)
       }
     })
   })
+
+  function convertTaxesToHTML(allYearTaxes) {
+    let html = '<table style="width:100%">'
+    $.each(allYearTaxes, function(year, calcs) {
+      html += '<tr><td colspan=2><h4>' + year + '</h4></td></tr>'
+      $.each(calcs, function(currency, amount) {
+        html += '<tr><td class="border-right">' + currency + '</td><td>R' + amount.toFixed(2) + '</td></tr>'
+      })
+      html += '<tr class="border-top"></tr>'
+    })
+    html += '</table>'
+
+    return html
+  }
 </script>
 {{ end }}
