@@ -1,17 +1,19 @@
 package writer
 
 import (
+	"fmt"
 	"io"
 	"os"
 )
 
-const destination = "../data"
+const destination = "cmd/conversionrate/data"
 
 type FileWriter struct {
 	Filename string
 }
 
 func (w FileWriter) Write(reader io.Reader) error {
+	fmt.Println(os.Getwd())
 	out, err := os.Create(destination + "/" + w.Filename)
 	if err != nil {
 		return err

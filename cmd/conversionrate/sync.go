@@ -15,6 +15,7 @@ func (s syncer) sync() error {
 	if err != nil {
 		return err
 	}
+	defer r.Close()
 
 	err = s.writer.Write(r)
 	if err != nil {
