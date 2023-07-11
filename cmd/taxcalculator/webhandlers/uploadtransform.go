@@ -2,14 +2,13 @@ package webhandlers
 
 import (
 	"encoding/json"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/filetransformer"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/sharedtypes"
 	"html/template"
 	"io"
 	"log"
 	"net/http"
 	"strconv"
-
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/filetransformer"
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/sharedtypes"
 )
 
 func UploadTransform(w http.ResponseWriter, r *http.Request) {

@@ -1,7 +1,7 @@
 package sources
 
 import (
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/sharedtypes"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/sharedtypes"
 )
 
 type Source interface {

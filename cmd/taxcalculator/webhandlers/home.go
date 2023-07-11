@@ -1,7 +1,7 @@
 package webhandlers
 
 import (
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/sharedtypes"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/sharedtypes"
 	"html/template"
 	"log"
 	"net/http"

@@ -1,8 +1,8 @@
-package conversionrate
+package sync
 
 import (
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/reader"
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/writer"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/sync/reader"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/sync/writer"
 )
 
 var (
@@ -16,7 +16,7 @@ var PairSyncers = map[Pair][]syncer{
 	PairUSDBTC: {
 		syncer{
 			reader: reader.HttpReader{
-				Location: "https://www.cryptodatadownload.com/cdd/Gemini_BTCUSD_d.csv",
+				Location: "https://www.cryptodatadownload.com/cdd/Gemini_BTCUSD_1h.csv",
 			},
 			writer: writer.FileWriter{
 				Filename: "USD_BTC.csv",

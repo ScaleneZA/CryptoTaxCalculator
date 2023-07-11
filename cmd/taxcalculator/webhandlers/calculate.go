@@ -2,8 +2,8 @@ package webhandlers
 
 import (
 	"encoding/json"
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/calculator"
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/sharedtypes"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/calculator"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/sharedtypes"
 	"net/http"
 )
 

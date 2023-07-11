@@ -3,11 +3,10 @@ package sources
 import (
 	"crypto/md5"
 	"encoding/hex"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/sharedtypes"
 	"math"
 	"strconv"
 	"strings"
-
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/sharedtypes"
 )
 
 type BasicSource struct{}

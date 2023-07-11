@@ -3,10 +3,9 @@ package calculator
 import (
 	"errors"
 	"fmt"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/sharedtypes"
 	"math"
 	"time"
-
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/sharedtypes"
 )
 
 /*

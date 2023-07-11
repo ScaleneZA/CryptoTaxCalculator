@@ -4,11 +4,10 @@ import (
 	"encoding/csv"
 	"errors"
 	"fmt"
+	sources2 "github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/filetransformer/sources"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/sharedtypes"
 	"io"
 	"sort"
-
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/filetransformer/sources"
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/sharedtypes"
 )
 
 func TransformAll(typeFiles map[sharedtypes.TransformType][]io.Reader) ([]sharedtypes.Transaction, error) {
@@ -71,13 +70,13 @@ func sortTransactions(ts []sharedtypes.Transaction) []sharedtypes.Transaction {
 	return ts
 }
 
-func sourceFromType(typ sharedtypes.TransformType) (sources.Source, error) {
-	var src sources.Source
+func sourceFromType(typ sharedtypes.TransformType) (sources2.Source, error) {
+	var src sources2.Source
 	switch typ {
 	case sharedtypes.TransformTypeBasic:
-		src = sources.BasicSource{}
+		src = sources2.BasicSource{}
 	case sharedtypes.TransformTypeLuno:
-		src = sources.LunoSource{}
+		src = sources2.LunoSource{}
 	default:
 		return nil, errors.New("invalid source")
 	}

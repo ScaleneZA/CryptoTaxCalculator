@@ -1,12 +1,12 @@
 package filetransformer_test
 
 import (
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/filetransformer"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/sharedtypes"
 	"io"
 	"os"
 	"testing"
 
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/filetransformer"
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/sharedtypes"
 	"github.com/stretchr/testify/assert"
 )
 
