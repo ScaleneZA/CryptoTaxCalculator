@@ -1,7 +1,7 @@
 package writer
 
 import (
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/sync/sharedtypes"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/sharedtypes"
 )
 
 type SQLLiteWriter struct {

@@ -1,9 +1,9 @@
 package sync
 
 import (
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/sharedtypes"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/sync/readtransformer"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/sync/readtransformer/csvreader"
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/sync/sharedtypes"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/sync/writer"
 )
 
