@@ -1,7 +1,7 @@
 package writer
 
-import "io"
+import "github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/sync/sharedtypes"
 
 type Writer interface {
-	Write(reader io.Reader) error
+	Write([]sharedtypes.MarketSlice) error
 }

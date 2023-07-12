@@ -1,16 +1,16 @@
-package reader
+package csvreader
 
 import (
 	"fmt"
-	"io"
 	"net/http"
 )
 
-type HttpReader struct {
+type HTTPCSVReader struct {
 	Location string
+	SkipRows int
 }
 
-func (r HttpReader) Read() (io.ReadCloser, error) {
+func (r HTTPCSVReader) Read() ([][]string, error) {
 	resp, err := http.Get(r.Location)
 	if err != nil {
 		return nil, err
@@ -19,5 +19,5 @@ func (r HttpReader) Read() (io.ReadCloser, error) {
 		return nil, fmt.Errorf("bad status: %s", resp.Status)
 	}
 
-	return resp.Body, nil
+	return readCSVFile(resp.Body, r.SkipRows)
 }
