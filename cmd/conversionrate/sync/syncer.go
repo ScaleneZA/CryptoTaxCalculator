@@ -8,7 +8,9 @@ import (
 // syncer syncs an entire batch at once
 type syncer struct {
 	readTransformer readtransformer.ReadTransformer
-	writer          writer.Writer
+
+	// TODO: Think about removing this and just depending on the DB instead.
+	writer writer.Writer
 }
 
 func (s syncer) sync(b Backends) error {

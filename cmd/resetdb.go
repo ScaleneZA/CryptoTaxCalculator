@@ -24,5 +24,5 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Println("SQL query executed successfully.")
+	fmt.Println("Schema reset and all data deleted.")
 }

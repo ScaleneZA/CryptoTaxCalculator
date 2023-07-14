@@ -24,8 +24,7 @@ var PairSyncers = map[sharedtypes.Pair][]syncer{
 				},
 			},
 			writer: writer.SQLLiteWriter{
-				FromCurrency: "USD",
-				ToCurrency:   "BTC",
+				Pair: PairUSDBTC,
 			},
 		},
 	},

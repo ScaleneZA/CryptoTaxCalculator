@@ -6,17 +6,13 @@ import (
 )
 
 type SQLLiteWriter struct {
-	FromCurrency string
-	ToCurrency   string
+	Pair sharedtypes.Pair
 }
 
 func (w SQLLiteWriter) WriteAll(b Backends, mps []sharedtypes.MarketSlice) error {
 	for _, mp := range mps {
 		_, err := markets.Create(b.DB(), sharedtypes.MarketPair{
-			Pair: sharedtypes.Pair{
-				Currency1: w.FromCurrency,
-				Currency2: w.ToCurrency,
-			},
+			Pair:        w.Pair,
 			MarketSlice: mp,
 		})
 		if err != nil {
