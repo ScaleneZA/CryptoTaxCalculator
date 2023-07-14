@@ -3,10 +3,14 @@ package conversionrate
 import (
 	"fmt"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/sharedtypes"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/db/markets"
 )
 
-func MarketValueAtTime(from, to string, timestamp int) (float64, error) {
-	g := buildCurrencyGraph(timestamp)
+func MarketValueAtTime(b Backends, from, to string, timestamp int) (float64, error) {
+	g, err := buildCurrencyGraph(b, timestamp)
+	if err != nil {
+		return 0, err
+	}
 
 	rate, found := g.findRate(from, to)
 
@@ -15,7 +19,7 @@ func MarketValueAtTime(from, to string, timestamp int) (float64, error) {
 	} else {
 		fmt.Println("No exchange rate found")
 	}
-	
+
 	return 0.00, nil
 }
 
@@ -48,9 +52,25 @@ func (g currencyGraph) findExchangeRateHelper(from, to string, visited map[strin
 	return nil, visited
 }
 
-func buildCurrencyGraph(timestamp int) currencyGraph {
-	// Find all currency rates closest to timestamp
-	allRatesAtPoint := []sharedtypes.MarketPair{}
+func buildCurrencyGraph(b Backends, timestamp int) (currencyGraph, error) {
+	var allRatesAtPoint []sharedtypes.MarketPair
+
+	for _, p := range sharedtypes.AllPairs() {
+		closestBefore, err := markets.FindClosestToBefore(b.DB(), p.Currency1, p.Currency2, timestamp)
+		if err != nil {
+			return currencyGraph{}, nil
+		}
+		closestAfter, err := markets.FindClosestToAfter(b.DB(), p.Currency1, p.Currency2, timestamp)
+		if err != nil {
+			return currencyGraph{}, nil
+		}
+
+		if (timestamp - closestBefore.Timestamp) > (closestAfter.Timestamp - timestamp) {
+			allRatesAtPoint = append(allRatesAtPoint, *closestAfter)
+		} else {
+			allRatesAtPoint = append(allRatesAtPoint, *closestBefore)
+		}
+	}
 
 	graph := make(map[string]map[string]float64)
 	for _, mp := range allRatesAtPoint {
@@ -61,5 +81,5 @@ func buildCurrencyGraph(timestamp int) currencyGraph {
 		graph[mp.Currency1][mp.Currency2] = mp.Close
 	}
 
-	return graph
+	return graph, nil
 }

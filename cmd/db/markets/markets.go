@@ -5,6 +5,50 @@ import (
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/sharedtypes"
 )
 
+func FindClosestToAfter(db *sql.DB, from, to string, timestamp int) (*sharedtypes.MarketPair, error) {
+	stmt, err := db.Prepare("SELECT timestamp, `from`, `to`, open, high, low, close FROM markets WHERE `from` = ? AND `to` = ? AND timestamp >= ? ORDER BY timestamp LIMIT 1")
+	if err != nil {
+		return nil, err
+	}
+	defer stmt.Close()
+
+	result, err := stmt.Query(from, to, timestamp)
+	if err != nil {
+		return nil, err
+	}
+	
+	result.Next()
+	mp, err := scanRow(result)
+
+	if err := result.Err(); err != nil {
+		return nil, err
+	}
+
+	return &mp, nil
+}
+
+func FindClosestToBefore(db *sql.DB, from, to string, timestamp int) (*sharedtypes.MarketPair, error) {
+	stmt, err := db.Prepare("SELECT timestamp, `from`, `to`, open, high, low, close FROM markets WHERE `from` = ? AND `to` = ? AND timestamp <= ? ORDER BY timestamp DESC LIMIT 1")
+	if err != nil {
+		return nil, err
+	}
+	defer stmt.Close()
+
+	result, err := stmt.Query(from, to, timestamp)
+	if err != nil {
+		return nil, err
+	}
+
+	result.Next()
+	mp, err := scanRow(result)
+
+	if err := result.Err(); err != nil {
+		return nil, err
+	}
+
+	return &mp, nil
+}
+
 func ListAll(db *sql.DB) ([]sharedtypes.MarketPair, error) {
 	rows, err := db.Query("SELECT timestamp, `from`, `to`, open, high, low, close FROM markets")
 	if err != nil {
@@ -14,8 +58,8 @@ func ListAll(db *sql.DB) ([]sharedtypes.MarketPair, error) {
 
 	var mps []sharedtypes.MarketPair
 	for rows.Next() {
-		var mp sharedtypes.MarketPair
-		if err := rows.Scan(&mp.Timestamp, &mp.Currency1, &mp.Currency2, &mp.Open, &mp.High, &mp.Low, &mp.Close); err != nil {
+		mp, err := scanRow(rows)
+		if err != nil {
 			return nil, err
 		}
 		mps = append(mps, mp)
@@ -26,6 +70,14 @@ func ListAll(db *sql.DB) ([]sharedtypes.MarketPair, error) {
 	}
 
 	return mps, nil
+}
+
+func scanRow(rows *sql.Rows) (sharedtypes.MarketPair, error) {
+	var mp sharedtypes.MarketPair
+	if err := rows.Scan(&mp.Timestamp, &mp.Currency1, &mp.Currency2, &mp.Open, &mp.High, &mp.Low, &mp.Close); err != nil {
+		return sharedtypes.MarketPair{}, err
+	}
+	return mp, nil
 }
 
 func Create(db *sql.DB, pair sharedtypes.MarketPair) (int64, error) {

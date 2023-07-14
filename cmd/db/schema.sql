@@ -12,3 +12,5 @@ CREATE TABLE markets (
 );
 
 CREATE INDEX idx_timestamp ON markets (timestamp);
+CREATE INDEX idx_from ON markets (`from`);
+CREATE INDEX idx_to ON markets (`to`);

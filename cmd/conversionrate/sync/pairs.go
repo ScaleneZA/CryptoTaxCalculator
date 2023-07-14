@@ -7,15 +7,8 @@ import (
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/sync/writer"
 )
 
-var (
-	PairUSDBTC = sharedtypes.Pair{
-		Currency1: "USD",
-		Currency2: "BTC",
-	}
-)
-
 var PairSyncers = map[sharedtypes.Pair][]syncer{
-	PairUSDBTC: {
+	sharedtypes.PairUSDBTC: {
 		syncer{
 			readTransformer: readtransformer.GeminiCSV{
 				Reader: csvreader.HTTPCSVReader{
@@ -24,7 +17,7 @@ var PairSyncers = map[sharedtypes.Pair][]syncer{
 				},
 			},
 			writer: writer.SQLLiteWriter{
-				Pair: PairUSDBTC,
+				Pair: sharedtypes.PairUSDBTC,
 			},
 		},
 	},

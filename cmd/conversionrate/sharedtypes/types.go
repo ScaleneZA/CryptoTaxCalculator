@@ -17,3 +17,16 @@ type MarketPair struct {
 	Pair
 	MarketSlice
 }
+
+var (
+	PairUSDBTC = Pair{
+		Currency1: "USD",
+		Currency2: "BTC",
+	}
+)
+
+func AllPairs() []Pair {
+	return []Pair{
+		PairUSDBTC,
+	}
+}
