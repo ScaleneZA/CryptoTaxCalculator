@@ -5,12 +5,12 @@ import (
 	"log"
 )
 
-func SyncAll() error {
+func SyncAll(b Backends) error {
 	failedSyncs := 0
 	for p, syncers := range PairSyncers {
 		successful := false
 		for _, s := range syncers {
-			err := s.sync()
+			err := s.sync(b)
 			if err != nil {
 				log.Println("Failed Sync for " + p.Currency1 + p.Currency2 + ", failing over...")
 				log.Println(err.Error())

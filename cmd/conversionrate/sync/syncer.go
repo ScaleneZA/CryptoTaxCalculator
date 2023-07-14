@@ -11,10 +11,14 @@ type syncer struct {
 	writer          writer.Writer
 }
 
-func (s syncer) sync() error {
+func (s syncer) sync(b Backends) error {
 	mps, err := s.readTransformer.ReadAndTransform()
 
-	err = s.writer.Write(mps)
+	err = s.writer.DeleteAll(b)
+	if err != nil {
+		return err
+	}
+	err = s.writer.WriteAll(b, mps)
 	if err != nil {
 		return err
 	}

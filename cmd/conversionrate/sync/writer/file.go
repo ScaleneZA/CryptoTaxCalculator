@@ -13,7 +13,7 @@ type FileWriter struct {
 	Filename string
 }
 
-func (w FileWriter) Write(mps []sharedtypes.MarketSlice) error {
+func (w FileWriter) WriteAll(b Backends, mps []sharedtypes.MarketSlice) error {
 	out, err := os.Create(destination + "/" + w.Filename)
 	if err != nil {
 		return err
@@ -39,4 +39,8 @@ func (w FileWriter) Write(mps []sharedtypes.MarketSlice) error {
 	}
 
 	return nil
+}
+
+func (w FileWriter) DeleteAll(b Backends) error {
+	return os.Remove(destination + "/" + w.Filename)
 }

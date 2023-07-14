@@ -23,8 +23,9 @@ var PairSyncers = map[sharedtypes.Pair][]syncer{
 					SkipRows: 2,
 				},
 			},
-			writer: writer.FileWriter{
-				Filename: "USD_BTC.csv",
+			writer: writer.SQLLiteWriter{
+				FromCurrency: "USD",
+				ToCurrency:   "BTC",
 			},
 		},
 	},

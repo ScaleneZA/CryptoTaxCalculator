@@ -1,1 +1,3 @@
 /cmd/conversionrate/data/
+/cryptotax.db
+/cryptotax.db-journal

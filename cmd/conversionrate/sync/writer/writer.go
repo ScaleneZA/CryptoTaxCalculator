@@ -5,5 +5,6 @@ import (
 )
 
 type Writer interface {
-	Write([]sharedtypes.MarketSlice) error
+	WriteAll(Backends, []sharedtypes.MarketSlice) error
+	DeleteAll(Backends) error
 }

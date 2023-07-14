@@ -15,6 +15,8 @@ func MarketValueAtTime(from, to string, timestamp int) (float64, error) {
 	} else {
 		fmt.Println("No exchange rate found")
 	}
+	
+	return 0.00, nil
 }
 
 type currencyGraph map[string]map[string]float64
