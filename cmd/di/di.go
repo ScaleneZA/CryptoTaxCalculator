@@ -16,6 +16,13 @@ func SetupDI() Backends {
 	return di
 }
 
+func SetupDIForTesting() Backends {
+	di := new(DI)
+	di.db = db.ConnectForTesting()
+
+	return di
+}
+
 type DI struct {
 	db *sql.DB
 }

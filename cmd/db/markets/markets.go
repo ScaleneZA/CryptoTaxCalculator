@@ -5,6 +5,29 @@ import (
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/sharedtypes"
 )
 
+func ListAll(db *sql.DB) ([]sharedtypes.MarketPair, error) {
+	rows, err := db.Query("SELECT timestamp, `from`, `to`, open, high, low, close FROM markets")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var mps []sharedtypes.MarketPair
+	for rows.Next() {
+		var mp sharedtypes.MarketPair
+		if err := rows.Scan(&mp.Timestamp, &mp.Currency1, &mp.Currency2, &mp.Open, &mp.High, &mp.Low, &mp.Close); err != nil {
+			return nil, err
+		}
+		mps = append(mps, mp)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return mps, nil
+}
+
 func Create(db *sql.DB, pair sharedtypes.MarketPair) (int64, error) {
 	stmt, err := db.Prepare("INSERT INTO markets(timestamp, `from`, `to`, open, high, low, close) VALUES(strftime('%s', 'now'), ?, ?, ?, ?, ?, ?)")
 	if err != nil {
@@ -26,35 +49,17 @@ func Create(db *sql.DB, pair sharedtypes.MarketPair) (int64, error) {
 }
 
 func Truncate(db *sql.DB) error {
-	stmt, err := db.Prepare("DELETE FROM markets;")
-	if err != nil {
-		return err
-	}
-	defer stmt.Close()
-
-	_, err = stmt.Exec()
+	_, err := db.Query("DELETE FROM markets;")
 	if err != nil {
 		return err
 	}
 
-	stmt, err = db.Prepare("VACUUM;")
-	if err != nil {
-		return err
-	}
-	defer stmt.Close()
-
-	_, err = stmt.Exec()
+	_, err = db.Query("VACUUM;")
 	if err != nil {
 		return err
 	}
 
-	stmt, err = db.Prepare("delete from sqlite_sequence where name='markets';")
-	if err != nil {
-		return err
-	}
-	defer stmt.Close()
-
-	_, err = stmt.Exec()
+	_, err = db.Query("delete from sqlite_sequence where name='markets';")
 	if err != nil {
 		return err
 	}

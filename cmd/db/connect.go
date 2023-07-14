@@ -15,6 +15,13 @@ func Connect() *sql.DB {
 	return db
 }
 
-func Disconnect(db *sql.DB) {
-	db.Close()
+func ConnectForTesting() *sql.DB {
+	dbc, err := sql.Open("sqlite3", ":memory:")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	ResetDB(dbc)
+
+	return dbc
 }
