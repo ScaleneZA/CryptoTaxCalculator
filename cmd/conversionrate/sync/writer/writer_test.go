@@ -19,6 +19,10 @@ func TestSQLLiteWriter_WriteAll(t *testing.T) {
 
 	b := di.SetupDIForTesting()
 
+	mps, err := markets.ListAll(b.DB())
+	require.Nil(t, err)
+	require.Equal(t, []sharedtypes.MarketPair(nil), mps)
+
 	data := []sharedtypes.MarketSlice{
 		{
 			Timestamp: 12345,
@@ -36,13 +40,22 @@ func TestSQLLiteWriter_WriteAll(t *testing.T) {
 		},
 	}
 
-	err := w.WriteAll(b, data)
+	err = w.WriteAll(b, data)
 	require.Nil(t, err)
 
-	mps, err := markets.ListAll(b.DB())
+	actual, err := markets.ListAll(b.DB())
 	require.Nil(t, err)
-
-	require.Equal(t, data, mps)
+	var expected []sharedtypes.MarketPair
+	for _, ms := range data {
+		expected = append(expected, sharedtypes.MarketPair{
+			Pair: sharedtypes.Pair{
+				Currency2: "BTC",
+				Currency1: "USD",
+			},
+			MarketSlice: ms,
+		})
+	}
+	require.Equal(t, expected, actual)
 }
 
 func TestSQLLiteWriter_DeleteAll(t *testing.T) {

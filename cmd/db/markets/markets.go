@@ -29,13 +29,13 @@ func ListAll(db *sql.DB) ([]sharedtypes.MarketPair, error) {
 }
 
 func Create(db *sql.DB, pair sharedtypes.MarketPair) (int64, error) {
-	stmt, err := db.Prepare("INSERT INTO markets(timestamp, `from`, `to`, open, high, low, close) VALUES(strftime('%s', 'now'), ?, ?, ?, ?, ?, ?)")
+	stmt, err := db.Prepare("INSERT INTO markets(timestamp, `from`, `to`, open, high, low, close) VALUES(?, ?, ?, ?, ?, ?, ?)")
 	if err != nil {
 		return 0, err
 	}
 	defer stmt.Close()
 
-	result, err := stmt.Exec(pair.Currency1, pair.Currency2, pair.Open, pair.High, pair.Low, pair.Close)
+	result, err := stmt.Exec(pair.Timestamp, pair.Currency1, pair.Currency2, pair.Open, pair.High, pair.Low, pair.Close)
 	if err != nil {
 		return 0, err
 	}

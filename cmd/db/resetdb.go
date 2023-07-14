@@ -3,23 +3,17 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"github.com/ScaleneZA/CryptoTaxCalculator/config"
 	"log"
 	"os"
-	"os/exec"
-	"strings"
+	"path/filepath"
 )
 
 func ResetDB(dbc *sql.DB) {
-	cmd := exec.Command("go", "list", "-f", "{{.Dir}}")
-	output, err := cmd.Output()
-	if err != nil {
-		log.Fatal(err)
-	}
+	schemaPath := filepath.Join(filepath.Dir(config.WorkingDirectory), "cmd", "db", "schema.sql")
+	log.Println(schemaPath)
 
-	projectDir := strings.TrimSpace(string(output))
-	log.Println("Project directory:", projectDir)
-
-	sqlBytes, err := os.ReadFile("cmd/db/schema.sql")
+	sqlBytes, err := os.ReadFile(schemaPath)
 	if err != nil {
 		log.Fatal(err)
 	}

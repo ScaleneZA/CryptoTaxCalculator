@@ -1,3 +1,4 @@
 /cmd/conversionrate/data/
+/config/config.go
 /cryptotax.db
 /cryptotax.db-journal
