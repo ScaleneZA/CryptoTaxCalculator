@@ -61,7 +61,7 @@ func (t GeminiCSV) transformRow(row []string) (sharedtypes.MarketPair, error) {
 			ToCurrency:   currencyParts[0],
 		},
 		MarketSlice: sharedtypes.MarketSlice{
-			Timestamp: tim,
+			Timestamp: int64(tim),
 			Open:      open,
 			High:      high,
 			Low:       low,

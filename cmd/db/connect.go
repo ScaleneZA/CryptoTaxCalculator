@@ -16,7 +16,7 @@ func Connect() *sql.DB {
 }
 
 func ConnectForTesting() *sql.DB {
-	dbc, err := sql.Open("sqlite3", ":memory:")
+	dbc, err := sql.Open("sqlite3", "file::memory:?cache=shared")
 	if err != nil {
 		log.Fatal(err)
 	}

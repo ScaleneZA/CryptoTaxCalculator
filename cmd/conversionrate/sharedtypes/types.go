@@ -6,7 +6,7 @@ type Pair struct {
 }
 
 type MarketSlice struct {
-	Timestamp int
+	Timestamp int64
 	Open      float64
 	High      float64
 	Low       float64

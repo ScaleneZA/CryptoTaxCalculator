@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/ops/sync"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/di"
-	webhandlers2 "github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/webhandlers"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/webhandlers"
 	"log"
 	"net/http"
 	"time"
@@ -15,9 +15,9 @@ func main() {
 
 	go syncCurrenciesForever(b)
 
-	http.HandleFunc("/", webhandlers2.Home)
-	http.HandleFunc("/ajax/upload", webhandlers2.UploadTransform)
-	http.HandleFunc("/ajax/calculate", webhandlers2.Calculate)
+	http.HandleFunc("/", webhandlers.Home)
+	http.HandleFunc("/ajax/upload", webhandlers.UploadTransform)
+	http.HandleFunc("/ajax/calculate", webhandlers.Calculate)
 
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil {

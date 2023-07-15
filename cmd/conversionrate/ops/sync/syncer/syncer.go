@@ -3,7 +3,6 @@ package syncer
 import (
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/db/markets"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/ops/sync/readtransformer"
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/db"
 )
 
 // HolisticSyncer deletes all data and syncs from the beginning of time.
@@ -17,8 +16,10 @@ func (s HolisticSyncer) Sync(b Backends) error {
 		return err
 	}
 
-	// TODO: Don't do this.
-	db.ResetDB(b.DB())
+	err = markets.Truncate(b.DB())
+	if err != nil {
+		return err
+	}
 
 	for _, mp := range mps {
 		_, err := markets.Create(b.DB(), mp)
