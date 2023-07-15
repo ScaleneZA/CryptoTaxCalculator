@@ -5,5 +5,5 @@ import (
 )
 
 type ReadTransformer interface {
-	ReadAndTransform() ([]sharedtypes.MarketSlice, error)
+	ReadAndTransform() ([]sharedtypes.MarketPair, error)
 }

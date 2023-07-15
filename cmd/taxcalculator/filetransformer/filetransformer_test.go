@@ -20,7 +20,7 @@ func TestTransform(t *testing.T) {
 		{
 			name:      "Basic Example",
 			typ:       sharedtypes.TransformTypeBasic,
-			seedFiles: []string{"./testData/basic.csv"},
+			seedFiles: []string{"./test_data/basic.csv"},
 			expected: []sharedtypes.Transaction{
 				{
 					Transformer:       sharedtypes.TransformTypeBasic,
@@ -59,7 +59,7 @@ func TestTransform(t *testing.T) {
 		{
 			name:      "Basic Example - Unordered, no header happy path",
 			typ:       sharedtypes.TransformTypeBasic,
-			seedFiles: []string{"./testData/basic_unordered_no_header.csv"},
+			seedFiles: []string{"./test_data/basic_unordered_no_header.csv"},
 			expected: []sharedtypes.Transaction{
 				{
 					Transformer:       sharedtypes.TransformTypeBasic,
@@ -99,8 +99,8 @@ func TestTransform(t *testing.T) {
 			name: "Basic Example - Two files",
 			typ:  sharedtypes.TransformTypeBasic,
 			seedFiles: []string{
-				"./testData/basic.csv",
-				"./testData/basic_unordered_no_header.csv",
+				"./test_data/basic.csv",
+				"./test_data/basic_unordered_no_header.csv",
 			},
 			expected: []sharedtypes.Transaction{
 				{
@@ -172,7 +172,7 @@ func TestTransform(t *testing.T) {
 		{
 			name:      "Basic Example - Multi-currency",
 			typ:       sharedtypes.TransformTypeBasic,
-			seedFiles: []string{"./testData/basic_multi_currency.csv"},
+			seedFiles: []string{"./test_data/basic_multi_currency.csv"},
 			expected: []sharedtypes.Transaction{
 				{
 					Transformer:       sharedtypes.TransformTypeBasic,
@@ -227,7 +227,7 @@ func TestTransform(t *testing.T) {
 		{
 			name:      "Luno",
 			typ:       sharedtypes.TransformTypeLuno,
-			seedFiles: []string{"./testData/LUNO_XBT.csv"},
+			seedFiles: []string{"./test_data/LUNO_XBT.csv"},
 			expected: []sharedtypes.Transaction{
 				{
 					Transformer:       sharedtypes.TransformTypeLuno,
@@ -428,10 +428,10 @@ func TestTransformAll(t *testing.T) {
 			typ:  sharedtypes.TransformTypeBasic,
 			seedFiles: map[sharedtypes.TransformType][]string{
 				sharedtypes.TransformTypeBasic: {
-					"./testData/basic.csv",
+					"./test_data/basic.csv",
 				},
 				sharedtypes.TransformTypeLuno: {
-					"./testData/LUNO_XBT.csv",
+					"./test_data/LUNO_XBT.csv",
 				},
 			},
 			expected: []sharedtypes.Transaction{

@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/sync"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/ops/sync"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/di"
 	webhandlers2 "github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/webhandlers"
 	"log"

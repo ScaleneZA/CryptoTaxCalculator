@@ -1,0 +1,72 @@
+package syncer_test
+
+import (
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/db/markets"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/ops/sync/readtransformer"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/ops/sync/readtransformer/csvreader"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/ops/sync/syncer"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/sharedtypes"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/di"
+	"github.com/stretchr/testify/require"
+	"testing"
+)
+
+func TestHolisticSyncer_Sync(t *testing.T) {
+	b := di.SetupDIForTesting()
+
+	mps, err := markets.ListAll(b.DB())
+	require.Nil(t, err)
+	require.Equal(t, []sharedtypes.MarketPair(nil), mps)
+
+	s := syncer.HolisticSyncer{
+		ReadTransformer: readtransformer.GeminiCSV{
+			Reader: csvreader.LocalCSVReader{
+				Location: "../readtransformer/csvreader/test_data/Gemini_BTCUSD_1h.csv",
+				SkipRows: 2,
+			},
+		},
+	}
+
+	err = s.Sync(b)
+	require.Nil(t, err)
+
+	actual, err := markets.ListAll(b.DB())
+	require.Nil(t, err)
+
+	require.Equal(t, []sharedtypes.MarketPair{
+		{
+			Pair: sharedtypes.PairUSDBTC,
+			MarketSlice: sharedtypes.MarketSlice{
+				Timestamp: 1689375600000,
+				Open:      30270.01,
+				High:      30341.7,
+				Low:       30250.01,
+				Close:     30336.28,
+			},
+		},
+		{
+			Pair: sharedtypes.PairUSDBTC,
+			MarketSlice: sharedtypes.MarketSlice{
+				Timestamp: 1689372000000,
+				Open:      30263.39,
+				High:      30280.28,
+				Low:       30233.52,
+				Close:     30270.01,
+			},
+		},
+		{
+			Pair: sharedtypes.PairUSDBTC,
+			MarketSlice: sharedtypes.MarketSlice{
+				Timestamp: 1689368400000,
+				Open:      30205.98,
+				High:      30295.32,
+				Low:       30175.01,
+				Close:     30263.39,
+			},
+		},
+	}, actual)
+}
+
+func TestSQLLiteWriter_DeleteAll(t *testing.T) {
+
+}

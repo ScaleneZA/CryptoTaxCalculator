@@ -7,12 +7,12 @@ import (
 )
 
 func Connect() *sql.DB {
-	db, err := sql.Open("sqlite3", "cryptotax.db")
+	dbc, err := sql.Open("sqlite3", "cryptotax.db")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return db
+	return dbc
 }
 
 func ConnectForTesting() *sql.DB {

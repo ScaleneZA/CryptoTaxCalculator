@@ -3,6 +3,7 @@ package markets
 import (
 	"database/sql"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/sharedtypes"
+	"log"
 )
 
 func FindClosestToAfter(db *sql.DB, from, to string, timestamp int) (*sharedtypes.MarketPair, error) {
@@ -16,7 +17,7 @@ func FindClosestToAfter(db *sql.DB, from, to string, timestamp int) (*sharedtype
 	if err != nil {
 		return nil, err
 	}
-	
+
 	result.Next()
 	mp, err := scanRow(result)
 
@@ -74,7 +75,7 @@ func ListAll(db *sql.DB) ([]sharedtypes.MarketPair, error) {
 
 func scanRow(rows *sql.Rows) (sharedtypes.MarketPair, error) {
 	var mp sharedtypes.MarketPair
-	if err := rows.Scan(&mp.Timestamp, &mp.Currency1, &mp.Currency2, &mp.Open, &mp.High, &mp.Low, &mp.Close); err != nil {
+	if err := rows.Scan(&mp.Timestamp, &mp.FromCurrency, &mp.ToCurrency, &mp.Open, &mp.High, &mp.Low, &mp.Close); err != nil {
 		return sharedtypes.MarketPair{}, err
 	}
 	return mp, nil
@@ -87,7 +88,7 @@ func Create(db *sql.DB, pair sharedtypes.MarketPair) (int64, error) {
 	}
 	defer stmt.Close()
 
-	result, err := stmt.Exec(pair.Timestamp, pair.Currency1, pair.Currency2, pair.Open, pair.High, pair.Low, pair.Close)
+	result, err := stmt.Exec(pair.Timestamp, pair.FromCurrency, pair.ToCurrency, pair.Open, pair.High, pair.Low, pair.Close)
 	if err != nil {
 		return 0, err
 	}
@@ -100,6 +101,7 @@ func Create(db *sql.DB, pair sharedtypes.MarketPair) (int64, error) {
 	return lastInsertID, nil
 }
 
+// TODO: Look into why this seems to be dropping the table
 func Truncate(db *sql.DB) error {
 	_, err := db.Query("DELETE FROM markets;")
 	if err != nil {
@@ -111,9 +113,10 @@ func Truncate(db *sql.DB) error {
 		return err
 	}
 
-	_, err = db.Query("delete from sqlite_sequence where name='markets';")
+	_, err = db.Query("DELETE FROM sqlite_sequence WHERE name='markets';")
 	if err != nil {
-		return err
+		log.Println("Failed to delete from sqlite_sequence DB. Could be that there is no table of this name?")
+		// Not critical error
 	}
 
 	return nil

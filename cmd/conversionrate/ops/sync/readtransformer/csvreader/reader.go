@@ -16,7 +16,7 @@ func readCSVFile(file io.Reader, skipRows int) ([][]string, error) {
 		buf = bufio.NewReader(file)
 	}
 
-	for i := 0; i <= skipRows; i++ {
+	for i := 0; i < skipRows; i++ {
 		_, err := buf.ReadBytes('\n')
 		if err != nil {
 			return nil, err

@@ -1,8 +1,8 @@
 package sharedtypes
 
 type Pair struct {
-	Currency1 string
-	Currency2 string
+	FromCurrency string
+	ToCurrency   string
 }
 
 type MarketSlice struct {
@@ -20,8 +20,8 @@ type MarketPair struct {
 
 var (
 	PairUSDBTC = Pair{
-		Currency1: "USD",
-		Currency2: "BTC",
+		FromCurrency: "USD",
+		ToCurrency:   "BTC",
 	}
 )
 
