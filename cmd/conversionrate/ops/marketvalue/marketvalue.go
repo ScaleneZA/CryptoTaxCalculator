@@ -2,12 +2,11 @@ package marketvalue
 
 import (
 	"errors"
-	"fmt"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/db/markets"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/sharedtypes"
 )
 
-func MarketValueAtTime(b Backends, from, to string, timestamp int64) (float64, error) {
+func ValueAtTime(b Backends, from, to string, timestamp int64) (float64, error) {
 	g, err := buildCurrencyGraph(b, timestamp)
 	if err != nil {
 		return 0, err
@@ -15,10 +14,8 @@ func MarketValueAtTime(b Backends, from, to string, timestamp int64) (float64, e
 
 	rate, found := g.findRate(from, to)
 
-	if found {
-		fmt.Printf("Exchange rate: %.2f USD to JPY\n", rate)
-	} else {
-		fmt.Println("No exchange rate found")
+	if !found {
+		return 0, errors.New("no rate found")
 	}
 
 	return rate, nil
@@ -27,30 +24,7 @@ func MarketValueAtTime(b Backends, from, to string, timestamp int64) (float64, e
 type currencyGraph map[string]map[string]float64
 
 func (g currencyGraph) findRate(from, to string) (float64, bool) {
-	rates, visited := g.findExchangeRateHelper(from, to, make(map[string]bool))
-	return rates[to], visited[to]
-}
-
-// Helper function for finding the exchange rate between two currencies using DFS
-func (g currencyGraph) findExchangeRateHelper(from, to string, visited map[string]bool) (map[string]float64, map[string]bool) {
-	visited[from] = true
-
-	if from == to {
-		return map[string]float64{from: 1}, visited
-	}
-
-	for currency, rate := range g[from] {
-		if !visited[currency] {
-			rates, visited := g.findExchangeRateHelper(currency, to, visited)
-			if rates != nil {
-				newRate := rate * rates[currency]
-				rates[from] = 1 / newRate
-				return rates, visited
-			}
-		}
-	}
-
-	return nil, visited
+	return g[from][to], true
 }
 
 func buildCurrencyGraph(b Backends, timestamp int64) (currencyGraph, error) {
@@ -81,7 +55,7 @@ func FindClosest(b Backends, p sharedtypes.Pair, timestamp int64) (*sharedtypes.
 	closestAfter, _ := markets.FindClosestToAfter(b.DB(), p.FromCurrency, p.ToCurrency, timestamp)
 
 	if closestAfter == nil && closestBefore == nil {
-		return nil, errors.New("Cannot find a market price for: " + p.FromCurrency + "/" + p.ToCurrency)
+		return nil, errors.New("cannot find a market price for: " + p.FromCurrency + "/" + p.ToCurrency)
 	} else if closestBefore == nil {
 		return closestAfter, nil
 	} else if closestAfter == nil {

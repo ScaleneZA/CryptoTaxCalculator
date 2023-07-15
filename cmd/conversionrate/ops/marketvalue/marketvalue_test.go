@@ -61,6 +61,43 @@ func TestFindClosest(t *testing.T) {
 
 }
 
+func TestValueAtTime(t *testing.T) {
+	b := di.SetupDIForTesting()
+	seedData(t, b.DB())
+
+	testCases := []struct {
+		name      string
+		from      string
+		to        string
+		timestamp int64
+		expected  float64
+	}{
+		{
+			name:      "One hop",
+			from:      "USD",
+			to:        "BTC",
+			timestamp: 1689375600001,
+			expected:  30336.28,
+		},
+		{
+			name:      "Two hops",
+			from:      "ZAR",
+			to:        "BTC",
+			timestamp: 1689375600001,
+			expected:  588523.832,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			actual, err := ValueAtTime(b, tc.from, tc.to, tc.timestamp)
+			require.Nil(t, err)
+			require.Equal(t, tc.expected, actual)
+		})
+	}
+
+}
+
 func seedData(t *testing.T, dbc *sql.DB) {
 	mps := []sharedtypes.MarketPair{
 		{
@@ -91,6 +128,36 @@ func seedData(t *testing.T, dbc *sql.DB) {
 				High:      30295.32,
 				Low:       30175.01,
 				Close:     30263.39,
+			},
+		},
+		{
+			Pair: sharedtypes.PairZARUSD,
+			MarketSlice: sharedtypes.MarketSlice{
+				Timestamp: 1689375600000,
+				Open:      19.10,
+				High:      19.56,
+				Low:       19.09,
+				Close:     19.40,
+			},
+		},
+		{
+			Pair: sharedtypes.PairZARUSD,
+			MarketSlice: sharedtypes.MarketSlice{
+				Timestamp: 1689372000000,
+				Open:      20.10,
+				High:      20.12,
+				Low:       19.05,
+				Close:     19.10,
+			},
+		},
+		{
+			Pair: sharedtypes.PairZARUSD,
+			MarketSlice: sharedtypes.MarketSlice{
+				Timestamp: 1689368400000,
+				Open:      21.50,
+				High:      21.56,
+				Low:       20.06,
+				Close:     20.10,
 			},
 		},
 	}

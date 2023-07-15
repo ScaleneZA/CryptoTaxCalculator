@@ -23,10 +23,15 @@ var (
 		FromCurrency: "USD",
 		ToCurrency:   "BTC",
 	}
+	PairZARUSD = Pair{
+		FromCurrency: "ZAR",
+		ToCurrency:   "USD",
+	}
 )
 
 func AllPairs() []Pair {
 	return []Pair{
 		PairUSDBTC,
+		PairZARUSD,
 	}
 }
