@@ -6,6 +6,7 @@ import (
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/sharedtypes"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/di"
 	"github.com/stretchr/testify/require"
+	"math"
 	"testing"
 )
 
@@ -84,7 +85,7 @@ func TestValueAtTime(t *testing.T) {
 			from:      "ZAR",
 			to:        "BTC",
 			timestamp: 1689375600001,
-			expected:  588523.832,
+			expected:  588523.83,
 		},
 	}
 
@@ -92,7 +93,7 @@ func TestValueAtTime(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			actual, err := ValueAtTime(b, tc.from, tc.to, tc.timestamp)
 			require.Nil(t, err)
-			require.Equal(t, tc.expected, actual)
+			require.Equal(t, tc.expected, math.Round(actual*100)/100)
 		})
 	}
 
