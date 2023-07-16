@@ -52,6 +52,9 @@ func FindClosest(b Backends, p sharedtypes.Pair, timestamp int64) (*sharedtypes.
 	return closestAfter, nil
 }
 
+// findRate currently only works for increasing value pairs. For example ZAR -> USD -> BTC. It
+// would not work in reverse, for example USD -> BTC -> ETH unless the values imported are negative
+// and already reversed.
 func findRate(mps []sharedtypes.MarketPair, from, to string, depth int) (float64, error) {
 	depth++
 	for _, mp := range mps {
