@@ -19,13 +19,17 @@ type MarketPair struct {
 }
 
 var (
+	PairZARUSD = Pair{
+		FromCurrency: "ZAR",
+		ToCurrency:   "USD",
+	}
 	PairUSDBTC = Pair{
 		FromCurrency: "USD",
 		ToCurrency:   "BTC",
 	}
-	PairZARUSD = Pair{
-		FromCurrency: "ZAR",
-		ToCurrency:   "USD",
+	PairUSDETH = Pair{
+		FromCurrency: "USD",
+		ToCurrency:   "ETH",
 	}
 )
 

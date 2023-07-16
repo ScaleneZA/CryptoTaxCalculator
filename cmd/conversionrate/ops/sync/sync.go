@@ -20,6 +20,16 @@ var PairSyncers = map[sharedtypes.Pair][]syncer.HolisticSyncer{
 			},
 		},
 	},
+	sharedtypes.PairUSDETH: {
+		syncer.HolisticSyncer{
+			ReadTransformer: readtransformer.GeminiCSV{
+				Reader: csvreader.HTTPCSVReader{
+					Location: "https://www.cryptodatadownload.com/cdd/Gemini_ETHUSD_1h.csv",
+					SkipRows: 2,
+				},
+			},
+		},
+	},
 }
 
 func SyncAll(b Backends) error {

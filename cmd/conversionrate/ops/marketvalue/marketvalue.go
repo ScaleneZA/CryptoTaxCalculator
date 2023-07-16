@@ -37,19 +37,29 @@ func FindClosest(b Backends, p sharedtypes.Pair, timestamp int64) (*sharedtypes.
 	closestBefore, _ := markets.FindClosestToBefore(b.DB(), p.FromCurrency, p.ToCurrency, timestamp)
 	closestAfter, _ := markets.FindClosestToAfter(b.DB(), p.FromCurrency, p.ToCurrency, timestamp)
 
+	var closest *sharedtypes.MarketPair
 	if closestAfter == nil && closestBefore == nil {
 		return nil, errors.New("cannot find a market price for: " + p.FromCurrency + "/" + p.ToCurrency)
 	} else if closestBefore == nil {
-		return closestAfter, nil
+		closest = closestAfter
 	} else if closestAfter == nil {
-		return closestBefore, nil
+		closest = closestBefore
+	} else if timestamp-closestBefore.Timestamp < closestAfter.Timestamp-timestamp {
+		closest = closestBefore
+	} else {
+		closest = closestAfter
 	}
 
-	if timestamp-closestBefore.Timestamp < closestAfter.Timestamp-timestamp {
-		return closestBefore, nil
+	if closestExceedsThreshold(timestamp, closest) {
+		return nil, errors.New("closest timestamps of stored rates exceed threshold of 1 week")
 	}
 
-	return closestAfter, nil
+	return closest, nil
+}
+
+func closestExceedsThreshold(timestamp int64, closest *sharedtypes.MarketPair) bool {
+	const week = 604800
+	return (timestamp-closest.Timestamp) > week || (closest.Timestamp-timestamp) > week
 }
 
 // findRate currently only works for increasing value pairs. For example ZAR -> USD -> BTC. It

@@ -2,6 +2,7 @@ package marketvalue
 
 import (
 	"database/sql"
+	"errors"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/db/markets"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/sharedtypes"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/di"
@@ -15,10 +16,11 @@ func TestFindClosest(t *testing.T) {
 	seedData(t, b.DB())
 
 	testCases := []struct {
-		name      string
-		pair      sharedtypes.Pair
-		timestamp int64
-		expected  *sharedtypes.MarketPair
+		name        string
+		pair        sharedtypes.Pair
+		timestamp   int64
+		expected    *sharedtypes.MarketPair
+		expectedErr error
 	}{
 		{
 			name:      "find closest before",
@@ -50,12 +52,19 @@ func TestFindClosest(t *testing.T) {
 				},
 			},
 		},
+		{
+			name:        "closest rates are stale",
+			pair:        sharedtypes.PairUSDBTC,
+			timestamp:   1234,
+			expected:    nil,
+			expectedErr: errors.New("closest timestamps of stored rates exceed threshold of 1 week"),
+		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			actual, err := FindClosest(b, tc.pair, tc.timestamp)
-			require.Nil(t, err)
+			require.Equal(t, tc.expectedErr, err)
 			require.Equal(t, tc.expected, actual)
 		})
 	}
