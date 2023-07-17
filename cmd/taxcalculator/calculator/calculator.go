@@ -3,6 +3,8 @@ package calculator
 import (
 	"errors"
 	"fmt"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/ops/marketvalue"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/di"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/sharedtypes"
 	"math"
 	"time"
@@ -41,7 +43,10 @@ func Calculate(fiat string, transactions []sharedtypes.Transaction) (YearEndTota
 				continue
 			}
 
-			eatFromTallyUntilSatisfied(fiat, t, tally, yearEndTotals)
+			err := eatFromTallyUntilSatisfied(fiat, t, tally, yearEndTotals)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 
@@ -57,7 +62,7 @@ func Calculate(fiat string, transactions []sharedtypes.Transaction) (YearEndTota
 	return yearEndTotals, nil
 }
 
-func eatFromTallyUntilSatisfied(fiat string, currentTransaction sharedtypes.Transaction, tally []sharedtypes.Transaction, yet YearEndTotals) YearEndTotals {
+func eatFromTallyUntilSatisfied(fiat string, currentTransaction sharedtypes.Transaction, tally []sharedtypes.Transaction, yet YearEndTotals) error {
 	toSubtract := currentTransaction.Amount
 	for i, tt := range tally {
 		// Skip tallys that have already been counted
@@ -78,8 +83,15 @@ func eatFromTallyUntilSatisfied(fiat string, currentTransaction sharedtypes.Tran
 			toSubtract = 0
 		}
 
-		fiatValueWhenBought := fiatValue(tt.Timestamp, fiat, actualSubtracted, tt.WholePriceAtPoint)
-		fiatValueWhenSold := fiatValue(currentTransaction.Timestamp, fiat, actualSubtracted, currentTransaction.WholePriceAtPoint)
+		fiatValueWhenBought, err := fiatValue(tt.Timestamp, fiat, currentTransaction.Currency, actualSubtracted, tt.WholePriceAtPoint)
+		if err != nil {
+			return err
+		}
+
+		fiatValueWhenSold, err := fiatValue(currentTransaction.Timestamp, fiat, currentTransaction.Currency, actualSubtracted, currentTransaction.WholePriceAtPoint)
+		if err != nil {
+			return err
+		}
 
 		// Yuck
 		if yet[taxableYear(currentTransaction.Timestamp)] == nil {
@@ -95,7 +107,7 @@ func eatFromTallyUntilSatisfied(fiat string, currentTransaction sharedtypes.Tran
 		}
 	}
 
-	return yet
+	return nil
 }
 
 func uniqueCurrencies(transactions []sharedtypes.Transaction) map[string]bool {
@@ -116,14 +128,16 @@ func taxableYear(timestamp int64) int {
 	return t.Year()
 }
 
-func fiatValue(timestamp int64, fiat string, amount, wholeValue float64) float64 {
+func fiatValue(timestamp int64, fiat, coin string, amount, wholeValue float64) (float64, error) {
 	if wholeValue > 0 {
-		return amount * wholeValue
+		//return amount * wholeValue, nil
 	}
 
-	return fetchFiatValueAtTime(fiat, timestamp)
-}
+	// TODO: Make this a GRPC call
+	rate, err := marketvalue.ValueAtTime(di.SetupDI(), fiat, coin, timestamp)
+	if err != nil {
+		return 0, err
+	}
 
-func fetchFiatValueAtTime(fiat string, timestamp int64) float64 {
-	return float64(timestamp)
+	return amount * rate, nil
 }

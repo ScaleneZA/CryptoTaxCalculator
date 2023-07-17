@@ -57,7 +57,7 @@ func TestFindClosest(t *testing.T) {
 			pair:        sharedtypes.PairUSDBTC,
 			timestamp:   1234,
 			expected:    nil,
-			expectedErr: errors.New("closest timestamps of stored rates exceed threshold of 1 week"),
+			expectedErr: errors.New("closest timestamps of stored rates exceed threshold of 1 week: USD/BTC"),
 		},
 	}
 

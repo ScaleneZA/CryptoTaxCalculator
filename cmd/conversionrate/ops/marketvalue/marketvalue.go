@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/db/markets"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/sharedtypes"
+	"strconv"
 )
 
 // depthLimit is used for the recursive path finding to make sure we don't end up in an
@@ -39,7 +40,7 @@ func FindClosest(b Backends, p sharedtypes.Pair, timestamp int64) (*sharedtypes.
 
 	var closest *sharedtypes.MarketPair
 	if closestAfter == nil && closestBefore == nil {
-		return nil, errors.New("cannot find a market price for: " + p.FromCurrency + "/" + p.ToCurrency)
+		return nil, errors.New("cannot find a market price for: " + p.String())
 	} else if closestBefore == nil {
 		closest = closestAfter
 	} else if closestAfter == nil {
@@ -51,7 +52,7 @@ func FindClosest(b Backends, p sharedtypes.Pair, timestamp int64) (*sharedtypes.
 	}
 
 	if closestExceedsThreshold(timestamp, closest) {
-		return nil, errors.New("closest timestamps of stored rates exceed threshold of 1 week")
+		return nil, errors.New("closest timestamps of stored rates exceed threshold of 1 week: " + p.String() + " " + strconv.Itoa(int(timestamp)) + "-" + strconv.Itoa(int(closest.Timestamp)))
 	}
 
 	return closest, nil

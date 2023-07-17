@@ -1,8 +1,14 @@
 package sharedtypes
 
+import "fmt"
+
 type Pair struct {
 	FromCurrency string
 	ToCurrency   string
+}
+
+func (p Pair) String() string {
+	return fmt.Sprintf("%s/%s", p.FromCurrency, p.ToCurrency)
 }
 
 type MarketSlice struct {
@@ -51,7 +57,7 @@ var (
 
 func AllPairs() []Pair {
 	return []Pair{
-		PairZARUSD,
+		//PairZARUSD,
 		PairUSDBTC,
 		PairUSDETH,
 		PairUSDLTC,

@@ -1,7 +1,7 @@
 package calculator_test
 
 import (
-	calculator2 "github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/calculator"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/calculator"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/sharedtypes"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -12,7 +12,7 @@ func TestCalculate(t *testing.T) {
 	testCases := []struct {
 		name     string
 		seed     []sharedtypes.Transaction
-		expected calculator2.YearEndTotals
+		expected calculator.YearEndTotals
 	}{
 		{
 			name: "Happy Path",
@@ -61,7 +61,7 @@ func TestCalculate(t *testing.T) {
 					WholePriceAtPoint: 2000,
 				},
 			},
-			expected: calculator2.YearEndTotals{
+			expected: calculator.YearEndTotals{
 				2023: {
 					"ETH":   50,
 					"TOTAL": 50,
@@ -77,7 +77,7 @@ func TestCalculate(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			actual, err := calculator2.Calculate("ZAR", tc.seed)
+			actual, err := calculator.Calculate("ZAR", tc.seed)
 			assert.NoError(t, err)
 			assert.Equal(t, tc.expected, actual)
 		})

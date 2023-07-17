@@ -12,7 +12,6 @@ import (
 
 func main() {
 	b := di.SetupDI()
-
 	go syncCurrenciesForever(b)
 
 	http.HandleFunc("/", webhandlers.Home)

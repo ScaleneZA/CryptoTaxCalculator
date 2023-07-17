@@ -103,7 +103,7 @@ func SyncAll(b Backends) error {
 		for _, s := range syncers {
 			err := s.Sync(b)
 			if err != nil {
-				log.Println("Failed Sync for " + p.FromCurrency + p.ToCurrency + ", failing over...")
+				log.Println("Failed Sync for " + p.String() + ", failing over...")
 				log.Println(err.Error())
 			} else {
 				// Successful sync, no need to fail over.
@@ -114,7 +114,7 @@ func SyncAll(b Backends) error {
 		if !successful {
 			failedSyncs++
 		} else {
-			log.Println("Synced:" + p.FromCurrency + "/" + p.ToCurrency)
+			log.Println("Synced:" + p.String())
 		}
 	}
 
