@@ -31,11 +31,32 @@ var (
 		FromCurrency: "USD",
 		ToCurrency:   "ETH",
 	}
+	PairUSDLTC = Pair{
+		FromCurrency: "USD",
+		ToCurrency:   "LTC",
+	}
+	PairUSDBCH = Pair{
+		FromCurrency: "USD",
+		ToCurrency:   "BCH",
+	}
+	PairUSDBAT = Pair{
+		FromCurrency: "USD",
+		ToCurrency:   "BAT",
+	}
+	PairUSDLINK = Pair{
+		FromCurrency: "USD",
+		ToCurrency:   "LINK",
+	}
 )
 
 func AllPairs() []Pair {
 	return []Pair{
-		PairUSDBTC,
 		PairZARUSD,
+		PairUSDBTC,
+		PairUSDETH,
+		PairUSDLTC,
+		PairUSDBCH,
+		PairUSDBAT,
+		PairUSDLINK,
 	}
 }

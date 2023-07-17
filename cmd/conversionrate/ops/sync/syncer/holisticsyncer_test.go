@@ -66,7 +66,3 @@ func TestHolisticSyncer_Sync(t *testing.T) {
 		},
 	}, actual)
 }
-
-func TestSQLLiteWriter_DeleteAll(t *testing.T) {
-
-}

@@ -77,7 +77,7 @@ func TestCalculate(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			actual, err := calculator2.Calculate(tc.seed)
+			actual, err := calculator2.Calculate("ZAR", tc.seed)
 			assert.NoError(t, err)
 			assert.Equal(t, tc.expected, actual)
 		})

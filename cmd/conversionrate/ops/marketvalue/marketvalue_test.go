@@ -173,7 +173,7 @@ func seedData(t *testing.T, dbc *sql.DB) {
 	}
 
 	for _, mp := range mps {
-		_, err := markets.Create(dbc, mp)
+		_, err := markets.CreateIgnoreDuplicate(dbc, mp)
 		require.Nil(t, err)
 	}
 }

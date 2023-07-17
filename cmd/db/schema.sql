@@ -4,11 +4,12 @@ CREATE TABLE markets (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     `from` VARCHAR(10),
     `to` VARCHAR(10),
-    timestamp INTEGER,
+    `timestamp` INTEGER,
     open REAL,
     high REAL,
     low REAL,
-    close REAL
+    close REAL,
+    UNIQUE(`timestamp`,`from`,`to`)
 );
 
 CREATE INDEX idx_timestamp ON markets (timestamp);

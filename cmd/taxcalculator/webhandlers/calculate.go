@@ -16,7 +16,10 @@ func Calculate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	yet, err := calculator.Calculate(ts)
+	// TODO(Make this dynamic from the form)
+	fiat := "ZAR"
+
+	yet, err := calculator.Calculate(fiat, ts)
 	if err != nil {
 		http.Error(w, "Cannot calculate tax", http.StatusBadRequest)
 		return

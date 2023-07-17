@@ -16,7 +16,7 @@ Next Steps:
 * Separate Sends, Receives, Buys, Sells - Override detected types
 */
 
-func Calculate(transactions []sharedtypes.Transaction) (YearEndTotals, error) {
+func Calculate(fiat string, transactions []sharedtypes.Transaction) (YearEndTotals, error) {
 	yearEndTotals := make(YearEndTotals)
 
 	for currency := range uniqueCurrencies(transactions) {
@@ -29,7 +29,7 @@ func Calculate(transactions []sharedtypes.Transaction) (YearEndTotals, error) {
 			}
 
 			if t.Timestamp < lastTimestamp {
-				return nil, errors.New("Transaction Slice not ordered correctly")
+				return nil, errors.New("transaction slice not ordered correctly")
 			}
 			lastTimestamp = t.Timestamp
 
@@ -41,7 +41,7 @@ func Calculate(transactions []sharedtypes.Transaction) (YearEndTotals, error) {
 				continue
 			}
 
-			eatFromTallyUntilSatisfied(t, tally, yearEndTotals)
+			eatFromTallyUntilSatisfied(fiat, t, tally, yearEndTotals)
 		}
 	}
 
@@ -57,7 +57,7 @@ func Calculate(transactions []sharedtypes.Transaction) (YearEndTotals, error) {
 	return yearEndTotals, nil
 }
 
-func eatFromTallyUntilSatisfied(currentTransaction sharedtypes.Transaction, tally []sharedtypes.Transaction, yet YearEndTotals) YearEndTotals {
+func eatFromTallyUntilSatisfied(fiat string, currentTransaction sharedtypes.Transaction, tally []sharedtypes.Transaction, yet YearEndTotals) YearEndTotals {
 	toSubtract := currentTransaction.Amount
 	for i, tt := range tally {
 		// Skip tallys that have already been counted
@@ -78,8 +78,8 @@ func eatFromTallyUntilSatisfied(currentTransaction sharedtypes.Transaction, tall
 			toSubtract = 0
 		}
 
-		fiatValueWhenBought := zarValue(tt.Timestamp, actualSubtracted, tt.WholePriceAtPoint)
-		fiatValueWhenSold := zarValue(currentTransaction.Timestamp, actualSubtracted, currentTransaction.WholePriceAtPoint)
+		fiatValueWhenBought := fiatValue(tt.Timestamp, fiat, actualSubtracted, tt.WholePriceAtPoint)
+		fiatValueWhenSold := fiatValue(currentTransaction.Timestamp, fiat, actualSubtracted, currentTransaction.WholePriceAtPoint)
 
 		// Yuck
 		if yet[taxableYear(currentTransaction.Timestamp)] == nil {
@@ -116,11 +116,14 @@ func taxableYear(timestamp int64) int {
 	return t.Year()
 }
 
-func zarValue(timestamp int64, amount, wholeValue float64) float64 {
-	//wholeValue := fetchZARValueAtTime(timestamp)
-	return amount * wholeValue
+func fiatValue(timestamp int64, fiat string, amount, wholeValue float64) float64 {
+	if wholeValue > 0 {
+		return amount * wholeValue
+	}
+
+	return fetchFiatValueAtTime(fiat, timestamp)
 }
 
-func fetchZARValueAtTime(timestamp int64) float64 {
+func fetchFiatValueAtTime(fiat string, timestamp int64) float64 {
 	return float64(timestamp)
 }

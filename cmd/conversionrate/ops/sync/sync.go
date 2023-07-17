@@ -9,7 +9,7 @@ import (
 	"log"
 )
 
-var PairSyncers = map[sharedtypes.Pair][]syncer.HolisticSyncer{
+var PairSyncers = map[sharedtypes.Pair][]syncer.Syncer{
 	sharedtypes.PairUSDBTC: {
 		syncer.HolisticSyncer{
 			ReadTransformer: readtransformer.GeminiCSV{
@@ -25,6 +25,70 @@ var PairSyncers = map[sharedtypes.Pair][]syncer.HolisticSyncer{
 			ReadTransformer: readtransformer.GeminiCSV{
 				Reader: csvreader.HTTPCSVReader{
 					Location: "https://www.cryptodatadownload.com/cdd/Gemini_ETHUSD_1h.csv",
+					SkipRows: 2,
+				},
+			},
+		},
+	},
+	sharedtypes.PairUSDLTC: {
+		syncer.HolisticSyncer{
+			ReadTransformer: readtransformer.GeminiCSV{
+				Reader: csvreader.HTTPCSVReader{
+					Location: "https://www.cryptodatadownload.com/cdd/Gemini_LTCUSD_1h.csv",
+					SkipRows: 2,
+				},
+			},
+		},
+	},
+	sharedtypes.PairUSDBCH: {
+		syncer.HolisticSyncer{
+			ReadTransformer: readtransformer.GeminiCSV{
+				Reader: csvreader.HTTPCSVReader{
+					Location: "https://www.cryptodatadownload.com/cdd/Gemini_BCHUSD_d.csv",
+					SkipRows: 2,
+				},
+			},
+		},
+		syncer.HolisticSyncer{
+			ReadTransformer: readtransformer.GeminiCSV{
+				Reader: csvreader.HTTPCSVReader{
+					Location: "https://www.cryptodatadownload.com/cdd/Gemini_BCHUSD_1h.csv",
+					SkipRows: 2,
+				},
+			},
+		},
+	},
+	sharedtypes.PairUSDBAT: {
+		syncer.HolisticSyncer{
+			ReadTransformer: readtransformer.GeminiCSV{
+				Reader: csvreader.HTTPCSVReader{
+					Location: "https://www.cryptodatadownload.com/cdd/Gemini_BATUSD_d.csv",
+					SkipRows: 2,
+				},
+			},
+		},
+		syncer.HolisticSyncer{
+			ReadTransformer: readtransformer.GeminiCSV{
+				Reader: csvreader.HTTPCSVReader{
+					Location: "https://www.cryptodatadownload.com/cdd/Gemini_BATUSD_1h.csv",
+					SkipRows: 2,
+				},
+			},
+		},
+	},
+	sharedtypes.PairUSDLINK: {
+		syncer.HolisticSyncer{
+			ReadTransformer: readtransformer.GeminiCSV{
+				Reader: csvreader.HTTPCSVReader{
+					Location: "https://www.cryptodatadownload.com/cdd/Gemini_LINKUSD_d.csv",
+					SkipRows: 2,
+				},
+			},
+		},
+		syncer.HolisticSyncer{
+			ReadTransformer: readtransformer.GeminiCSV{
+				Reader: csvreader.HTTPCSVReader{
+					Location: "https://www.cryptodatadownload.com/cdd/Gemini_LINKUSD_1h.csv",
 					SkipRows: 2,
 				},
 			},
@@ -49,6 +113,8 @@ func SyncAll(b Backends) error {
 		}
 		if !successful {
 			failedSyncs++
+		} else {
+			log.Println("Synced:" + p.FromCurrency + "/" + p.ToCurrency)
 		}
 	}
 
