@@ -19,7 +19,7 @@ func main() {
 
 	go syncCurrenciesForever(b)
 
-	grpcServers(b)
+	go grpcServers(b)
 	httpServers()
 }
 
