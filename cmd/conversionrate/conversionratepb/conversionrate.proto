@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package conversionratepb;
+
+option go_package = "github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/conversionratepb";
+
+service Conversionrate {
+  rpc ValueAtTime(ValueAtTimeRequest) returns (ValueAtTimeResponse);
+}
+
+message ValueAtTimeRequest {
+  string from = 1;
+  string to = 2;
+  int64 timestamp = 3;
+}
+
+message ValueAtTimeResponse {
+  double rate = 1;
+}
