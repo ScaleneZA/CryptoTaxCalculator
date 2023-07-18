@@ -1,16 +1,17 @@
 package sync
 
 import (
-	"errors"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/ops/sync/readtransformer"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/ops/sync/readtransformer/csvreader"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/ops/sync/syncer"
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/sharedtypes"
+	"github.com/luno/jettison/errors"
+	"github.com/luno/jettison/j"
 	"log"
 )
 
-var PairSyncers = map[sharedtypes.Pair][]syncer.Syncer{
-	sharedtypes.PairUSDBTC: {
+var PairSyncers = map[conversionrate.Pair][]syncer.Syncer{
+	conversionrate.PairUSDBTC: {
 		syncer.HolisticSyncer{
 			ReadTransformer: readtransformer.GeminiCSV{
 				Reader: csvreader.HTTPCSVReader{
@@ -20,7 +21,7 @@ var PairSyncers = map[sharedtypes.Pair][]syncer.Syncer{
 			},
 		},
 	},
-	sharedtypes.PairUSDETH: {
+	conversionrate.PairUSDETH: {
 		syncer.HolisticSyncer{
 			ReadTransformer: readtransformer.GeminiCSV{
 				Reader: csvreader.HTTPCSVReader{
@@ -30,7 +31,7 @@ var PairSyncers = map[sharedtypes.Pair][]syncer.Syncer{
 			},
 		},
 	},
-	sharedtypes.PairUSDLTC: {
+	conversionrate.PairUSDLTC: {
 		syncer.HolisticSyncer{
 			ReadTransformer: readtransformer.GeminiCSV{
 				Reader: csvreader.HTTPCSVReader{
@@ -40,7 +41,7 @@ var PairSyncers = map[sharedtypes.Pair][]syncer.Syncer{
 			},
 		},
 	},
-	sharedtypes.PairUSDBCH: {
+	conversionrate.PairUSDBCH: {
 		syncer.HolisticSyncer{
 			ReadTransformer: readtransformer.GeminiCSV{
 				Reader: csvreader.HTTPCSVReader{
@@ -58,7 +59,7 @@ var PairSyncers = map[sharedtypes.Pair][]syncer.Syncer{
 			},
 		},
 	},
-	sharedtypes.PairUSDBAT: {
+	conversionrate.PairUSDBAT: {
 		syncer.HolisticSyncer{
 			ReadTransformer: readtransformer.GeminiCSV{
 				Reader: csvreader.HTTPCSVReader{
@@ -76,7 +77,7 @@ var PairSyncers = map[sharedtypes.Pair][]syncer.Syncer{
 			},
 		},
 	},
-	sharedtypes.PairUSDLINK: {
+	conversionrate.PairUSDLINK: {
 		syncer.HolisticSyncer{
 			ReadTransformer: readtransformer.GeminiCSV{
 				Reader: csvreader.HTTPCSVReader{
@@ -97,7 +98,7 @@ var PairSyncers = map[sharedtypes.Pair][]syncer.Syncer{
 }
 
 func SyncAll(b Backends) error {
-	failedSyncs := 0
+	var failedSyncs []conversionrate.Pair
 	for p, syncers := range PairSyncers {
 		successful := false
 		for _, s := range syncers {
@@ -112,14 +113,16 @@ func SyncAll(b Backends) error {
 			}
 		}
 		if !successful {
-			failedSyncs++
+			failedSyncs = append(failedSyncs, p)
 		} else {
 			log.Println("Synced:" + p.String())
 		}
 	}
 
-	if failedSyncs > 0 {
-		return errors.New("one or more pairs failed to sync")
+	if len(failedSyncs) > 0 {
+		return errors.Wrap(conversionrate.ErrPairSyncFailed, "", j.MKV{
+			"failed_syncs": failedSyncs,
+		})
 	}
 
 	return nil

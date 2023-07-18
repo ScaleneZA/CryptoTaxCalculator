@@ -1,9 +1,9 @@
 package readtransformer
 
 import (
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/sharedtypes"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate"
 )
 
 type ReadTransformer interface {
-	ReadAndTransform() ([]sharedtypes.MarketPair, error)
+	ReadAndTransform() ([]conversionrate.MarketPair, error)
 }

@@ -1,10 +1,10 @@
 package marketvalue
 
 import (
-	"errors"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/db/markets"
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/sharedtypes"
-	"strconv"
+	"github.com/luno/jettison/errors"
+	"github.com/luno/jettison/j"
 )
 
 // depthLimit is used for the recursive path finding to make sure we don't end up in an
@@ -20,10 +20,10 @@ func ValueAtTime(b Backends, from, to string, timestamp int64) (float64, error) 
 	return findRate(mps, from, to, 0)
 }
 
-func closestMarketPairsAtPoint(b Backends, timestamp int64) ([]sharedtypes.MarketPair, error) {
-	var allRatesAtPoint []sharedtypes.MarketPair
+func closestMarketPairsAtPoint(b Backends, timestamp int64) ([]conversionrate.MarketPair, error) {
+	var allRatesAtPoint []conversionrate.MarketPair
 
-	for _, p := range sharedtypes.AllPairs() {
+	for _, p := range conversionrate.AllPairs() {
 		closest, err := FindClosest(b, p, timestamp)
 		if err != nil {
 			return nil, err
@@ -34,13 +34,15 @@ func closestMarketPairsAtPoint(b Backends, timestamp int64) ([]sharedtypes.Marke
 	return allRatesAtPoint, nil
 }
 
-func FindClosest(b Backends, p sharedtypes.Pair, timestamp int64) (*sharedtypes.MarketPair, error) {
+func FindClosest(b Backends, p conversionrate.Pair, timestamp int64) (*conversionrate.MarketPair, error) {
 	closestBefore, _ := markets.FindClosestToBefore(b.DB(), p.FromCurrency, p.ToCurrency, timestamp)
 	closestAfter, _ := markets.FindClosestToAfter(b.DB(), p.FromCurrency, p.ToCurrency, timestamp)
 
-	var closest *sharedtypes.MarketPair
+	var closest *conversionrate.MarketPair
 	if closestAfter == nil && closestBefore == nil {
-		return nil, errors.New("cannot find a market price for: " + p.String())
+		return nil, errors.Wrap(conversionrate.ErrNoMarket, "", j.MKV{
+			"pair": p.String(),
+		})
 	} else if closestBefore == nil {
 		closest = closestAfter
 	} else if closestAfter == nil {
@@ -52,13 +54,17 @@ func FindClosest(b Backends, p sharedtypes.Pair, timestamp int64) (*sharedtypes.
 	}
 
 	if closestExceedsThreshold(timestamp, closest) {
-		return nil, errors.New("closest timestamps of stored rates exceed threshold of 1 week: " + p.String() + " " + strconv.Itoa(int(timestamp)) + "-" + strconv.Itoa(int(closest.Timestamp)))
+		return nil, errors.Wrap(conversionrate.ErrStoredRateExceedsThreshold, "", j.MKV{
+			"pair":              p.String(),
+			"timestamp":         timestamp,
+			"closest_timestamp": closest.Timestamp,
+		})
 	}
 
 	return closest, nil
 }
 
-func closestExceedsThreshold(timestamp int64, closest *sharedtypes.MarketPair) bool {
+func closestExceedsThreshold(timestamp int64, closest *conversionrate.MarketPair) bool {
 	const week = 604800
 	return (timestamp-closest.Timestamp) > week || (closest.Timestamp-timestamp) > week
 }
@@ -66,7 +72,7 @@ func closestExceedsThreshold(timestamp int64, closest *sharedtypes.MarketPair) b
 // findRate currently only works for increasing value pairs. For example ZAR -> USD -> BTC. It
 // would not work in reverse, for example USD -> BTC -> ETH unless the values imported are negative
 // and already reversed.
-func findRate(mps []sharedtypes.MarketPair, from, to string, depth int) (float64, error) {
+func findRate(mps []conversionrate.MarketPair, from, to string, depth int) (float64, error) {
 	depth++
 	for _, mp := range mps {
 		if mp.FromCurrency != from {
@@ -87,5 +93,9 @@ func findRate(mps []sharedtypes.MarketPair, from, to string, depth int) (float64
 		}
 	}
 
-	return 0, errors.New("no rate found")
+	return 0, errors.Wrap(conversionrate.ErrNoRatesFound, "", j.MKV{
+		"from":    from,
+		"to":      to,
+		"mps_len": len(mps),
+	})
 }

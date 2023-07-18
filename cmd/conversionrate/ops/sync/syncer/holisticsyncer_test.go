@@ -1,11 +1,11 @@
 package syncer_test
 
 import (
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/db/markets"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/ops/sync/readtransformer"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/ops/sync/readtransformer/csvreader"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/ops/sync/syncer"
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/sharedtypes"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/di"
 	"github.com/stretchr/testify/require"
 	"testing"
@@ -16,7 +16,7 @@ func TestHolisticSyncer_Sync(t *testing.T) {
 
 	mps, err := markets.ListAll(b.DB())
 	require.Nil(t, err)
-	require.Equal(t, []sharedtypes.MarketPair(nil), mps)
+	require.Equal(t, []conversionrate.MarketPair(nil), mps)
 
 	s := syncer.HolisticSyncer{
 		ReadTransformer: readtransformer.GeminiCSV{
@@ -33,10 +33,10 @@ func TestHolisticSyncer_Sync(t *testing.T) {
 	actual, err := markets.ListAll(b.DB())
 	require.Nil(t, err)
 
-	require.Equal(t, []sharedtypes.MarketPair{
+	require.Equal(t, []conversionrate.MarketPair{
 		{
-			Pair: sharedtypes.PairUSDBTC,
-			MarketSlice: sharedtypes.MarketSlice{
+			Pair: conversionrate.PairUSDBTC,
+			MarketSlice: conversionrate.MarketSlice{
 				Timestamp: 1689375600000,
 				Open:      30270.01,
 				High:      30341.7,
@@ -45,8 +45,8 @@ func TestHolisticSyncer_Sync(t *testing.T) {
 			},
 		},
 		{
-			Pair: sharedtypes.PairUSDBTC,
-			MarketSlice: sharedtypes.MarketSlice{
+			Pair: conversionrate.PairUSDBTC,
+			MarketSlice: conversionrate.MarketSlice{
 				Timestamp: 1689372000000,
 				Open:      30263.39,
 				High:      30280.28,
@@ -55,8 +55,8 @@ func TestHolisticSyncer_Sync(t *testing.T) {
 			},
 		},
 		{
-			Pair: sharedtypes.PairUSDBTC,
-			MarketSlice: sharedtypes.MarketSlice{
+			Pair: conversionrate.PairUSDBTC,
+			MarketSlice: conversionrate.MarketSlice{
 				Timestamp: 1689368400000,
 				Open:      30205.98,
 				High:      30295.32,

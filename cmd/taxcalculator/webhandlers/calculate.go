@@ -2,14 +2,14 @@ package webhandlers
 
 import (
 	"encoding/json"
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/calculator"
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/sharedtypes"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/ops/calculator"
 	"net/http"
 )
 
 func Calculate(w http.ResponseWriter, r *http.Request) {
 	// Parse the request body
-	var ts []sharedtypes.Transaction
+	var ts []taxcalculator.Transaction
 	err := json.NewDecoder(r.Body).Decode(&ts)
 	if err != nil {
 		http.Error(w, "Bad Request", http.StatusBadRequest)

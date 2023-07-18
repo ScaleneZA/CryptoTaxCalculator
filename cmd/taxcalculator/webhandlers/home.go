@@ -1,7 +1,7 @@
 package webhandlers
 
 import (
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/sharedtypes"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator"
 	"html/template"
 	"log"
 	"net/http"
@@ -18,10 +18,10 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	// Define any data you want to pass to the template
 	data := struct {
 		Title          string
-		TransformTypes []sharedtypes.TransformType
+		TransformTypes []taxcalculator.TransformType
 	}{
 		Title:          "Tax Calculator",
-		TransformTypes: sharedtypes.SelectableTransformTypes(),
+		TransformTypes: taxcalculator.SelectableTransformTypes(),
 	}
 
 	// Execute the template with the data

@@ -2,16 +2,17 @@ package filetransformer
 
 import (
 	"encoding/csv"
-	"errors"
 	"fmt"
-	sources2 "github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/filetransformer/sources"
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/sharedtypes"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/ops/filetransformer/sources"
+	"github.com/luno/jettison/errors"
+	"github.com/luno/jettison/j"
 	"io"
 	"sort"
 )
 
-func TransformAll(typeFiles map[sharedtypes.TransformType][]io.Reader) ([]sharedtypes.Transaction, error) {
-	var ts []sharedtypes.Transaction
+func TransformAll(typeFiles map[taxcalculator.TransformType][]io.Reader) ([]taxcalculator.Transaction, error) {
+	var ts []taxcalculator.Transaction
 
 	for typ, files := range typeFiles {
 		tts, err := Transform(files, typ)
@@ -25,8 +26,8 @@ func TransformAll(typeFiles map[sharedtypes.TransformType][]io.Reader) ([]shared
 	return sortTransactions(ts), nil
 }
 
-func Transform(files []io.Reader, typ sharedtypes.TransformType) ([]sharedtypes.Transaction, error) {
-	var ts []sharedtypes.Transaction
+func Transform(files []io.Reader, typ taxcalculator.TransformType) ([]taxcalculator.Transaction, error) {
+	var ts []taxcalculator.Transaction
 	for _, file := range files {
 		reader := csv.NewReader(file)
 		rows, err := reader.ReadAll()
@@ -59,7 +60,7 @@ func Transform(files []io.Reader, typ sharedtypes.TransformType) ([]sharedtypes.
 	return sortTransactions(ts), nil
 }
 
-func sortTransactions(ts []sharedtypes.Transaction) []sharedtypes.Transaction {
+func sortTransactions(ts []taxcalculator.Transaction) []taxcalculator.Transaction {
 	sort.Slice(ts, func(i, j int) bool {
 		if ts[i].Timestamp == ts[j].Timestamp {
 			return ts[i].DetectedType < ts[j].DetectedType
@@ -70,15 +71,17 @@ func sortTransactions(ts []sharedtypes.Transaction) []sharedtypes.Transaction {
 	return ts
 }
 
-func sourceFromType(typ sharedtypes.TransformType) (sources2.Source, error) {
-	var src sources2.Source
+func sourceFromType(typ taxcalculator.TransformType) (sources.Source, error) {
+	var src sources.Source
 	switch typ {
-	case sharedtypes.TransformTypeBasic:
-		src = sources2.BasicSource{}
-	case sharedtypes.TransformTypeLuno:
-		src = sources2.LunoSource{}
+	case taxcalculator.TransformTypeBasic:
+		src = sources.BasicSource{}
+	case taxcalculator.TransformTypeLuno:
+		src = sources.LunoSource{}
 	default:
-		return nil, errors.New("invalid source")
+		return nil, errors.Wrap(taxcalculator.ErrUnsupportedTranformType, "", j.MKV{
+			"type": typ,
+		})
 	}
 
 	return src, nil

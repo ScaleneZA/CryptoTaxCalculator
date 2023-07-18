@@ -1,11 +1,12 @@
 package calculator
 
 import (
-	"errors"
 	"fmt"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/conversionrate/ops/marketvalue"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/di"
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/sharedtypes"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator"
+	"github.com/luno/jettison/errors"
+	"github.com/luno/jettison/j"
 	"math"
 	"time"
 )
@@ -18,22 +19,25 @@ Next Steps:
 * Separate Sends, Receives, Buys, Sells - Override detected types
 */
 
-func Calculate(fiat string, transactions []sharedtypes.Transaction) (YearEndTotals, error) {
+func Calculate(fiat string, transactions []taxcalculator.Transaction) (YearEndTotals, error) {
 	yearEndTotals := make(YearEndTotals)
 
 	for currency := range uniqueCurrencies(transactions) {
-		var tally []sharedtypes.Transaction
-		var lastTimestamp int64
+		var tally []taxcalculator.Transaction
+		var prevTimestamp int64
 
 		for _, t := range transactions {
 			if t.Currency != currency {
 				continue
 			}
 
-			if t.Timestamp < lastTimestamp {
-				return nil, errors.New("transaction slice not ordered correctly")
+			if t.Timestamp < prevTimestamp {
+				return nil, errors.Wrap(taxcalculator.ErrInvalidTransactionOrder, "", j.MKV{
+					"current_timestamp":  t.Timestamp,
+					"previous_timestamp": prevTimestamp,
+				})
 			}
-			lastTimestamp = t.Timestamp
+			prevTimestamp = t.Timestamp
 
 			if t.FinalType().ShouldIncreaseTally() {
 				tally = append(tally, t)
@@ -62,7 +66,7 @@ func Calculate(fiat string, transactions []sharedtypes.Transaction) (YearEndTota
 	return yearEndTotals, nil
 }
 
-func eatFromTallyUntilSatisfied(fiat string, currentTransaction sharedtypes.Transaction, tally []sharedtypes.Transaction, yet YearEndTotals) error {
+func eatFromTallyUntilSatisfied(fiat string, currentTransaction taxcalculator.Transaction, tally []taxcalculator.Transaction, yet YearEndTotals) error {
 	toSubtract := currentTransaction.Amount
 	for i, tt := range tally {
 		// Skip tallys that have already been counted
@@ -110,7 +114,7 @@ func eatFromTallyUntilSatisfied(fiat string, currentTransaction sharedtypes.Tran
 	return nil
 }
 
-func uniqueCurrencies(transactions []sharedtypes.Transaction) map[string]bool {
+func uniqueCurrencies(transactions []taxcalculator.Transaction) map[string]bool {
 	currencies := make(map[string]bool)
 
 	for _, t := range transactions {
@@ -130,7 +134,7 @@ func taxableYear(timestamp int64) int {
 
 func fiatValue(timestamp int64, fiat, coin string, amount, wholeValue float64) (float64, error) {
 	if wholeValue > 0 {
-		//return amount * wholeValue, nil
+		return amount * wholeValue, nil
 	}
 
 	// TODO: Make this a GRPC call

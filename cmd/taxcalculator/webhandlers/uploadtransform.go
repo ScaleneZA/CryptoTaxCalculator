@@ -2,8 +2,8 @@ package webhandlers
 
 import (
 	"encoding/json"
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/filetransformer"
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/sharedtypes"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/taxcalculator/ops/filetransformer"
 	"html/template"
 	"io"
 	"log"
@@ -18,8 +18,8 @@ func UploadTransform(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fs := make(map[sharedtypes.TransformType][]io.Reader)
-	for _, typ := range sharedtypes.SelectableTransformTypes() {
+	fs := make(map[taxcalculator.TransformType][]io.Reader)
+	for _, typ := range taxcalculator.SelectableTransformTypes() {
 		files, ok := r.MultipartForm.File["files-"+strconv.Itoa(int(typ))]
 		if !ok {
 			continue
@@ -62,12 +62,12 @@ func UploadTransform(w http.ResponseWriter, r *http.Request) {
 
 	data := struct {
 		Title                    string
-		OverrideTransactionTypes []sharedtypes.TransactionType
-		Transactions             []sharedtypes.Transaction
+		OverrideTransactionTypes []taxcalculator.TransactionType
+		Transactions             []taxcalculator.Transaction
 		TransactionsJSON         string
 	}{
 		Title:                    "Overrides",
-		OverrideTransactionTypes: sharedtypes.ValidTransactionTypes(),
+		OverrideTransactionTypes: taxcalculator.ValidTransactionTypes(),
 		Transactions:             ts,
 		TransactionsJSON:         string(jsonData),
 	}
