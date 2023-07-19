@@ -1,4 +1,4 @@
-/cmd/conversionrate/data/
+/cmd/rates/conversionrate/data/
 /config/config.go
 /cryptotax.db
 /cryptotax.db-journal
