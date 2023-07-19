@@ -53,7 +53,7 @@ func UploadTransform(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl, err := template.ParseFiles("web/templates/overrides.html", "web/templates/base.html")
+	tmpl, err := template.ParseFiles("cmd/transactions/webserver/templates/overrides.html", "cmd/transactions/webserver/templates/base.html")
 	if err != nil {
 		log.Println("Error:", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
