@@ -1,6 +1,7 @@
 package readtransformer
 
 import (
+	"fmt"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/rates/conversionrate"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/rates/conversionrate/ops/sync/readtransformer/csvreader"
 	"strconv"
@@ -32,6 +33,9 @@ func (t GeminiCSV) ReadAndTransform() ([]conversionrate.MarketPair, error) {
 
 func (t GeminiCSV) transformRow(row []string) (conversionrate.MarketPair, error) {
 	tim, err := strconv.Atoi(row[0])
+	if hasMilliseconds(int64(tim)) {
+		tim = tim / 1000
+	}
 	if err != nil {
 		return conversionrate.MarketPair{}, err
 	}
@@ -68,4 +72,9 @@ func (t GeminiCSV) transformRow(row []string) (conversionrate.MarketPair, error)
 			Close:     clos,
 		},
 	}, nil
+}
+
+func hasMilliseconds(timestamp int64) bool {
+	timestampStr := fmt.Sprintf("%d", timestamp)
+	return len(timestampStr) > 10
 }

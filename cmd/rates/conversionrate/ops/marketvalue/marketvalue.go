@@ -1,7 +1,7 @@
 package marketvalue
 
 import (
-	conversionrate2 "github.com/ScaleneZA/CryptoTaxCalculator/cmd/rates/conversionrate"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/rates/conversionrate"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/rates/conversionrate/db/markets"
 	"github.com/luno/jettison/errors"
 	"github.com/luno/jettison/j"
@@ -20,12 +20,12 @@ func ValueAtTime(b Backends, from, to string, timestamp int64) (float64, error) 
 	return findRate(mps, from, to, 0)
 }
 
-func closestMarketPairsAtPoint(b Backends, timestamp int64) ([]conversionrate2.MarketPair, error) {
-	var allRatesAtPoint []conversionrate2.MarketPair
+func closestMarketPairsAtPoint(b Backends, timestamp int64) ([]conversionrate.MarketPair, error) {
+	var allRatesAtPoint []conversionrate.MarketPair
 
-	for _, p := range conversionrate2.AllPairs() {
+	for _, p := range conversionrate.AllPairs() {
 		closest, err := FindClosest(b, p, timestamp)
-		if errors.Is(err, conversionrate2.ErrNoMarket) {
+		if errors.Is(err, conversionrate.ErrNoMarket) {
 			// NoReturnErr: Skip markets we don't have data for.
 			continue
 		} else if err != nil {
@@ -37,13 +37,13 @@ func closestMarketPairsAtPoint(b Backends, timestamp int64) ([]conversionrate2.M
 	return allRatesAtPoint, nil
 }
 
-func FindClosest(b Backends, p conversionrate2.Pair, timestamp int64) (*conversionrate2.MarketPair, error) {
+func FindClosest(b Backends, p conversionrate.Pair, timestamp int64) (*conversionrate.MarketPair, error) {
 	closestBefore, _ := markets.FindClosestToBefore(b.DB(), p.FromCurrency, p.ToCurrency, timestamp)
 	closestAfter, _ := markets.FindClosestToAfter(b.DB(), p.FromCurrency, p.ToCurrency, timestamp)
 
-	var closest *conversionrate2.MarketPair
+	var closest *conversionrate.MarketPair
 	if closestAfter == nil && closestBefore == nil {
-		return nil, errors.Wrap(conversionrate2.ErrNoMarket, "", j.MKV{
+		return nil, errors.Wrap(conversionrate.ErrNoMarket, "", j.MKV{
 			"pair": p.String(),
 		})
 	} else if closestBefore == nil {
@@ -57,17 +57,18 @@ func FindClosest(b Backends, p conversionrate2.Pair, timestamp int64) (*conversi
 	}
 
 	if closestExceedsThreshold(timestamp, closest) {
-		return nil, errors.Wrap(conversionrate2.ErrStoredRateExceedsThreshold, "", j.MKV{
+		err := errors.Wrap(conversionrate.ErrStoredRateExceedsThreshold, "", j.MKV{
 			"pair":              p.String(),
 			"timestamp":         timestamp,
 			"closest_timestamp": closest.Timestamp,
 		})
+		return nil, err
 	}
 
 	return closest, nil
 }
 
-func closestExceedsThreshold(timestamp int64, closest *conversionrate2.MarketPair) bool {
+func closestExceedsThreshold(timestamp int64, closest *conversionrate.MarketPair) bool {
 	const week = 604800
 	return (timestamp-closest.Timestamp) > week || (closest.Timestamp-timestamp) > week
 }
@@ -75,7 +76,7 @@ func closestExceedsThreshold(timestamp int64, closest *conversionrate2.MarketPai
 // findRate currently only works for increasing value pairs. For example ZAR -> USD -> BTC. It
 // would not work in reverse, for example USD -> BTC -> ETH unless the values imported are negative
 // and already reversed.
-func findRate(mps []conversionrate2.MarketPair, from, to string, depth int) (float64, error) {
+func findRate(mps []conversionrate.MarketPair, from, to string, depth int) (float64, error) {
 	depth++
 	for _, mp := range mps {
 		if mp.FromCurrency != from {
@@ -96,7 +97,7 @@ func findRate(mps []conversionrate2.MarketPair, from, to string, depth int) (flo
 		}
 	}
 
-	return 0, errors.Wrap(conversionrate2.ErrNoRatesFound, "", j.MKV{
+	return 0, errors.Wrap(conversionrate.ErrNoRatesFound, "", j.MKV{
 		"from":    from,
 		"to":      to,
 		"mps_len": len(mps),

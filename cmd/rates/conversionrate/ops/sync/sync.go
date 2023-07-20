@@ -1,18 +1,32 @@
 package sync
 
 import (
-	conversionrate2 "github.com/ScaleneZA/CryptoTaxCalculator/cmd/rates/conversionrate"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/rates/conversionrate"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/rates/conversionrate/ops/sync/readtransformer"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/rates/conversionrate/ops/sync/readtransformer/csvreader"
-	syncer2 "github.com/ScaleneZA/CryptoTaxCalculator/cmd/rates/conversionrate/ops/sync/syncer"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/rates/conversionrate/ops/sync/syncer"
 	"github.com/luno/jettison/errors"
 	"github.com/luno/jettison/j"
 	"log"
 )
 
-var PairSyncers = map[conversionrate2.Pair][]syncer2.Syncer{
-	conversionrate2.PairUSDBTC: {
-		syncer2.HolisticSyncer{
+var PairSyncers = map[conversionrate.Pair][]syncer.Syncer{
+	// TODO: Find a better way to seed this data. Perhaps an XML reader for this remote resource:
+	// https://custom.resbank.co.za/SarbWebApi/WebIndicators/Shared/GetTimeseriesObservations//EXCX135D/2015-01-01/2023-07-20
+	conversionrate.PairZARUSD: {
+		syncer.HolisticSyncer{
+			ReadTransformer: readtransformer.SARBCSV{
+				Reader: csvreader.LocalCSVReader{
+					Location: "cmd/rates/data/USD_ZAR_seed.csv",
+					SkipRows: 4,
+				},
+				FromCurrency: conversionrate.PairZARUSD.FromCurrency,
+				ToCurrency:   conversionrate.PairZARUSD.ToCurrency,
+			},
+		},
+	},
+	conversionrate.PairUSDBTC: {
+		syncer.HolisticSyncer{
 			ReadTransformer: readtransformer.GeminiCSV{
 				Reader: csvreader.HTTPCSVReader{
 					Location: "https://www.cryptodatadownload.com/cdd/Gemini_BTCUSD_1h.csv",
@@ -21,8 +35,8 @@ var PairSyncers = map[conversionrate2.Pair][]syncer2.Syncer{
 			},
 		},
 	},
-	conversionrate2.PairUSDETH: {
-		syncer2.HolisticSyncer{
+	conversionrate.PairUSDETH: {
+		syncer.HolisticSyncer{
 			ReadTransformer: readtransformer.GeminiCSV{
 				Reader: csvreader.HTTPCSVReader{
 					Location: "https://www.cryptodatadownload.com/cdd/Gemini_ETHUSD_1h.csv",
@@ -31,8 +45,8 @@ var PairSyncers = map[conversionrate2.Pair][]syncer2.Syncer{
 			},
 		},
 	},
-	conversionrate2.PairUSDLTC: {
-		syncer2.HolisticSyncer{
+	conversionrate.PairUSDLTC: {
+		syncer.HolisticSyncer{
 			ReadTransformer: readtransformer.GeminiCSV{
 				Reader: csvreader.HTTPCSVReader{
 					Location: "https://www.cryptodatadownload.com/cdd/Gemini_LTCUSD_1h.csv",
@@ -41,8 +55,8 @@ var PairSyncers = map[conversionrate2.Pair][]syncer2.Syncer{
 			},
 		},
 	},
-	conversionrate2.PairUSDBCH: {
-		syncer2.HolisticSyncer{
+	conversionrate.PairUSDBCH: {
+		syncer.HolisticSyncer{
 			ReadTransformer: readtransformer.GeminiCSV{
 				Reader: csvreader.HTTPCSVReader{
 					Location: "https://www.cryptodatadownload.com/cdd/Gemini_BCHUSD_d.csv",
@@ -50,7 +64,7 @@ var PairSyncers = map[conversionrate2.Pair][]syncer2.Syncer{
 				},
 			},
 		},
-		syncer2.HolisticSyncer{
+		syncer.HolisticSyncer{
 			ReadTransformer: readtransformer.GeminiCSV{
 				Reader: csvreader.HTTPCSVReader{
 					Location: "https://www.cryptodatadownload.com/cdd/Gemini_BCHUSD_1h.csv",
@@ -59,8 +73,8 @@ var PairSyncers = map[conversionrate2.Pair][]syncer2.Syncer{
 			},
 		},
 	},
-	conversionrate2.PairUSDBAT: {
-		syncer2.HolisticSyncer{
+	conversionrate.PairUSDBAT: {
+		syncer.HolisticSyncer{
 			ReadTransformer: readtransformer.GeminiCSV{
 				Reader: csvreader.HTTPCSVReader{
 					Location: "https://www.cryptodatadownload.com/cdd/Gemini_BATUSD_d.csv",
@@ -68,7 +82,7 @@ var PairSyncers = map[conversionrate2.Pair][]syncer2.Syncer{
 				},
 			},
 		},
-		syncer2.HolisticSyncer{
+		syncer.HolisticSyncer{
 			ReadTransformer: readtransformer.GeminiCSV{
 				Reader: csvreader.HTTPCSVReader{
 					Location: "https://www.cryptodatadownload.com/cdd/Gemini_BATUSD_1h.csv",
@@ -77,8 +91,8 @@ var PairSyncers = map[conversionrate2.Pair][]syncer2.Syncer{
 			},
 		},
 	},
-	conversionrate2.PairUSDLINK: {
-		syncer2.HolisticSyncer{
+	conversionrate.PairUSDLINK: {
+		syncer.HolisticSyncer{
 			ReadTransformer: readtransformer.GeminiCSV{
 				Reader: csvreader.HTTPCSVReader{
 					Location: "https://www.cryptodatadownload.com/cdd/Gemini_LINKUSD_d.csv",
@@ -86,7 +100,7 @@ var PairSyncers = map[conversionrate2.Pair][]syncer2.Syncer{
 				},
 			},
 		},
-		syncer2.HolisticSyncer{
+		syncer.HolisticSyncer{
 			ReadTransformer: readtransformer.GeminiCSV{
 				Reader: csvreader.HTTPCSVReader{
 					Location: "https://www.cryptodatadownload.com/cdd/Gemini_LINKUSD_1h.csv",
@@ -98,7 +112,7 @@ var PairSyncers = map[conversionrate2.Pair][]syncer2.Syncer{
 }
 
 func SyncAll(b Backends) error {
-	var failedSyncs []conversionrate2.Pair
+	var failedSyncs []conversionrate.Pair
 	for p, syncers := range PairSyncers {
 		successful := false
 		for _, s := range syncers {
@@ -120,7 +134,7 @@ func SyncAll(b Backends) error {
 	}
 
 	if len(failedSyncs) > 0 {
-		return errors.Wrap(conversionrate2.ErrPairSyncFailed, "", j.MKV{
+		return errors.Wrap(conversionrate.ErrPairSyncFailed, "", j.MKV{
 			"failed_syncs": failedSyncs,
 		})
 	}

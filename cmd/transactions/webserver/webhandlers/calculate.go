@@ -21,7 +21,7 @@ func (c CalculateHandler) Calculate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// TODO(Make this dynamic from the form)
-	fiat := "USD"
+	fiat := "ZAR"
 
 	yet, err := calculator.Calculate(c.B, fiat, ts)
 	if err != nil {

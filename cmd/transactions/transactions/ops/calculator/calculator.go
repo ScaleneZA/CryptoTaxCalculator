@@ -132,7 +132,7 @@ func taxableYear(timestamp int64) int {
 
 func fiatValue(b Backends, timestamp int64, fiat, coin string, amount, wholeValue float64) (float64, error) {
 	if wholeValue > 0 {
-		return amount * wholeValue, nil
+		//return amount * wholeValue, nil
 	}
 
 	rate, err := b.RatesClient().ValueAtTime(fiat, coin, timestamp)
