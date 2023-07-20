@@ -1,23 +1,24 @@
 package main
 
 import (
-	pb "github.com/ScaleneZA/CryptoTaxCalculator/cmd/rates/conversionrate/conversionratepb"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/rates/conversionrate/ops/sync"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/rates/conversionrate/server"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/rates/db"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/rates/di"
-	"github.com/luno/jettison/interceptors"
-	"google.golang.org/grpc"
 	"log"
-	"net"
 	"time"
 )
 
 func main() {
 	b := di.SetupDI()
 
+	//resetDB()
 	//go syncCurrenciesForever(b)
-	grpcServer(b)
+
+	err := server.Serve(b)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func syncCurrenciesForever(b di.Backends) {
@@ -31,26 +32,6 @@ func syncCurrenciesForever(b di.Backends) {
 		log.Println("Synced all currencies")
 
 		time.Sleep(time.Hour * 12)
-	}
-}
-
-func grpcServer(b di.Backends) {
-	lis, err := net.Listen("tcp", ":50051")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	s := grpc.NewServer(
-		grpc.UnaryInterceptor(interceptors.UnaryServerInterceptor),
-		grpc.StreamInterceptor(interceptors.StreamServerInterceptor),
-	)
-
-	pb.RegisterConversionrateServer(s, &server.Server{
-		B: b,
-	})
-
-	if err := s.Serve(lis); err != nil {
-		log.Fatal(err)
 	}
 }
 
