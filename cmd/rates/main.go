@@ -6,6 +6,7 @@ import (
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/rates/conversionrate/server"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/rates/db"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/rates/di"
+	"github.com/luno/jettison/interceptors"
 	"google.golang.org/grpc"
 	"log"
 	"net"
@@ -39,7 +40,11 @@ func grpcServer(b di.Backends) {
 		log.Fatal(err)
 	}
 
-	s := grpc.NewServer()
+	s := grpc.NewServer(
+		grpc.UnaryInterceptor(interceptors.UnaryServerInterceptor),
+		grpc.StreamInterceptor(interceptors.StreamServerInterceptor),
+	)
+
 	pb.RegisterConversionrateServer(s, &server.Server{
 		B: b,
 	})

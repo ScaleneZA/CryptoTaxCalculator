@@ -2,7 +2,7 @@ package marketvalue
 
 import (
 	"database/sql"
-	conversionrate2 "github.com/ScaleneZA/CryptoTaxCalculator/cmd/rates/conversionrate"
+	conversionrate "github.com/ScaleneZA/CryptoTaxCalculator/cmd/rates/conversionrate"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/rates/conversionrate/db/markets"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/rates/di"
 	"github.com/luno/jettison/jtest"
@@ -17,18 +17,18 @@ func TestFindClosest(t *testing.T) {
 
 	testCases := []struct {
 		name        string
-		pair        conversionrate2.Pair
+		pair        conversionrate.Pair
 		timestamp   int64
-		expected    *conversionrate2.MarketPair
+		expected    *conversionrate.MarketPair
 		expectedErr error
 	}{
 		{
 			name:      "find closest before",
-			pair:      conversionrate2.PairUSDBTC,
+			pair:      conversionrate.PairUSDBTC,
 			timestamp: 1689375600001,
-			expected: &conversionrate2.MarketPair{
-				Pair: conversionrate2.PairUSDBTC,
-				MarketSlice: conversionrate2.MarketSlice{
+			expected: &conversionrate.MarketPair{
+				Pair: conversionrate.PairUSDBTC,
+				MarketSlice: conversionrate.MarketSlice{
 					Timestamp: 1689375600000,
 					Open:      30270.01,
 					High:      30341.7,
@@ -39,11 +39,11 @@ func TestFindClosest(t *testing.T) {
 		},
 		{
 			name:      "find closest after",
-			pair:      conversionrate2.PairUSDBTC,
+			pair:      conversionrate.PairUSDBTC,
 			timestamp: 1689368399999,
-			expected: &conversionrate2.MarketPair{
-				Pair: conversionrate2.PairUSDBTC,
-				MarketSlice: conversionrate2.MarketSlice{
+			expected: &conversionrate.MarketPair{
+				Pair: conversionrate.PairUSDBTC,
+				MarketSlice: conversionrate.MarketSlice{
 					Timestamp: 1689368400000,
 					Open:      30205.98,
 					High:      30295.32,
@@ -54,17 +54,17 @@ func TestFindClosest(t *testing.T) {
 		},
 		{
 			name:        "closest rates are stale",
-			pair:        conversionrate2.PairUSDBTC,
+			pair:        conversionrate.PairUSDBTC,
 			timestamp:   1234,
 			expected:    nil,
-			expectedErr: conversionrate2.ErrStoredRateExceedsThreshold,
+			expectedErr: conversionrate.ErrStoredRateExceedsThreshold,
 		},
 		{
 			name:        "no market for pair",
-			pair:        conversionrate2.PairUSDLTC,
+			pair:        conversionrate.PairUSDLTC,
 			timestamp:   1234,
 			expected:    nil,
-			expectedErr: conversionrate2.ErrNoMarket,
+			expectedErr: conversionrate.ErrNoMarket,
 		},
 	}
 
@@ -116,10 +116,10 @@ func TestValueAtTime(t *testing.T) {
 }
 
 func seedData(t *testing.T, dbc *sql.DB) {
-	mps := []conversionrate2.MarketPair{
+	mps := []conversionrate.MarketPair{
 		{
-			Pair: conversionrate2.PairUSDBTC,
-			MarketSlice: conversionrate2.MarketSlice{
+			Pair: conversionrate.PairUSDBTC,
+			MarketSlice: conversionrate.MarketSlice{
 				Timestamp: 1689375600000,
 				Open:      30270.01,
 				High:      30341.7,
@@ -128,8 +128,8 @@ func seedData(t *testing.T, dbc *sql.DB) {
 			},
 		},
 		{
-			Pair: conversionrate2.PairUSDBTC,
-			MarketSlice: conversionrate2.MarketSlice{
+			Pair: conversionrate.PairUSDBTC,
+			MarketSlice: conversionrate.MarketSlice{
 				Timestamp: 1689372000000,
 				Open:      30263.39,
 				High:      30280.28,
@@ -138,8 +138,8 @@ func seedData(t *testing.T, dbc *sql.DB) {
 			},
 		},
 		{
-			Pair: conversionrate2.PairUSDBTC,
-			MarketSlice: conversionrate2.MarketSlice{
+			Pair: conversionrate.PairUSDBTC,
+			MarketSlice: conversionrate.MarketSlice{
 				Timestamp: 1689368400000,
 				Open:      30205.98,
 				High:      30295.32,
@@ -148,8 +148,8 @@ func seedData(t *testing.T, dbc *sql.DB) {
 			},
 		},
 		{
-			Pair: conversionrate2.PairZARUSD,
-			MarketSlice: conversionrate2.MarketSlice{
+			Pair: conversionrate.PairZARUSD,
+			MarketSlice: conversionrate.MarketSlice{
 				Timestamp: 1689375600000,
 				Open:      19.10,
 				High:      19.56,
@@ -158,8 +158,8 @@ func seedData(t *testing.T, dbc *sql.DB) {
 			},
 		},
 		{
-			Pair: conversionrate2.PairZARUSD,
-			MarketSlice: conversionrate2.MarketSlice{
+			Pair: conversionrate.PairZARUSD,
+			MarketSlice: conversionrate.MarketSlice{
 				Timestamp: 1689372000000,
 				Open:      20.10,
 				High:      20.12,
@@ -168,8 +168,8 @@ func seedData(t *testing.T, dbc *sql.DB) {
 			},
 		},
 		{
-			Pair: conversionrate2.PairZARUSD,
-			MarketSlice: conversionrate2.MarketSlice{
+			Pair: conversionrate.PairZARUSD,
+			MarketSlice: conversionrate.MarketSlice{
 				Timestamp: 1689368400000,
 				Open:      21.50,
 				High:      21.56,

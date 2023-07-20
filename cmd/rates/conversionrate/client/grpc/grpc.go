@@ -3,6 +3,7 @@ package grpc
 import (
 	"context"
 	pb "github.com/ScaleneZA/CryptoTaxCalculator/cmd/rates/conversionrate/conversionratepb"
+	"github.com/luno/jettison/interceptors"
 	"google.golang.org/grpc"
 )
 
@@ -12,7 +13,10 @@ type Client struct {
 }
 
 func New() (*Client, error) {
-	conn, err := grpc.Dial(":50051", grpc.WithInsecure())
+	conn, err := grpc.Dial(":50051", grpc.WithInsecure(),
+		grpc.WithUnaryInterceptor(interceptors.UnaryClientInterceptor),
+		grpc.WithStreamInterceptor(interceptors.StreamClientInterceptor),
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -32,6 +36,6 @@ func (c Client) ValueAtTime(from, to string, timestamp int64) (float64, error) {
 	if err != nil {
 		return 0, err
 	}
-	
+
 	return resp.Rate, nil
 }

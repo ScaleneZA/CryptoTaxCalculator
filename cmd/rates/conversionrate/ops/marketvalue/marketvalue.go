@@ -17,7 +17,7 @@ func ValueAtTime(b Backends, from, to string, timestamp int64) (float64, error) 
 		return 0, err
 	}
 
-	return findRate(mps, from, to, 0)
+	return findRate(mps, from, to, timestamp, 0)
 }
 
 func closestMarketPairsAtPoint(b Backends, timestamp int64) ([]conversionrate.MarketPair, error) {
@@ -56,31 +56,24 @@ func FindClosest(b Backends, p conversionrate.Pair, timestamp int64) (*conversio
 		closest = closestAfter
 	}
 
-	if closestExceedsThreshold(timestamp, closest) {
-		err := errors.Wrap(conversionrate.ErrStoredRateExceedsThreshold, "", j.MKV{
-			"pair":              p.String(),
-			"timestamp":         timestamp,
-			"closest_timestamp": closest.Timestamp,
-		})
-		return nil, err
-	}
-
 	return closest, nil
-}
-
-func closestExceedsThreshold(timestamp int64, closest *conversionrate.MarketPair) bool {
-	const week = 604800
-	return (timestamp-closest.Timestamp) > week || (closest.Timestamp-timestamp) > week
 }
 
 // findRate currently only works for increasing value pairs. For example ZAR -> USD -> BTC. It
 // would not work in reverse, for example USD -> BTC -> ETH unless the values imported are negative
 // and already reversed.
-func findRate(mps []conversionrate.MarketPair, from, to string, depth int) (float64, error) {
+func findRate(mps []conversionrate.MarketPair, from, to string, timestamp int64, depth int) (float64, error) {
 	depth++
 	for _, mp := range mps {
 		if mp.FromCurrency != from {
 			continue
+		}
+		if rateTimeExceedsThreshold(timestamp, mp.Timestamp) {
+			return 0, errors.Wrap(conversionrate.ErrStoredRateExceedsThreshold, "", j.MKV{
+				"pair":           mp.Pair,
+				"timestamp":      timestamp,
+				"rate_timestamp": mp.Timestamp,
+			})
 		}
 
 		if mp.ToCurrency == to {
@@ -88,7 +81,7 @@ func findRate(mps []conversionrate.MarketPair, from, to string, depth int) (floa
 		}
 
 		if depth <= depthLimit {
-			rate, err := findRate(mps, mp.ToCurrency, to, depth)
+			rate, err := findRate(mps, mp.ToCurrency, to, timestamp, depth)
 			if err != nil {
 				return 0, err
 			}
@@ -102,4 +95,9 @@ func findRate(mps []conversionrate.MarketPair, from, to string, depth int) (floa
 		"to":      to,
 		"mps_len": len(mps),
 	})
+}
+
+func rateTimeExceedsThreshold(timestamp, closestTimestamp int64) bool {
+	const week = 604800
+	return (timestamp-closestTimestamp) > week || (closestTimestamp-timestamp) > week
 }
