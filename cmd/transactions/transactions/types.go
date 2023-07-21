@@ -67,6 +67,11 @@ func (tt TransactionType) ShouldCheck() bool {
 	return tt == TypeSendInternal || tt == TypeReceiveInternal
 }
 
+type FiatPrice struct {
+	Fiat  string
+	Price float64
+}
+
 type Transaction struct {
 	UID           string
 	Transformer   TransformType
@@ -75,8 +80,8 @@ type Transaction struct {
 	OverridedType TransactionType
 	Amount        float64
 	Timestamp     int64
-	// TODO: Include currency in here
-	WholePriceAtPoint float64
+
+	WholePriceAtPoint FiatPrice
 }
 
 func (t Transaction) FinalType() TransactionType {

@@ -37,12 +37,15 @@ func (s BasicSource) TransformRow(row []string) ([]transactions.Transaction, err
 	hashString := hex.EncodeToString(hash[:])
 
 	return []transactions.Transaction{{
-		UID:               hashString,
-		Transformer:       transactions.TransformTypeBasic,
-		Currency:          row[1],
-		DetectedType:      typ,
-		Amount:            amount,
-		Timestamp:         int64(timestamp),
-		WholePriceAtPoint: wholePrice,
+		UID:          hashString,
+		Transformer:  transactions.TransformTypeBasic,
+		Currency:     row[1],
+		DetectedType: typ,
+		Amount:       amount,
+		Timestamp:    int64(timestamp),
+		WholePriceAtPoint: transactions.FiatPrice{
+			Fiat:  row[5],
+			Price: wholePrice,
+		},
 	}}, nil
 }

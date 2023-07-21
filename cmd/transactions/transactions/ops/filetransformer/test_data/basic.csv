@@ -1,5 +1,5 @@
-Transaction ID,Currency,Amount,Timestamp,Historyical Price At Point
-1,ETH,0.56,1519812503,100
-2,ETH,1.2,1535450903,200
-3,ETH,-0.25,1656410903,300
-4,ETH,-1.25,1687946903,400
+Transaction ID,Currency,Amount,Timestamp,Historyical Price At Point, Fiat
+1,ETH,0.56,1519812503,100,ZAR
+2,ETH,1.2,1535450903,200,ZAR
+3,ETH,-0.25,1656410903,300,ZAR
+4,ETH,-1.25,1687946903,400,ZAR

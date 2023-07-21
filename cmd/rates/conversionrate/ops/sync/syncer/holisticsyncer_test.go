@@ -11,9 +11,9 @@ import (
 	"testing"
 )
 
-func TestHolisticSyncer_Sync(t *testing.T) {
-	b := di.SetupDIForTesting()
+var b = di.SetupDIForTesting()
 
+func TestHolisticSyncer_Sync(t *testing.T) {
 	mps, err := markets.ListAll(b.DB())
 	require.Nil(t, err)
 	require.Equal(t, []conversionrate.MarketPair(nil), mps)
@@ -37,7 +37,7 @@ func TestHolisticSyncer_Sync(t *testing.T) {
 		{
 			Pair: conversionrate.PairUSDBTC,
 			MarketSlice: conversionrate.MarketSlice{
-				Timestamp: 1689375600000,
+				Timestamp: 1689375600,
 				Open:      30270.01,
 				High:      30341.7,
 				Low:       30250.01,
@@ -47,7 +47,7 @@ func TestHolisticSyncer_Sync(t *testing.T) {
 		{
 			Pair: conversionrate.PairUSDBTC,
 			MarketSlice: conversionrate.MarketSlice{
-				Timestamp: 1689372000000,
+				Timestamp: 1689372000,
 				Open:      30263.39,
 				High:      30280.28,
 				Low:       30233.52,
@@ -57,7 +57,7 @@ func TestHolisticSyncer_Sync(t *testing.T) {
 		{
 			Pair: conversionrate.PairUSDBTC,
 			MarketSlice: conversionrate.MarketSlice{
-				Timestamp: 1689368400000,
+				Timestamp: 1689368400,
 				Open:      30205.98,
 				High:      30295.32,
 				Low:       30175.01,

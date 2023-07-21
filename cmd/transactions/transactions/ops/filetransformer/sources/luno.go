@@ -41,13 +41,16 @@ func (s LunoSource) TransformRow(row []string) ([]transactions.Transaction, erro
 	hashString := hex.EncodeToString(hash[:])
 
 	return []transactions.Transaction{{
-		UID:               hashString,
-		Transformer:       transactions.TransformTypeLuno,
-		Currency:          mapCurrency(row[4]),
-		DetectedType:      s.inferType(row, amount),
-		Amount:            math.Abs(amount),
-		Timestamp:         tim.Unix(),
-		WholePriceAtPoint: wholePrice,
+		UID:          hashString,
+		Transformer:  transactions.TransformTypeLuno,
+		Currency:     mapCurrency(row[4]),
+		DetectedType: s.inferType(row, amount),
+		Amount:       math.Abs(amount),
+		Timestamp:    tim.Unix(),
+		WholePriceAtPoint: transactions.FiatPrice{
+			Fiat:  row[11],
+			Price: wholePrice,
+		},
 	}}, nil
 }
 

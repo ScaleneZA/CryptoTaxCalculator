@@ -2,7 +2,7 @@ package marketvalue
 
 import (
 	"database/sql"
-	conversionrate "github.com/ScaleneZA/CryptoTaxCalculator/cmd/rates/conversionrate"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/rates/conversionrate"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/rates/conversionrate/db/markets"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/rates/di"
 	"github.com/luno/jettison/jtest"
@@ -11,8 +11,9 @@ import (
 	"testing"
 )
 
+var b = di.SetupDIForTesting()
+
 func TestFindClosest(t *testing.T) {
-	b := di.SetupDIForTesting()
 	seedData(t, b.DB())
 
 	testCases := []struct {
@@ -53,13 +54,6 @@ func TestFindClosest(t *testing.T) {
 			},
 		},
 		{
-			name:        "closest rates are stale",
-			pair:        conversionrate.PairUSDBTC,
-			timestamp:   1234,
-			expected:    nil,
-			expectedErr: conversionrate.ErrStoredRateExceedsThreshold,
-		},
-		{
 			name:        "no market for pair",
 			pair:        conversionrate.PairUSDLTC,
 			timestamp:   1234,
@@ -79,15 +73,15 @@ func TestFindClosest(t *testing.T) {
 }
 
 func TestValueAtTime(t *testing.T) {
-	b := di.SetupDIForTesting()
 	seedData(t, b.DB())
 
 	testCases := []struct {
-		name      string
-		from      string
-		to        string
-		timestamp int64
-		expected  float64
+		name        string
+		from        string
+		to          string
+		timestamp   int64
+		expected    float64
+		expectedErr error
 	}{
 		{
 			name:      "One hop",
@@ -103,12 +97,19 @@ func TestValueAtTime(t *testing.T) {
 			timestamp: 1689375600001,
 			expected:  588523.83,
 		},
+		{
+			name:        "A rate is stale",
+			from:        "ZAR",
+			to:          "BTC",
+			timestamp:   1234,
+			expectedErr: conversionrate.ErrStoredRateExceedsThreshold,
+		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			actual, err := ValueAtTime(b, tc.from, tc.to, tc.timestamp)
-			require.Nil(t, err)
+			jtest.Require(t, tc.expectedErr, err)
 			require.Equal(t, tc.expected, math.Round(actual*100)/100)
 		})
 	}
@@ -180,7 +181,6 @@ func seedData(t *testing.T, dbc *sql.DB) {
 	}
 
 	for _, mp := range mps {
-		_, err := markets.CreateIgnoreDuplicate(dbc, mp)
-		require.Nil(t, err)
+		markets.CreateIgnoreDuplicate(dbc, mp)
 	}
 }
