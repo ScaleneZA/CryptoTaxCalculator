@@ -11,15 +11,15 @@ import (
 
 type BasicSource struct{}
 
-func (s BasicSource) TransformRow(row []string) (transactions.Transaction, error) {
+func (s BasicSource) TransformRow(row []string) ([]transactions.Transaction, error) {
 	amount, err := strconv.ParseFloat(row[2], 64)
 	if err != nil {
-		return transactions.Transaction{}, err
+		return nil, err
 	}
 
 	timestamp, err := strconv.Atoi(row[3])
 	if err != nil {
-		return transactions.Transaction{}, err
+		return nil, err
 	}
 
 	typ := transactions.TypeBuy
@@ -30,13 +30,13 @@ func (s BasicSource) TransformRow(row []string) (transactions.Transaction, error
 
 	wholePrice, err := strconv.ParseFloat(row[4], 64)
 	if err != nil {
-		return transactions.Transaction{}, err
+		return nil, err
 	}
 
 	hash := md5.Sum([]byte(strings.Join(row[:], ",")))
 	hashString := hex.EncodeToString(hash[:])
 
-	return transactions.Transaction{
+	return []transactions.Transaction{{
 		UID:               hashString,
 		Transformer:       transactions.TransformTypeBasic,
 		Currency:          row[1],
@@ -44,5 +44,5 @@ func (s BasicSource) TransformRow(row []string) (transactions.Transaction, error
 		Amount:            amount,
 		Timestamp:         int64(timestamp),
 		WholePriceAtPoint: wholePrice,
-	}, nil
+	}}, nil
 }

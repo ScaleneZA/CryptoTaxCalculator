@@ -1,0 +1,5 @@
+Asset, AccountName,Address,AddressName,Value,Symbol,Fees,InternalTransfer,TransactionID,Time(UTC),Time(ISO8601-UTC),BlockExplorer
+Ethereum,Ethereum,0x0db8b9656f2404647b02979df3667ef39e903863,,-0.356137334,ETH,0.00058689,false,fd21481fbb7a588e41fc331da7973721ac52eeaf6ca6bac7422f32a1d7486ebb,Tue 29 6 2021 17:57:29,2021-06-29T17:57Z,https://etherscan.io/tx/
+Ethereum,Ethereum,0x0db8b9656f2404647b02979df3667ef39e903863,,-1.0019563,ETH,0.0019563,false,3c18c916f6907d213bf216e5fa3b427c9f4bac766459b25297d2767af181eac3,Thu 29 4 2021 14:27:15,2021-04-29T14:27Z,https://etherscan.io/tx/
+XRP,XRP,rLHzPsX6oXkzU2qL12kHCH8G8cnZv1rBJh,,449.20965,XRP,0.000012,false,689d3ff18175b81ef776f7c0580d4d81fd2b2cf39cdb227903653dcae15d2142,Tue 09 2 2021 05:47:02,2021-02-09T05:47Z,https://xrpcharts.ripple.com/#/transactions/
+Litecoin,Litecoin,LLY3sFtv3Pkx4YhesM3QPvqGpk6aBa5puK,,16.519,LTC,,false,905d7c3368ba7eaf2cb18d797223d38711b296d089721d27961da10db234cb58,Thu 13 7 2017 07:08:19,2017-07-13T07:08Z,https://blockchair.com/litecoin/transaction/?from=coinomi

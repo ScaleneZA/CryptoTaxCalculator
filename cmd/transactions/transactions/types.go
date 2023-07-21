@@ -14,8 +14,10 @@ const (
 	TypeSendExternal    TransactionType = 5
 	TypeReceiveExternal TransactionType = 6
 	TypeFee             TransactionType = 7
+	TypeInterest        TransactionType = 8
+	TypeAirdrop         TransactionType = 9
 
-	typeSentinel TransactionType = 8
+	typeSentinel TransactionType = 10
 )
 
 func ValidTransactionTypes() []TransactionType {
@@ -73,7 +75,7 @@ type Transaction struct {
 	OverridedType TransactionType
 	Amount        float64
 	Timestamp     int64
-	// TODO: Make this dynamic if possible
+	// TODO: Include currency in here
 	WholePriceAtPoint float64
 }
 
@@ -91,12 +93,16 @@ const (
 	TransformTypeUnknown  = 0
 	TransformTypeBasic    = 1
 	TransformTypeLuno     = 2
-	transformTypeSentinel = 3
+	TransformTypeBinance  = 3
+	TransformTypeCoinomi  = 4
+	transformTypeSentinel = 5
 )
 
 func SelectableTransformTypes() []TransformType {
 	return []TransformType{
 		TransformTypeBasic,
+		TransformTypeBinance,
+		TransformTypeCoinomi,
 		TransformTypeLuno,
 	}
 }
@@ -105,6 +111,8 @@ var transformTypeStrings = map[TransformType]string{
 	TransformTypeUnknown: "Unknown",
 	TransformTypeBasic:   "Basic (Don't use)",
 	TransformTypeLuno:    "Luno",
+	TransformTypeBinance: "Binance",
+	TransformTypeCoinomi: "Coinomi",
 }
 
 func (tt TransformType) String() string {

@@ -18,20 +18,21 @@ var currencyMap = map[string]string{
 	"XBT": "BTC",
 }
 
-func (s LunoSource) TransformRow(row []string) (transactions.Transaction, error) {
+func (s LunoSource) TransformRow(row []string) ([]transactions.Transaction, error) {
 	amount, err := strconv.ParseFloat(row[5], 64)
 	if err != nil {
-		return transactions.Transaction{}, err
+		return nil, err
 	}
 
 	tim, err := time.Parse("2006-01-02 15:04:05", row[2])
 	if err != nil {
-		return transactions.Transaction{}, err
+		return nil, err
 	}
 
+	// We need to be careful with this, it could cause mis-matches with the tax fiat selected.
 	fiatValue, err := strconv.ParseFloat(row[12], 64)
 	if err != nil {
-		return transactions.Transaction{}, err
+		return nil, err
 	}
 
 	wholePrice := fiatValue / math.Abs(amount)
@@ -39,18 +40,18 @@ func (s LunoSource) TransformRow(row []string) (transactions.Transaction, error)
 	hash := md5.Sum([]byte(strings.Join(row[:], ",")))
 	hashString := hex.EncodeToString(hash[:])
 
-	return transactions.Transaction{
+	return []transactions.Transaction{{
 		UID:               hashString,
 		Transformer:       transactions.TransformTypeLuno,
 		Currency:          mapCurrency(row[4]),
-		DetectedType:      inferType(row, amount),
+		DetectedType:      s.inferType(row, amount),
 		Amount:            math.Abs(amount),
 		Timestamp:         tim.Unix(),
 		WholePriceAtPoint: wholePrice,
-	}, nil
+	}}, nil
 }
 
-func inferType(row []string, amount float64) transactions.TransactionType {
+func (s LunoSource) inferType(row []string, amount float64) transactions.TransactionType {
 	if amount < 0 {
 		if strings.Contains(row[3], "Sold") {
 			return transactions.TypeSell

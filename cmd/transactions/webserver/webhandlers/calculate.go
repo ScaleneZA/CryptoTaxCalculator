@@ -25,7 +25,7 @@ func (c CalculateHandler) Calculate(w http.ResponseWriter, r *http.Request) {
 
 	yet, err := calculator.Calculate(c.B, fiat, ts)
 	if err != nil {
-		http.Error(w, "Cannot calculate tax:"+err.Error(), http.StatusBadRequest)
+		http.Error(w, "Cannot calculate tax: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 

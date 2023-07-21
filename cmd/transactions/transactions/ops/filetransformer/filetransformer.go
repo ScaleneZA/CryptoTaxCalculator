@@ -52,7 +52,7 @@ func Transform(files []io.Reader, typ transactions.TransformType) ([]transaction
 				return nil, err
 			}
 
-			ts = append(ts, t)
+			ts = append(ts, t...)
 		}
 
 	}
@@ -78,6 +78,8 @@ func sourceFromType(typ transactions.TransformType) (sources.Source, error) {
 		src = sources.BasicSource{}
 	case transactions.TransformTypeLuno:
 		src = sources.LunoSource{}
+	case transactions.TransformTypeBinance:
+		src = sources.BinanceSource{}
 	default:
 		return nil, errors.Wrap(transactions.ErrUnsupportedTranformType, "", j.MKV{
 			"type": typ,
