@@ -15,7 +15,7 @@ func TestBasicSource_TransformRow(t *testing.T) {
 		expected []transactions.Transaction
 	}{
 		{
-			name: "basic",
+			name: "basic buy",
 			row:  []string{"1", "ETH", "0.56", "1519812503", "100", "ZAR"},
 			expected: []transactions.Transaction{
 				{
@@ -23,6 +23,24 @@ func TestBasicSource_TransformRow(t *testing.T) {
 					Transformer:  transactions.TransformTypeBasic,
 					Currency:     "ETH",
 					DetectedType: transactions.TypeBuy,
+					Amount:       0.56,
+					Timestamp:    1519812503,
+					WholePriceAtPoint: transactions.FiatPrice{
+						Fiat:  "ZAR",
+						Price: 100,
+					},
+				},
+			},
+		},
+		{
+			name: "basic sell",
+			row:  []string{"1", "ETH", "-0.56", "1519812503", "100", "ZAR"},
+			expected: []transactions.Transaction{
+				{
+					UID:          "ff71ca95c3f6f2be107ccbaa2faf03b2",
+					Transformer:  transactions.TransformTypeBasic,
+					Currency:     "ETH",
+					DetectedType: transactions.TypeSell,
 					Amount:       0.56,
 					Timestamp:    1519812503,
 					WholePriceAtPoint: transactions.FiatPrice{
@@ -105,6 +123,20 @@ func TestBinanceSource_TransformRow(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "binance interest earned",
+			row:  []string{"51633489", "2022-04-01 02:01:36", "Spot", "POS savings interest", "ATOM", "0.00417670", ""},
+			expected: []transactions.Transaction{
+				{
+					UID:          "16169597266dfa3691c59a4e1b9a04bc",
+					Transformer:  transactions.TransformTypeBinance,
+					Currency:     "ATOM",
+					DetectedType: transactions.TypeInterest,
+					Amount:       0.00417670,
+					Timestamp:    1648778496,
+				},
+			},
+		},
 	}
 
 	for _, tc := range testCases {
@@ -140,6 +172,20 @@ func TestCoinomiSource_TransformRow(t *testing.T) {
 					Currency:     "ETH",
 					DetectedType: transactions.TypeFee,
 					Amount:       0.00058689,
+					Timestamp:    1624989420,
+				},
+			},
+		},
+		{
+			name: "coinomi withdraw - no fee",
+			row:  []string{"Ethereum", "Ethereum", "0x0db8b9656f2404647b02979df3667ef39e903863", "", "-0.356137334", "ETH", "", "false", "fd21481fbb7a588e41fc331da7973721ac52eeaf6ca6bac7422f32a1d7486ebb", "Tue 29 6 2021 17:57:29", "2021-06-29T17:57Z", "https://etherscan.io/tx/1234"},
+			expected: []transactions.Transaction{
+				{
+					UID:          "fd21481fbb7a588e41fc331da7973721ac52eeaf6ca6bac7422f32a1d7486ebb",
+					Transformer:  transactions.TransformTypeCoinomi,
+					Currency:     "ETH",
+					DetectedType: transactions.TypeSendInternal,
+					Amount:       0.356137334,
 					Timestamp:    1624989420,
 				},
 			},
@@ -221,12 +267,12 @@ func TestLunoSource_TransformRow(t *testing.T) {
 		},
 		{
 			name: "luno send",
-			row:  []string{"123456789", "135", "2021-08-26 07:22:02", "Sent Bitcoin to KNOWN234", "XBT", "-0.00072384", "0", "0.18967279", "0.18966393", "", "KNOWN234", "ZAR", "520.37"},
+			row:  []string{"123456789", "135", "2021-08-26 07:22:02", "Sent Ethereum to KNOWN234", "ETH", "-0.00072384", "0", "0.18967279", "0.18966393", "", "KNOWN234", "ZAR", "520.37"},
 			expected: []transactions.Transaction{
 				{
-					UID:          "707d9e766c20c62ad415bc45193f3cc1",
+					UID:          "5ac4db3377fa6767643af8e42c04c161",
 					Transformer:  transactions.TransformTypeLuno,
-					Currency:     "BTC",
+					Currency:     "ETH",
 					DetectedType: transactions.TypeSendInternal,
 					Amount:       0.00072384,
 					Timestamp:    1629962522,
@@ -251,6 +297,24 @@ func TestLunoSource_TransformRow(t *testing.T) {
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 12895.167895167893,
+					},
+				},
+			},
+		},
+		{
+			name: "luno receive",
+			row:  []string{"123456789", "123", "2021-04-29 13:03:53", "Received Bitcoin", "XBT", "0.09093", "0.09093", "0.76043057", "0.76043057", "", "", "ZAR", "73098.99"},
+			expected: []transactions.Transaction{
+				{
+					UID:          "934d9b1fe0f50f6abaf01d55d0088e7a",
+					Transformer:  transactions.TransformTypeLuno,
+					Currency:     "BTC",
+					DetectedType: transactions.TypeReceiveInternal,
+					Amount:       0.09093,
+					Timestamp:    1619701433,
+					WholePriceAtPoint: transactions.FiatPrice{
+						Fiat:  "ZAR",
+						Price: 803903.9920818213,
 					},
 				},
 			},

@@ -39,6 +39,21 @@ func TestFindClosest(t *testing.T) {
 			},
 		},
 		{
+			name:      "find closest before again",
+			pair:      conversionrate.PairUSDBTC,
+			timestamp: 1689372000001,
+			expected: &conversionrate.MarketPair{
+				Pair: conversionrate.PairUSDBTC,
+				MarketSlice: conversionrate.MarketSlice{
+					Timestamp: 1689372000000,
+					Open:      30263.39,
+					High:      30280.28,
+					Low:       30233.52,
+					Close:     30270.01,
+				},
+			},
+		},
+		{
 			name:      "find closest after",
 			pair:      conversionrate.PairUSDBTC,
 			timestamp: 1689368399999,
@@ -50,6 +65,21 @@ func TestFindClosest(t *testing.T) {
 					High:      30295.32,
 					Low:       30175.01,
 					Close:     30263.39,
+				},
+			},
+		},
+		{
+			name:      "find closest after again",
+			pair:      conversionrate.PairUSDBTC,
+			timestamp: 1689371999999,
+			expected: &conversionrate.MarketPair{
+				Pair: conversionrate.PairUSDBTC,
+				MarketSlice: conversionrate.MarketSlice{
+					Timestamp: 1689372000000,
+					Open:      30263.39,
+					High:      30280.28,
+					Low:       30233.52,
+					Close:     30270.01,
 				},
 			},
 		},
@@ -103,6 +133,13 @@ func TestValueAtTime(t *testing.T) {
 			to:          "BTC",
 			timestamp:   1234,
 			expectedErr: conversionrate.ErrStoredRateExceedsThreshold,
+		},
+		{
+			name:        "Rate not found",
+			from:        "USD",
+			to:          "MOON",
+			timestamp:   1689375600001,
+			expectedErr: conversionrate.ErrNoRatesFound,
 		},
 	}
 

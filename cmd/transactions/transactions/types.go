@@ -54,7 +54,7 @@ func (tt TransactionType) Int() int {
 }
 
 func (tt TransactionType) ShouldIncreaseTally() bool {
-	return tt == TypeBuy || tt == TypeReceiveExternal
+	return tt == TypeBuy || tt == TypeReceiveExternal || tt == TypeInterest
 }
 
 // Reminder: Decreasing the tally does not always affect tax.

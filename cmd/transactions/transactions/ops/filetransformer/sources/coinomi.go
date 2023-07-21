@@ -36,6 +36,7 @@ func (s CoinomiSource) TransformRow(row []string) ([]transactions.Transaction, e
 
 	feeAmnt, err := strconv.ParseFloat(row[6], 64)
 	if err != nil {
+		// NoReturnErr: Default to 0.
 		feeAmnt = 0
 	}
 	if feeAmnt > 0 {
