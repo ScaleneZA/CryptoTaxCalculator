@@ -104,7 +104,8 @@ func eatFromTallyUntilSatisfied(b Backends, fiat string, currentTransaction tran
 		tally[i].Amount = newAmount
 		if toSubtract <= float64(0) {
 			break
-		} else if i+1 >= len(tally) {
+		}
+		if i+1 >= len(tally) {
 			fmt.Println(fmt.Sprintf("WARNING: Trying to sell asset that we don't have. Amount over: %f", toSubtract))
 		}
 	}
@@ -131,13 +132,16 @@ func taxableYear(timestamp int64) int {
 }
 
 func fiatValue(b Backends, timestamp int64, fiat, coin string, amount float64, wholeValue transactions.FiatPrice) (float64, error) {
-	if wholeValue.Price > 0 {
-		return amount * wholeValue.Price, nil
-	}
+	var rate float64
+	if wholeValue.Price > 0 && fiat == wholeValue.Fiat {
+		rate = wholeValue.Price
+	} else {
+		r, err := b.RatesClient().ValueAtTime(fiat, coin, timestamp)
+		if err != nil {
+			return 0, err
+		}
 
-	rate, err := b.RatesClient().ValueAtTime(fiat, coin, timestamp)
-	if err != nil {
-		return 0, err
+		rate = r
 	}
 
 	return amount * rate, nil

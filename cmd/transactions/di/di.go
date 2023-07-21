@@ -3,11 +3,14 @@ package di
 import (
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/rates/conversionrate"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/rates/conversionrate/client/grpc"
-	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/rates/conversionrate/client/testing"
 )
 
 type Backends interface {
 	RatesClient() conversionrate.Client
+}
+
+type BackendsTest struct {
+	RatesClient conversionrate.Client
 }
 
 func SetupDI() Backends {
@@ -23,15 +26,9 @@ func SetupDI() Backends {
 	return di
 }
 
-func SetupDIForTesting() Backends {
+func SetupDIForTesting(b BackendsTest) Backends {
 	di := new(DI)
-
-	ratesClient, err := testing.New()
-	if err != nil {
-		panic("failed to create new testing client")
-	}
-
-	di.ratesClient = ratesClient
+	di.ratesClient = b.RatesClient
 
 	return di
 }

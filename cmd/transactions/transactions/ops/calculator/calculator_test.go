@@ -1,20 +1,24 @@
 package calculator_test
 
 import (
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/rates/conversionrate"
+	rates_mock "github.com/ScaleneZA/CryptoTaxCalculator/cmd/rates/conversionrate/client/mockery"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/transactions/di"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/transactions/transactions"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/transactions/transactions/ops/calculator"
+	"github.com/luno/jettison/jtest"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"testing"
 )
 
 func TestCalculate(t *testing.T) {
-	b := di.SetupDIForTesting()
-
 	testCases := []struct {
-		name     string
-		seed     []transactions.Transaction
-		expected calculator.YearEndTotals
+		name          string
+		seed          []transactions.Transaction
+		rateMockCalls []*mock.Call
+		expected      calculator.YearEndTotals
+		expectedErr   error
 	}{
 		{
 			name: "Happy Path",
@@ -74,7 +78,7 @@ func TestCalculate(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeSell,
 					Amount:       0.4,
-					Timestamp:    1687947903,
+					Timestamp:    1705835912,
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 2000,
@@ -93,12 +97,136 @@ func TestCalculate(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "Rate not included, calls rates client",
+			seed: []transactions.Transaction{
+				{
+					Currency:     "ETH",
+					DetectedType: transactions.TypeBuy,
+					Amount:       1,
+					Timestamp:    1519812502,
+				},
+				{
+					Currency:     "ETH",
+					DetectedType: transactions.TypeSell,
+					Amount:       0.4,
+					Timestamp:    1705835912,
+				},
+			},
+			rateMockCalls: []*mock.Call{
+				new(mock.Mock).On("ValueAtTime", "ZAR", "ETH", int64(1519812502)).Return(float64(100), nil),
+				new(mock.Mock).On("ValueAtTime", "ZAR", "ETH", int64(1705835912)).Return(float64(1800), nil),
+			},
+			expected: calculator.YearEndTotals{
+				2024: {
+					"ETH":   680,
+					"TOTAL": 680,
+				},
+			},
+		},
+		{
+			name: "Rate fiat incorrect, calls rates client",
+			seed: []transactions.Transaction{
+				{
+					Currency:     "ETH",
+					DetectedType: transactions.TypeBuy,
+					Amount:       1,
+					Timestamp:    1519812502,
+					WholePriceAtPoint: transactions.FiatPrice{
+						Fiat:  "USD",
+						Price: 2000,
+					},
+				},
+				{
+					Currency:     "ETH",
+					DetectedType: transactions.TypeSell,
+					Amount:       0.4,
+					Timestamp:    1705835912,
+					WholePriceAtPoint: transactions.FiatPrice{
+						Fiat:  "USD",
+						Price: 2000,
+					},
+				},
+			},
+			rateMockCalls: []*mock.Call{
+				new(mock.Mock).On("ValueAtTime", "ZAR", "ETH", int64(1519812502)).Return(float64(100), nil),
+				new(mock.Mock).On("ValueAtTime", "ZAR", "ETH", int64(1705835912)).Return(float64(1800), nil),
+			},
+			expected: calculator.YearEndTotals{
+				2024: {
+					"ETH":   680,
+					"TOTAL": 680,
+				},
+			},
+		},
+		{
+			name: "Rate client returns error",
+			seed: []transactions.Transaction{
+				{
+					Currency:     "ETH",
+					DetectedType: transactions.TypeBuy,
+					Amount:       1,
+					Timestamp:    1519812502,
+					WholePriceAtPoint: transactions.FiatPrice{
+						Fiat:  "USD",
+						Price: 2000,
+					},
+				},
+				{
+					Currency:     "ETH",
+					DetectedType: transactions.TypeSell,
+					Amount:       0.4,
+					Timestamp:    1705835912,
+					WholePriceAtPoint: transactions.FiatPrice{
+						Fiat:  "USD",
+						Price: 2000,
+					},
+				},
+			},
+			rateMockCalls: []*mock.Call{
+				new(mock.Mock).On("ValueAtTime", "ZAR", "ETH", int64(1519812502)).Return(float64(0), conversionrate.ErrNoRatesFound),
+			},
+			expectedErr: conversionrate.ErrNoRatesFound,
+		},
+		{
+			name: "Invalid Transaction Order",
+			seed: []transactions.Transaction{
+				{
+					Currency:     "BTC",
+					DetectedType: transactions.TypeBuy,
+					Amount:       0.5,
+					Timestamp:    1535450915,
+					WholePriceAtPoint: transactions.FiatPrice{
+						Fiat:  "ZAR",
+						Price: 900,
+					},
+				},
+				{
+					Currency:     "BTC",
+					DetectedType: transactions.TypeBuy,
+					Amount:       0.56,
+					Timestamp:    1519812503,
+					WholePriceAtPoint: transactions.FiatPrice{
+						Fiat:  "ZAR",
+						Price: 100,
+					},
+				},
+			},
+			expectedErr: transactions.ErrInvalidTransactionOrder,
+		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
+			rc := new(rates_mock.Client)
+			rc.ExpectedCalls = append(rc.ExpectedCalls, tc.rateMockCalls...)
+
+			b := di.SetupDIForTesting(di.BackendsTest{
+				RatesClient: rc,
+			})
+
 			actual, err := calculator.Calculate(b, "ZAR", tc.seed)
-			assert.NoError(t, err)
+			jtest.Require(t, tc.expectedErr, err)
 			assert.Equal(t, tc.expected, actual)
 		})
 	}
