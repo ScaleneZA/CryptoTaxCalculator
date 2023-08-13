@@ -17,7 +17,16 @@ func ValueAtTime(b Backends, from, to string, timestamp int64) (float64, error) 
 		return 0, err
 	}
 
-	return findRate(mps, from, to, timestamp, 0)
+	val, err := findRate(mps, from, to, timestamp, 0)
+	if errors.Is(err, conversionrate.ErrNoRatesFound) {
+		return 0, errors.Wrap(err, "", j.MKV{
+			"from":    from,
+			"to":      to,
+			"mps_len": len(mps),
+		})
+	}
+
+	return val, err
 }
 
 func closestMarketPairsAtPoint(b Backends, timestamp int64) ([]conversionrate.MarketPair, error) {
@@ -82,7 +91,10 @@ func findRate(mps []conversionrate.MarketPair, from, to string, timestamp int64,
 
 		if depth <= depthLimit {
 			rate, err := findRate(mps, mp.ToCurrency, to, timestamp, depth)
-			if err != nil {
+			if errors.Is(err, conversionrate.ErrNoRatesFound) {
+				// Depth first search cannot bubble up error until last path is done.
+				continue
+			} else if err != nil {
 				return 0, err
 			}
 
@@ -90,11 +102,7 @@ func findRate(mps []conversionrate.MarketPair, from, to string, timestamp int64,
 		}
 	}
 
-	return 0, errors.Wrap(conversionrate.ErrNoRatesFound, "", j.MKV{
-		"from":    from,
-		"to":      to,
-		"mps_len": len(mps),
-	})
+	return 0, errors.Wrap(conversionrate.ErrNoRatesFound, "")
 }
 
 func rateTimeExceedsThreshold(timestamp, closestTimestamp int64) bool {

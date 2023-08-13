@@ -1,10 +1,13 @@
 package calculator
 
 import (
+	"context"
 	"fmt"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/rates/conversionrate"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/transactions/transactions"
 	"github.com/luno/jettison/errors"
 	"github.com/luno/jettison/j"
+	"github.com/luno/jettison/log"
 	"math"
 	"time"
 )
@@ -46,7 +49,11 @@ func Calculate(b Backends, fiat string, ts []transactions.Transaction) (YearEndT
 			}
 
 			err := eatFromTallyUntilSatisfied(b, fiat, t, tally, yearEndTotals)
-			if err != nil {
+			if errors.Is(err, conversionrate.ErrNoRatesFound) {
+				// We don't have rates for this, skip it.
+				log.Error(context.TODO(), err)
+				continue
+			} else if err != nil {
 				return nil, err
 			}
 		}
