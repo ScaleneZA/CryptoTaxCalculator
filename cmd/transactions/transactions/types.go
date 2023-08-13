@@ -54,7 +54,7 @@ func (tt TransactionType) Int() int {
 }
 
 func (tt TransactionType) ShouldIncreaseTally() bool {
-	return tt == TypeBuy || tt == TypeReceiveExternal || tt == TypeInterest
+	return tt == TypeBuy || tt == TypeReceiveExternal || tt == TypeInterest || tt == TypeAirdrop
 }
 
 // Reminder: Decreasing the tally does not always affect tax.
@@ -62,7 +62,7 @@ func (tt TransactionType) ShouldDecreaseTally() bool {
 	return tt == TypeSell || tt == TypeSendExternal || tt == TypeFee
 }
 
-// ShouldCheck supplies types that need double checking by the user.
+// ShouldCheck supplies types that need double-checking by the user.
 func (tt TransactionType) ShouldCheck() bool {
 	return tt == TypeSendInternal || tt == TypeReceiveInternal
 }
@@ -100,7 +100,8 @@ const (
 	TransformTypeLuno     = 2
 	TransformTypeBinance  = 3
 	TransformTypeCoinomi  = 4
-	transformTypeSentinel = 5
+	TransformTypeKraken   = 5
+	transformTypeSentinel = 6
 )
 
 func SelectableTransformTypes() []TransformType {
@@ -109,6 +110,7 @@ func SelectableTransformTypes() []TransformType {
 		TransformTypeBinance,
 		TransformTypeCoinomi,
 		TransformTypeLuno,
+		TransformTypeKraken,
 	}
 }
 
@@ -118,6 +120,7 @@ var transformTypeStrings = map[TransformType]string{
 	TransformTypeLuno:    "Luno",
 	TransformTypeBinance: "Binance",
 	TransformTypeCoinomi: "Coinomi",
+	TransformTypeKraken:  "Kraken",
 }
 
 func (tt TransformType) String() string {

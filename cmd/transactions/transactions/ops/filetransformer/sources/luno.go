@@ -14,10 +14,6 @@ import (
 
 type LunoSource struct{}
 
-var currencyMap = map[string]string{
-	"XBT": "BTC",
-}
-
 func (s LunoSource) TransformRow(row []string) ([]transactions.Transaction, error) {
 	amount, err := strconv.ParseFloat(row[5], 64)
 	if err != nil {

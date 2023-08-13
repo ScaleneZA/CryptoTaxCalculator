@@ -82,6 +82,8 @@ func sourceFromType(typ transactions.TransformType) (sources.Source, error) {
 		src = sources.BinanceSource{}
 	case transactions.TransformTypeCoinomi:
 		src = sources.CoinomiSource{}
+	case transactions.TransformTypeKraken:
+		src = sources.KrakenSource{}
 	default:
 		return nil, errors.Wrap(transactions.ErrUnsupportedTranformType, "", j.MKV{
 			"type": typ,

@@ -148,6 +148,109 @@ func TestBinanceSource_TransformRow(t *testing.T) {
 	}
 }
 
+func TestKrakenSource_TransformRow(t *testing.T) {
+	testCases := []struct {
+		name     string
+		row      []string
+		expected []transactions.Transaction
+	}{
+		{
+			name: "kraken withdraw",
+			row:  []string{"LUFQ64-G33PS-2AGKX4", "ASBHH3K-SSTHXU-T7T3JD", "2017-07-12 12:55:51", "withdrawal", "", "currency", "XXDG", "-499998.00000000", "2.00000000", "0.00000000"},
+			expected: []transactions.Transaction{
+				{
+					UID:          "fba5670c958c5429948dc1954ac2f640",
+					Transformer:  transactions.TransformTypeKraken,
+					Currency:     "DOGE",
+					DetectedType: transactions.TypeSendInternal,
+					Amount:       499998.00000000,
+					Timestamp:    1499864151,
+				},
+				{
+					UID:          "c18e5beb15875f9075867e87962a17e9",
+					Transformer:  transactions.TransformTypeKraken,
+					Currency:     "DOGE",
+					DetectedType: transactions.TypeFee,
+					Amount:       2,
+					Timestamp:    1499864151,
+				},
+			},
+		},
+		{
+			name: "kraken deposit",
+			row:  []string{"", "QGBBX47-IMV4HY-D4L774", "2017-01-16 04:55:07", "deposit", "", "currency", "XXBT", "1.0000000000", "0.0000000000", ""},
+			expected: []transactions.Transaction{
+				{
+					UID:          "4324ce5d00ca0890eb658a7a8b9bb516",
+					Transformer:  transactions.TransformTypeKraken,
+					Currency:     "BTC",
+					DetectedType: transactions.TypeReceiveInternal,
+					Amount:       1,
+					Timestamp:    1484542507,
+				},
+			},
+		},
+		{
+			name: "kraken trade (buy)",
+			row:  []string{"LDGXVI-CFEUU-RDF5EO", "TRHBHN-B7MT4-5GFBCK", "2017-01-16 05:08:57", "trade", "", "currency", "XETH", "69.4815000000", "0.0000000000", "69.4815000000"},
+			expected: []transactions.Transaction{
+				{
+					UID:          "76a51894e501c19cac22522653568991",
+					Transformer:  transactions.TransformTypeKraken,
+					Currency:     "ETH",
+					DetectedType: transactions.TypeBuy,
+					Amount:       69.4815000000,
+					Timestamp:    1484543337,
+				},
+			},
+		},
+		{
+			name: "kraken trade (sell)",
+			row:  []string{"LQA2A6-MGIDN-2G3OJU", "TRHBHN-B7MT4-5GFBCK", "2017-01-16 05:08:57", "trade", "", "currency", "XXBT", "-0.8143930000", "0.0013030000", "0.1843040000"},
+			expected: []transactions.Transaction{
+				{
+					UID:          "e1c7fbac21d5917bf1177d28cfcbefda",
+					Transformer:  transactions.TransformTypeKraken,
+					Currency:     "BTC",
+					DetectedType: transactions.TypeSell,
+					Amount:       0.8143930000,
+					Timestamp:    1484543337,
+				},
+				{
+					UID:          "8ad9938d00e0c05f9088da603275d9d0",
+					Transformer:  transactions.TransformTypeKraken,
+					Currency:     "BTC",
+					DetectedType: transactions.TypeFee,
+					Amount:       0.0013030000,
+					Timestamp:    1484543337,
+				},
+			},
+		},
+		{
+			name: "kraken airdrop",
+			row:  []string{"L5M3LT-5ZXMV-6HY4DR", "LA6H43Q-QITN2-Z6JZGC", "2017-08-01 16:26:36", "transfer", "", "currency", "BCH", "0.6529973350", "0.0000000000", "0.6529973350"},
+			expected: []transactions.Transaction{
+				{
+					UID:          "0abc00109247ccf2345f27d905bb1940",
+					Transformer:  transactions.TransformTypeKraken,
+					Currency:     "BCH",
+					DetectedType: transactions.TypeAirdrop,
+					Amount:       0.6529973350,
+					Timestamp:    1501604796,
+				},
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			actual, err := sources.KrakenSource{}.TransformRow(tc.row)
+			jtest.RequireNil(t, err)
+			require.Equal(t, tc.expected, actual)
+		})
+	}
+}
+
 func TestCoinomiSource_TransformRow(t *testing.T) {
 	testCases := []struct {
 		name     string
