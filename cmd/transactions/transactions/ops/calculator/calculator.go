@@ -22,11 +22,13 @@ Next Steps:
 
 func Calculate(b Backends, fiat string, ts []transactions.Transaction) (YearEndTotals, error) {
 	yearEndTotals := make(YearEndTotals)
+	excludeCurrencies := make(map[string]bool)
 
 	for currency := range uniqueCurrencies(ts) {
 		var tally []transactions.Transaction
 		var prevTimestamp int64
 
+		fmt.Println(currency)
 		for _, t := range ts {
 			if t.Currency != currency {
 				continue
@@ -48,11 +50,14 @@ func Calculate(b Backends, fiat string, ts []transactions.Transaction) (YearEndT
 				continue
 			}
 
+			fmt.Print(".")
+
 			err := eatFromTallyUntilSatisfied(b, fiat, t, tally, yearEndTotals)
 			if errors.IsAny(err, conversionrate.ErrNoRatesFound, conversionrate.ErrStoredRateExceedsThreshold) {
-				// We don't have rates for this, skip it.
 				log.Error(context.TODO(), err)
-				continue
+				// We don't have a particular rate for this currency, skip it.
+				excludeCurrencies[currency] = true
+				break
 			} else if err != nil {
 				return nil, err
 			}
@@ -61,7 +66,11 @@ func Calculate(b Backends, fiat string, ts []transactions.Transaction) (YearEndT
 
 	for year, amounts := range yearEndTotals {
 		var yearTotal float64
-		for _, amount := range amounts {
+		for c, amount := range amounts {
+			if excludeCurrencies[c] {
+				delete(yearEndTotals[year], c)
+				continue
+			}
 			yearTotal += amount
 		}
 		yearEndTotals[year]["TOTAL"] = yearTotal
@@ -91,16 +100,20 @@ func eatFromTallyUntilSatisfied(b Backends, fiat string, currentTransaction tran
 			// Nothing else to subtract after this round.
 			toSubtract = 0
 		}
-
+		fmt.Print("\\")
 		fiatValueWhenBought, err := fiatValue(b, tt.Timestamp, fiat, currentTransaction.Currency, actualSubtracted, tt.WholePriceAtPoint)
 		if err != nil {
 			return err
 		}
 
+		fmt.Print("_")
+
 		fiatValueWhenSold, err := fiatValue(b, currentTransaction.Timestamp, fiat, currentTransaction.Currency, actualSubtracted, currentTransaction.WholePriceAtPoint)
 		if err != nil {
 			return err
 		}
+
+		fmt.Print("/")
 
 		// Yuck
 		if yet[taxableYear(currentTransaction.Timestamp)] == nil {

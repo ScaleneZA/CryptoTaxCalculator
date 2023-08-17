@@ -1,6 +1,7 @@
 package marketvalue
 
 import (
+	"fmt"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/rates/conversionrate"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/rates/conversionrate/db/markets"
 	"github.com/luno/jettison/errors"
@@ -20,9 +21,10 @@ func ValueAtTime(b Backends, from, to string, timestamp int64) (float64, error) 
 	val, err := findRate(mps, from, to, timestamp, 0)
 	if errors.Is(err, conversionrate.ErrNoRatesFound) {
 		return 0, errors.Wrap(err, "", j.MKV{
-			"from":    from,
-			"to":      to,
-			"mps_len": len(mps),
+			"from":      from,
+			"to":        to,
+			"timestamp": timestamp,
+			"mps_len":   len(mps),
 		})
 	}
 
@@ -47,6 +49,7 @@ func closestMarketPairsAtPoint(b Backends, timestamp int64) ([]conversionrate.Ma
 }
 
 func FindClosest(b Backends, p conversionrate.Pair, timestamp int64) (*conversionrate.MarketPair, error) {
+	//TODO(Find a way to speed this up)
 	closestBefore, _ := markets.FindClosestToBefore(b.DB(), p.FromCurrency, p.ToCurrency, timestamp)
 	closestAfter, _ := markets.FindClosestToAfter(b.DB(), p.FromCurrency, p.ToCurrency, timestamp)
 
@@ -65,6 +68,13 @@ func FindClosest(b Backends, p conversionrate.Pair, timestamp int64) (*conversio
 		closest = closestAfter
 	}
 
+	if rateTimeExceedsThreshold(timestamp, closest.Timestamp) {
+		return nil, errors.Wrap(conversionrate.ErrNoMarket, "", j.MKV{
+			"pair":      p.String(),
+			"timestamp": timestamp,
+		})
+	}
+
 	return closest, nil
 }
 
@@ -77,14 +87,6 @@ func findRate(mps []conversionrate.MarketPair, from, to string, timestamp int64,
 		if mp.FromCurrency != from {
 			continue
 		}
-		if rateTimeExceedsThreshold(timestamp, mp.Timestamp) {
-			return 0, errors.Wrap(conversionrate.ErrStoredRateExceedsThreshold, "", j.MKV{
-				"pair":           mp.Pair,
-				"timestamp":      timestamp,
-				"rate_timestamp": mp.Timestamp,
-			})
-		}
-
 		if mp.ToCurrency == to {
 			return mp.Close, nil
 		}
@@ -92,6 +94,7 @@ func findRate(mps []conversionrate.MarketPair, from, to string, timestamp int64,
 		if depth <= depthLimit {
 			rate, err := findRate(mps, mp.ToCurrency, to, timestamp, depth)
 			if errors.Is(err, conversionrate.ErrNoRatesFound) {
+				fmt.Print("X")
 				// Depth first search cannot bubble up error until last path is done.
 				continue
 			} else if err != nil {

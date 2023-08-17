@@ -132,7 +132,7 @@ func TestValueAtTime(t *testing.T) {
 			from:        "ZAR",
 			to:          "BTC",
 			timestamp:   1234,
-			expectedErr: conversionrate.ErrStoredRateExceedsThreshold,
+			expectedErr: conversionrate.ErrNoRatesFound,
 		},
 		{
 			name:        "Rate not found",
