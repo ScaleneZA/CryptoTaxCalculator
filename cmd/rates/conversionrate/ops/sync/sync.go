@@ -109,6 +109,24 @@ var PairSyncers = map[conversionrate.Pair][]syncer.Syncer{
 			},
 		},
 	},
+	conversionrate.PairUSDDOGE: {
+		syncer.HolisticSyncer{
+			ReadTransformer: readtransformer.GeminiCSV{
+				Reader: csvreader.HTTPCSVReader{
+					Location: "https://www.cryptodatadownload.com/cdd/Gemini_DOGEUSD_d.csv",
+					SkipRows: 2,
+				},
+			},
+		},
+		syncer.HolisticSyncer{
+			ReadTransformer: readtransformer.GeminiCSV{
+				Reader: csvreader.HTTPCSVReader{
+					Location: "https://www.cryptodatadownload.com/cdd/Gemini_DOGEUSD_1h.csv",
+					SkipRows: 2,
+				},
+			},
+		},
+	},
 }
 
 func SyncAll(b Backends) error {

@@ -53,6 +53,10 @@ var (
 		FromCurrency: "USD",
 		ToCurrency:   "LINK",
 	}
+	PairUSDDOGE = Pair{
+		FromCurrency: "USD",
+		ToCurrency:   "DOGE",
+	}
 )
 
 func AllPairs() []Pair {
@@ -64,5 +68,6 @@ func AllPairs() []Pair {
 		PairUSDBCH,
 		PairUSDBAT,
 		PairUSDLINK,
+		PairUSDDOGE,
 	}
 }
