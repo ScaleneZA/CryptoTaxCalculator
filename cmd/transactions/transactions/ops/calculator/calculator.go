@@ -49,7 +49,7 @@ func Calculate(b Backends, fiat string, ts []transactions.Transaction) (YearEndT
 			}
 
 			err := eatFromTallyUntilSatisfied(b, fiat, t, tally, yearEndTotals)
-			if errors.Is(err, conversionrate.ErrNoRatesFound) {
+			if errors.IsAny(err, conversionrate.ErrNoRatesFound, conversionrate.ErrStoredRateExceedsThreshold) {
 				// We don't have rates for this, skip it.
 				log.Error(context.TODO(), err)
 				continue
