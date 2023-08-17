@@ -120,7 +120,7 @@ var transformTypeStrings = map[TransformType]string{
 	TransformTypeLuno:    "Luno",
 	TransformTypeBinance: "Binance",
 	TransformTypeCoinomi: "Coinomi",
-	TransformTypeKraken:  "Kraken",
+	TransformTypeKraken:  "Kraken (Ledger)",
 }
 
 func (tt TransformType) String() string {
