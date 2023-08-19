@@ -81,7 +81,7 @@ func Calculate(b Backends, fiat string, ts []transactions.Transaction) ([]YearEn
 
 				fmt.Print(".")
 
-				err := eatFromTallyUntilSatisfied(b, fiat, t, tally, yearGainTotals, balanceTotals, prevTimestamp)
+				err := eatFromTallyUntilSatisfied(b, fiat, t, tally, yearGainTotals, balanceTotals)
 				if errors.IsAny(err, conversionrate.ErrNoRatesFound, conversionrate.ErrStoredRateExceedsThreshold) {
 					log.Error(context.TODO(), err)
 					// We don't have a particular rate for this currency, skip it.
@@ -112,7 +112,7 @@ func initYearBalanceMap(firstYear, lastYear int) yearBalancesMap {
 	return yearBalanceTotals
 }
 
-func eatFromTallyUntilSatisfied(b Backends, fiat string, currentTransaction transactions.Transaction, tally []transactions.Transaction, ygt yearGainsMap, bt totalBalancesMap, previousTimestamp int64) error {
+func eatFromTallyUntilSatisfied(b Backends, fiat string, currentTransaction transactions.Transaction, tally []transactions.Transaction, ygt yearGainsMap, bt totalBalancesMap) error {
 	toSubtract := currentTransaction.Amount
 	for i, tt := range tally {
 		// Skip tallys that have already been counted

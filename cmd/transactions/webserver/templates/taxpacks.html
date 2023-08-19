@@ -1,0 +1,37 @@
+{{ range $yt := .YearEndTotals }}
+  <h1>{{ $yt.Year }}</h1>
+  <h2>Gains</h2>
+  <table>
+    <thead>
+      <th>Asset</th>
+      <th>Amount</th>
+      <th>Costs</th>
+      <th>Proceeds</th>
+      <th>Gain/Loss</th>
+    </thead>
+    {{ range $g := $yt.Gains }}
+    <tr>
+      <td>{{ $g.Asset }}</td>
+      <td>{{printf "%.10f" $g.Amount }}</td>
+      <td>{{ printf "%.2f" $g.Costs }}</td>
+      <td>{{ printf "%.2f" $g.Proceeds }}</td>
+      <td>TODO</td>
+    </tr>
+    {{ end }}
+  </table>
+  <br/>
+  <h2>End of year balances</h2>
+  <table>
+    <thead>
+      <th>Asset</th>
+      <th>Amount</th>
+    </thead>
+    {{ range $b := $yt.Balances }}
+    <tr>
+      <td>{{ $b.Asset }}</td>
+      <td>{{ printf "%.10f" $b.Amount }}</td>
+    </tr>
+    {{ end }}
+  </table>
+<hr/>
+{{ end }}

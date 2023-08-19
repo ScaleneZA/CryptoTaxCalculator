@@ -15,13 +15,14 @@ func httpServers() {
 	b := di.SetupDI()
 
 	http.HandleFunc("/", webhandlers.Home)
-	http.HandleFunc("/ajax/upload", webhandlers.UploadTransform)
+	http.HandleFunc("/overrides", webhandlers.UploadTransform)
 
 	// Probably a better way to be doing DI than the Backends pattern
 	c := webhandlers.CalculateHandler{
 		B: b,
 	}
-	http.HandleFunc("/ajax/calculate", c.Calculate)
+
+	http.HandleFunc("/taxpacks", c.Calculate)
 
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil {

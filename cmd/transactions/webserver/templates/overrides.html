@@ -27,7 +27,7 @@
 </div>
 
 <div class="modal" tabindex="-1" role="dialog" id="result-modal">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog modal-dialog modal-fullscreen" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">Calculations</h5>
@@ -114,15 +114,13 @@
 
   $("#calculate").on("click", function(e){
     $.ajax({
-      url: "/ajax/calculate",
+      url: "/taxpacks",
       type: "POST",
       data: JSON.stringify(transactions),
       contentType: "application/json",
       success: function(response) {
-        html = convertTaxesToHTML(response)
-
         $('#result-modal').modal('show')
-        $("#result").html(html)
+        $("#result").html(response)
 
         console.log(response)
       },
@@ -132,19 +130,5 @@
       }
     })
   })
-
-  function convertTaxesToHTML(allYearTaxes) {
-    let html = '<table style="width:100%">'
-    $.each(allYearTaxes, function(year, calcs) {
-      html += '<tr><td colspan=2><h4>' + year + '</h4></td></tr>'
-      $.each(calcs, function(currency, amount) {
-        html += '<tr><td>' + currency + '</td><td>R' + amount.toFixed(2) + '</td></tr>'
-      })
-      html += '<tr class="border-top"></tr>'
-    })
-    html += '</table>'
-
-    return html
-  }
 </script>
 {{ end }}
