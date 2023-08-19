@@ -49,7 +49,6 @@ func closestMarketPairsAtPoint(b Backends, timestamp int64) ([]conversionrate.Ma
 }
 
 func FindClosest(b Backends, p conversionrate.Pair, timestamp int64) (*conversionrate.MarketPair, error) {
-	//TODO(Find a way to speed this up)
 	closestBefore, _ := markets.FindClosestToBefore(b.DB(), p.FromCurrency, p.ToCurrency, timestamp)
 	closestAfter, _ := markets.FindClosestToAfter(b.DB(), p.FromCurrency, p.ToCurrency, timestamp)
 

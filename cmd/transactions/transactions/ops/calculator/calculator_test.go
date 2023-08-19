@@ -6,9 +6,10 @@ import (
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/transactions/di"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/transactions/transactions"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/transactions/transactions/ops/calculator"
+	"github.com/luno/jettison/errors"
 	"github.com/luno/jettison/jtest"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 	"testing"
 )
 
@@ -17,7 +18,7 @@ func TestCalculate(t *testing.T) {
 		name          string
 		seed          []transactions.Transaction
 		rateMockCalls []*mock.Call
-		expected      calculator.YearEndTotals
+		expected      []calculator.YearEndTotal
 		expectedErr   error
 	}{
 		{
@@ -85,15 +86,150 @@ func TestCalculate(t *testing.T) {
 					},
 				},
 			},
-			expected: calculator.YearEndTotals{
-				2023: {
-					"ETH":   50,
-					"TOTAL": 50,
+			expected: []calculator.YearEndTotal{
+				{
+					Year: 2018,
+					Gains: []calculator.Gain{
+						{
+							Asset: "TOTAL",
+						},
+					},
+					Balances: []calculator.Balance{
+						{
+							Asset:  "ETH",
+							Amount: 0.56,
+						},
+					},
 				},
-				2024: {
-					"BTC":   440,
-					"ETH":   281,
-					"TOTAL": 721,
+				{
+					Year: 2019,
+					Gains: []calculator.Gain{
+						{
+							Asset: "TOTAL",
+						},
+					},
+					Balances: []calculator.Balance{
+						{
+							Asset:  "ETH",
+							Amount: 1.76,
+						},
+						{
+							Asset:  "BTC",
+							Amount: 0.5,
+						},
+					},
+				},
+				{
+					Year: 2020,
+					Gains: []calculator.Gain{
+						{
+							Asset: "TOTAL",
+						},
+					},
+					Balances: []calculator.Balance{
+						{
+							Asset:  "ETH",
+							Amount: 1.76,
+						},
+						{
+							Asset:  "BTC",
+							Amount: 0.5,
+						},
+					},
+				},
+				{
+					Year: 2021,
+					Gains: []calculator.Gain{
+						{
+							Asset: "TOTAL",
+						},
+					},
+					Balances: []calculator.Balance{
+						{
+							Asset:  "ETH",
+							Amount: 1.76,
+						},
+						{
+							Asset:  "BTC",
+							Amount: 0.5,
+						},
+					},
+				},
+				{
+					Year: 2022,
+					Gains: []calculator.Gain{
+						{
+							Asset: "TOTAL",
+						},
+					},
+					Balances: []calculator.Balance{
+						{
+							Asset:  "ETH",
+							Amount: 1.76,
+						},
+						{
+							Asset:  "BTC",
+							Amount: 0.5,
+						},
+					},
+				},
+				{
+					Year: 2023,
+					Gains: []calculator.Gain{
+						{
+							Asset:    "ETH",
+							Amount:   0.25,
+							Costs:    25,
+							Proceeds: 75,
+						},
+						{
+							Asset:    "TOTAL",
+							Costs:    25,
+							Proceeds: 75,
+						},
+					},
+					Balances: []calculator.Balance{
+						{
+							Asset:  "ETH",
+							Amount: 1.51,
+						},
+						{
+							Asset:  "BTC",
+							Amount: 0.5,
+						},
+					},
+				},
+				{
+					Year: 2024,
+					Gains: []calculator.Gain{
+						{
+							Asset:    "TOTAL",
+							Costs:    579,
+							Proceeds: 1300,
+						},
+						{
+							Asset:    "BTC",
+							Amount:   0.4,
+							Costs:    360,
+							Proceeds: 800,
+						},
+						{
+							Asset:    "ETH",
+							Amount:   1.25,
+							Costs:    219,
+							Proceeds: 500,
+						},
+					},
+					Balances: []calculator.Balance{
+						{
+							Asset:  "ETH",
+							Amount: 0.26,
+						},
+						{
+							Asset:  "BTC",
+							Amount: 0.1,
+						},
+					},
 				},
 			},
 		},
@@ -104,7 +240,7 @@ func TestCalculate(t *testing.T) {
 					Currency:     "ETH",
 					DetectedType: transactions.TypeBuy,
 					Amount:       1,
-					Timestamp:    1519812502,
+					Timestamp:    1705835901,
 				},
 				{
 					Currency:     "ETH",
@@ -114,13 +250,31 @@ func TestCalculate(t *testing.T) {
 				},
 			},
 			rateMockCalls: []*mock.Call{
-				new(mock.Mock).On("ValueAtTime", "ZAR", "ETH", int64(1519812502)).Return(float64(100), nil),
+				new(mock.Mock).On("ValueAtTime", "ZAR", "ETH", int64(1705835901)).Return(float64(100), nil),
 				new(mock.Mock).On("ValueAtTime", "ZAR", "ETH", int64(1705835912)).Return(float64(1800), nil),
 			},
-			expected: calculator.YearEndTotals{
-				2024: {
-					"ETH":   680,
-					"TOTAL": 680,
+			expected: []calculator.YearEndTotal{
+				{
+					Year: 2024,
+					Gains: []calculator.Gain{
+						{
+							Asset:    "ETH",
+							Amount:   0.4,
+							Costs:    40,
+							Proceeds: 720,
+						},
+						{
+							Asset:    "TOTAL",
+							Costs:    40,
+							Proceeds: 720,
+						},
+					},
+					Balances: []calculator.Balance{
+						{
+							Asset:  "ETH",
+							Amount: 0.6,
+						},
+					},
 				},
 			},
 		},
@@ -131,7 +285,7 @@ func TestCalculate(t *testing.T) {
 					Currency:     "ETH",
 					DetectedType: transactions.TypeBuy,
 					Amount:       1,
-					Timestamp:    1519812502,
+					Timestamp:    1705835901,
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "USD",
 						Price: 2000,
@@ -149,18 +303,36 @@ func TestCalculate(t *testing.T) {
 				},
 			},
 			rateMockCalls: []*mock.Call{
-				new(mock.Mock).On("ValueAtTime", "ZAR", "ETH", int64(1519812502)).Return(float64(100), nil),
+				new(mock.Mock).On("ValueAtTime", "ZAR", "ETH", int64(1705835901)).Return(float64(100), nil),
 				new(mock.Mock).On("ValueAtTime", "ZAR", "ETH", int64(1705835912)).Return(float64(1800), nil),
 			},
-			expected: calculator.YearEndTotals{
-				2024: {
-					"ETH":   680,
-					"TOTAL": 680,
+			expected: []calculator.YearEndTotal{
+				{
+					Year: 2024,
+					Gains: []calculator.Gain{
+						{
+							Asset:    "ETH",
+							Amount:   0.4,
+							Costs:    40,
+							Proceeds: 720,
+						},
+						{
+							Asset:    "TOTAL",
+							Costs:    40,
+							Proceeds: 720,
+						},
+					},
+					Balances: []calculator.Balance{
+						{
+							Asset:  "ETH",
+							Amount: 0.6,
+						},
+					},
 				},
 			},
 		},
 		{
-			name: "Rate client returns error",
+			name: "Rate client returns unexpected error",
 			seed: []transactions.Transaction{
 				{
 					Currency:     "ETH",
@@ -184,9 +356,68 @@ func TestCalculate(t *testing.T) {
 				},
 			},
 			rateMockCalls: []*mock.Call{
-				new(mock.Mock).On("ValueAtTime", "ZAR", "ETH", int64(1519812502)).Return(float64(0), conversionrate.ErrNoRatesFound),
+				new(mock.Mock).On("ValueAtTime", "ZAR", "ETH", int64(1519812502)).Return(float64(0), errors.New("unexpected")),
 			},
-			expectedErr: conversionrate.ErrNoRatesFound,
+			expectedErr: errors.New("unexpected"),
+		},
+		{
+			name: "Rate client returns expected error, skip currency",
+			seed: []transactions.Transaction{
+				{
+					Currency:     "ETH",
+					DetectedType: transactions.TypeBuy,
+					Amount:       1,
+					Timestamp:    1705835901,
+				},
+				{
+					Currency:     "BTC",
+					DetectedType: transactions.TypeBuy,
+					Amount:       1,
+					Timestamp:    1705835902,
+				},
+				{
+					Currency:     "ETH",
+					DetectedType: transactions.TypeSell,
+					Amount:       0.4,
+					Timestamp:    1705835912,
+				},
+				{
+					Currency:     "BTC",
+					DetectedType: transactions.TypeSell,
+					Amount:       0.4,
+					Timestamp:    1705835913,
+				},
+			},
+			rateMockCalls: []*mock.Call{
+				new(mock.Mock).On("ValueAtTime", "ZAR", "ETH", int64(1705835901)).Return(float64(100), nil),
+				new(mock.Mock).On("ValueAtTime", "ZAR", "BTC", int64(1705835902)).Return(float64(0), conversionrate.ErrNoRatesFound),
+				new(mock.Mock).On("ValueAtTime", "ZAR", "ETH", int64(1705835912)).Return(float64(1800), nil),
+				new(mock.Mock).On("ValueAtTime", "ZAR", "BTC", int64(1705835913)).Return(float64(0), conversionrate.ErrNoRatesFound),
+			},
+			expected: []calculator.YearEndTotal{
+				{
+					Year: 2024,
+					Gains: []calculator.Gain{
+						{
+							Asset:    "ETH",
+							Amount:   0.4,
+							Costs:    40,
+							Proceeds: 720,
+						},
+						{
+							Asset:    "TOTAL",
+							Costs:    40,
+							Proceeds: 720,
+						},
+					},
+					Balances: []calculator.Balance{
+						{
+							Asset:  "ETH",
+							Amount: 0.6,
+						},
+					},
+				},
+			},
 		},
 		{
 			name: "Invalid Transaction Order",
@@ -227,7 +458,24 @@ func TestCalculate(t *testing.T) {
 
 			actual, err := calculator.Calculate(b, "ZAR", tc.seed)
 			jtest.Require(t, tc.expectedErr, err)
-			assert.Equal(t, tc.expected, actual)
+
+			require.Equal(t, len(tc.expected), len(actual))
+			for i, e := range tc.expected {
+
+				require.Equal(t, len(e.Balances), len(actual[i].Balances))
+				for j, eb := range e.Balances {
+					require.Equal(t, eb.Asset, actual[i].Balances[j].Asset)
+					require.InDelta(t, eb.Amount, actual[i].Balances[j].Amount, 1e-10)
+				}
+
+				require.Equal(t, len(e.Gains), len(actual[i].Gains))
+				for j, eb := range e.Gains {
+					require.Equal(t, eb.Asset, actual[i].Gains[j].Asset)
+					require.InDelta(t, eb.Amount, actual[i].Gains[j].Amount, 1e-10)
+					require.InDelta(t, eb.Costs, actual[i].Gains[j].Costs, 1e-10)
+					require.InDelta(t, eb.Proceeds, actual[i].Gains[j].Proceeds, 1e-10)
+				}
+			}
 		})
 	}
 }
