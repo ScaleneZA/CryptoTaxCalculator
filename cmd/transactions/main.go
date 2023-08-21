@@ -15,7 +15,9 @@ func httpServers() {
 	b := di.SetupDI()
 
 	http.HandleFunc("/", webhandlers.Home)
-	http.HandleFunc("/overrides", webhandlers.UploadTransform)
+
+	ut := webhandlers.UploadTransformer{B: b}
+	http.HandleFunc("/overrides", ut.UploadTransform)
 
 	o := webhandlers.OverrideHandler{B: b}
 	http.HandleFunc("/overrides/override", o.Override)

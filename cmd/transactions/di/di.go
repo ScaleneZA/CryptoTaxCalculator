@@ -14,6 +14,7 @@ type Backends interface {
 
 type BackendsTest struct {
 	RatesClient conversionrate.Client
+	DB          *sql.DB
 }
 
 func SetupDI() Backends {

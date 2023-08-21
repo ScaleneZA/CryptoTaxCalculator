@@ -3,6 +3,7 @@ package calculator
 import (
 	"database/sql"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/transactions/transactions"
+	"strings"
 	"sync"
 )
 
@@ -32,7 +33,7 @@ func Upsert(db *sql.DB, uid string, overrideType transactions.TransactionType) (
 }
 
 func LookupTypeByUid(db *sql.DB, uid string) (transactions.TransactionType, error) {
-	stmt, err := db.Prepare("SELECT overridden_type FROM calculator_transaction_overrides WHERE uid = ? LIMIT 1")
+	stmt, err := db.Prepare("SELECT uid, overridden_type	 FROM calculator_transaction_overrides WHERE uid = ? LIMIT 1")
 	if err != nil {
 		return transactions.TypeUnknown, err
 	}
@@ -46,8 +47,8 @@ func LookupTypeByUid(db *sql.DB, uid string) (transactions.TransactionType, erro
 
 	result.Next()
 
-	var typ transactions.TransactionType
-	if err := result.Scan(&typ); err != nil {
+	ot, err := scanRow(result)
+	if err != nil {
 		return transactions.TypeUnknown, err
 	}
 
@@ -55,5 +56,51 @@ func LookupTypeByUid(db *sql.DB, uid string) (transactions.TransactionType, erro
 		return transactions.TypeUnknown, err
 	}
 
-	return typ, nil
+	return ot.OverriddenType, nil
+}
+
+func ListByTypeByUid(db *sql.DB, uids []string) ([]transactions.OverrideType, error) {
+	if len(uids) == 0 {
+		return nil, nil
+	}
+
+	// Create placeholders for the IN clause
+	placeholders := make([]string, len(uids))
+	args := make([]interface{}, len(uids))
+	for i := range uids {
+		placeholders[i] = "?"
+		args[i] = uids[i]
+	}
+
+	// Construct the SQL query
+	query := "SELECT uid, overridden_type FROM calculator_transaction_overrides WHERE uid IN (" + strings.Join(placeholders, ", ") + ")"
+
+	rows, err := db.Query(query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var ots []transactions.OverrideType
+	for rows.Next() {
+		ot, err := scanRow(rows)
+		if err != nil {
+			return nil, err
+		}
+		ots = append(ots, *ot)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return ots, nil
+}
+
+func scanRow(rows *sql.Rows) (*transactions.OverrideType, error) {
+	var ot transactions.OverrideType
+	if err := rows.Scan(&ot.UID, &ot.OverriddenType); err != nil {
+		return nil, err
+	}
+	return &ot, nil
 }

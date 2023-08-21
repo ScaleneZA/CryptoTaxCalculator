@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/rates/conversionrate"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/transactions/transactions"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/transactions/transactions/db/calculator"
 	"github.com/luno/jettison/errors"
 	"github.com/luno/jettison/j"
 	"github.com/luno/jettison/log"
@@ -21,6 +22,41 @@ Next Steps:
 type yearGainsMap map[int]map[string]Gain
 type yearBalancesMap map[int]map[string]Balance
 type totalBalancesMap map[string]Balance
+
+func PopulateOverriddenTypes(b Backends, ts []transactions.Transaction) ([]transactions.Transaction, error) {
+	var uids []string
+	for _, t := range ts {
+		uids = append(uids, t.UID)
+	}
+
+	ots, err := calculator.ListByTypeByUid(b.DB(), uids)
+	if err != nil {
+		return nil, err
+	}
+
+	otm := mapOverrideTypes(ots)
+
+	for i, t := range ts {
+		ot, ok := otm[t.UID]
+
+		if !ok {
+			continue
+		}
+
+		ts[i].OverridedType = ot
+	}
+
+	return ts, nil
+}
+
+func mapOverrideTypes(ots []transactions.OverrideType) map[string]transactions.TransactionType {
+	typMap := make(map[string]transactions.TransactionType)
+	for _, ot := range ots {
+		typMap[ot.UID] = ot.OverriddenType
+	}
+
+	return typMap
+}
 
 func Calculate(b Backends, fiat string, ts []transactions.Transaction) ([]YearEndTotal, error) {
 	firstYear := taxableYear(ts[0].Timestamp)

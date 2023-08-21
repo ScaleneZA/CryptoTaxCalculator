@@ -138,3 +138,8 @@ func (tt TransformType) String() string {
 func (tt TransformType) Int() int {
 	return int(tt)
 }
+
+type OverrideType struct {
+	UID            string
+	OverriddenType TransactionType
+}

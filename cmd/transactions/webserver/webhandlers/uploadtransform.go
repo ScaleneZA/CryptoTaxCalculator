@@ -3,6 +3,7 @@ package webhandlers
 import (
 	"encoding/json"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/transactions/transactions"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/transactions/transactions/ops/calculator"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/transactions/transactions/ops/filetransformer"
 	"html/template"
 	"io"
@@ -11,7 +12,11 @@ import (
 	"strconv"
 )
 
-func UploadTransform(w http.ResponseWriter, r *http.Request) {
+type UploadTransformer struct {
+	B Backends
+}
+
+func (ut UploadTransformer) UploadTransform(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseMultipartForm(32 << 20) // 32MB
 	if err != nil {
 		http.Error(w, "Bad Request", http.StatusBadRequest)
@@ -45,6 +50,12 @@ func UploadTransform(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "Internal Server Error: Failed to tranform", http.StatusInternalServerError)
+	}
+
+	ts, err = calculator.PopulateOverriddenTypes(ut.B, ts)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Internal Server Error: Failed to populate override types", http.StatusInternalServerError)
 	}
 
 	jsonData, err := json.Marshal(ts)

@@ -43,3 +43,44 @@ func TestUpsertAndLookup(t *testing.T) {
 		})
 	}
 }
+
+func TestListByTypeByUid(t *testing.T) {
+	dbc := db.ConnectForTesting()
+
+	_, err := calculator.Upsert(dbc, "1234", transactions.TypeAirdrop)
+	jtest.RequireNil(t, err)
+	_, err = calculator.Upsert(dbc, "1235", transactions.TypeFee)
+	jtest.RequireNil(t, err)
+	_, err = calculator.Upsert(dbc, "1236", transactions.TypeSell)
+	jtest.RequireNil(t, err)
+
+	tests := []struct {
+		name     string
+		uids     []string
+		expected []transactions.OverrideType
+	}{
+		{
+			name: "Fetch only supplied UIDs",
+			uids: []string{"1234", "1236"},
+			expected: []transactions.OverrideType{
+				{
+					UID:            "1234",
+					OverriddenType: transactions.TypeAirdrop,
+				},
+				{
+					UID:            "1236",
+					OverriddenType: transactions.TypeSell,
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			actual, err := calculator.ListByTypeByUid(dbc, tt.uids)
+			jtest.RequireNil(t, err)
+
+			require.Equal(t, tt.expected, actual)
+		})
+	}
+}

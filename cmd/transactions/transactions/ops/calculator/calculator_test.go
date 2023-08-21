@@ -3,8 +3,10 @@ package calculator_test
 import (
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/rates/conversionrate"
 	rates_mock "github.com/ScaleneZA/CryptoTaxCalculator/cmd/rates/conversionrate/client/mockery"
+	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/transactions/db"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/transactions/di"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/transactions/transactions"
+	calculatordb "github.com/ScaleneZA/CryptoTaxCalculator/cmd/transactions/transactions/db/calculator"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/transactions/transactions/ops/calculator"
 	"github.com/luno/jettison/errors"
 	"github.com/luno/jettison/jtest"
@@ -476,6 +478,66 @@ func TestCalculate(t *testing.T) {
 					require.InDelta(t, eb.Proceeds, actual[i].Gains[j].Proceeds, 1e-10)
 				}
 			}
+		})
+	}
+}
+
+func TestPopulateOverriddenTypes(t *testing.T) {
+	dbc := db.ConnectForTesting()
+	b := di.SetupDIForTesting(di.BackendsTest{
+		DB: dbc,
+	})
+
+	_, err := calculatordb.Upsert(dbc, "1234", transactions.TypeAirdrop)
+	jtest.RequireNil(t, err)
+	_, err = calculatordb.Upsert(dbc, "1235", transactions.TypeFee)
+	jtest.RequireNil(t, err)
+	_, err = calculatordb.Upsert(dbc, "1236", transactions.TypeSell)
+	jtest.RequireNil(t, err)
+
+	tests := []struct {
+		name     string
+		ts       []transactions.Transaction
+		expected []transactions.Transaction
+	}{
+		{
+			name: "golden path",
+			ts: []transactions.Transaction{
+				{
+					UID: "1234",
+				},
+				{
+					UID:           "1236",
+					OverridedType: transactions.TypeInterest,
+				},
+				{
+					UID:           "1237",
+					OverridedType: transactions.TypeInterest,
+				},
+			},
+			expected: []transactions.Transaction{
+				{
+					UID:           "1234",
+					OverridedType: transactions.TypeAirdrop,
+				},
+				{
+					UID:           "1236",
+					OverridedType: transactions.TypeSell,
+				},
+				{
+					UID:           "1237",
+					OverridedType: transactions.TypeInterest,
+				},
+			},
+		},
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			actual, err := calculator.PopulateOverriddenTypes(b, tt.ts)
+			jtest.RequireNil(t, err)
+
+			require.Equal(t, tt.expected, actual)
 		})
 	}
 }
