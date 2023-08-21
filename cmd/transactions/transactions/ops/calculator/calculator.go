@@ -15,10 +15,7 @@ import (
 
 /*
 Next Steps:
-* Multi-file
 * Way to initialize at a point in time
-* Fetch whole price if not supplied
-* Separate Sends, Receives, Buys, Sells - Override detected types
 */
 
 type yearGainsMap map[int]map[string]Gain

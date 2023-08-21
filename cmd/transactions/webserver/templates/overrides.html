@@ -105,12 +105,29 @@
         } else {
           $(that).addClass('text-success')
         }
+        override(t)
         return false
       }
     })
 
     localStorage.setItem('transactions', JSON.stringify(transactions))
   })
+
+  function override(transaction) {
+    $.ajax({
+      url: "/overrides/override",
+      type: "POST",
+      data: JSON.stringify({
+        "uid": transaction.UID,
+        "overrided_type": transaction.OverridedType,
+      }),
+      contentType: "application/json",
+      error: function(xhr, status, error) {
+        // Handle the error
+        console.error(error)
+      }
+    })
+  }
 
   $("#calculate").on("click", function(e){
     $.ajax({
