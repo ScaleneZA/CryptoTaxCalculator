@@ -18,6 +18,13 @@ func httpServers() {
 	http.HandleFunc("/overrides", webhandlers.UploadTransform)
 
 	// Probably a better way to be doing DI than the Backends pattern
+	o := webhandlers.OverrideHandler{
+		B: b,
+	}
+
+	http.HandleFunc("/overrides/override", o.Override)
+
+	// Probably a better way to be doing DI than the Backends pattern
 	c := webhandlers.CalculateHandler{
 		B: b,
 	}
