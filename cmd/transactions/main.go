@@ -17,18 +17,10 @@ func httpServers() {
 	http.HandleFunc("/", webhandlers.Home)
 	http.HandleFunc("/overrides", webhandlers.UploadTransform)
 
-	// Probably a better way to be doing DI than the Backends pattern
-	o := webhandlers.OverrideHandler{
-		B: b,
-	}
-
+	o := webhandlers.OverrideHandler{B: b}
 	http.HandleFunc("/overrides/override", o.Override)
 
-	// Probably a better way to be doing DI than the Backends pattern
-	c := webhandlers.CalculateHandler{
-		B: b,
-	}
-
+	c := webhandlers.CalculateHandler{B: b}
 	http.HandleFunc("/taxpacks", c.Calculate)
 
 	err := http.ListenAndServe(":8080", nil)

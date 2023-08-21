@@ -7,7 +7,7 @@ import (
 )
 
 func Connect() *sql.DB {
-	dbc, err := sql.Open("sqlite3", "cryptotaxtx.db")
+	dbc, err := sql.Open("sqlite3", "cryptotax.db")
 	if err != nil {
 		log.Fatal(err)
 	}

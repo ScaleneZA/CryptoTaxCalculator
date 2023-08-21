@@ -30,6 +30,7 @@ func findWhere(db *sql.DB, where string, vars ...any) (*conversionrate.MarketPai
 	if err != nil {
 		return nil, err
 	}
+	defer result.Close()
 
 	result.Next()
 	mp, err := scanRow(result)
