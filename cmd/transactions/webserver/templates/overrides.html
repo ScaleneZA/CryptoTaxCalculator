@@ -9,7 +9,7 @@
     <div class="col"><h4>Transation Type</h4></div>
   </div>
   {{ range $t := .Transactions }}
-    <div data-uid="{{ $t.UID }}" class="row border-top p-1 {{ if ne $t.OverridedType.Int 0}} bg-overridden {{ else if .DetectedType.ShouldCheck  }}bg-check{{ end }}">
+    <div data-uid="{{ $t.UID }}" class="row border-top p-1 {{ if and (ne $t.OverridedType.Int 0) (ne $t.DetectedType.Int $t.OverridedType.Int) }} bg-overridden {{ else if and (.DetectedType.ShouldCheck) (eq $t.OverridedType.Int 0)  }}bg-check{{ end }}">
       <div class="col">{{ $t.Timestamp }}</div>
       <div class="col">{{ $t.Transformer }}</div>
       <div class="col">{{ $t.Currency }}</div>
@@ -70,16 +70,20 @@
   })
 
   $('select').on('change', function(e){
-    let uid = $(this).closest('.row').attr("data-uid")
+    let row = $(this).closest('.row')
+    let uid = $(row).attr("data-uid")
     let val = $(this).val()
     let that = this
     $.each(transactions, function(key, t) {
       if (t.UID === uid) {
         transactions[key].OverridedType = parseInt(val)
+
+        $(that).addClass('text-success')
+
         if (transactions[key].OverridedType === transactions[key].DetectedType) {
-          $(that).removeClass('text-success')
+          $(row).removeClass('bg-overridden')
         } else {
-          $(that).addClass('text-success')
+          $(row).addClass('bg-overridden')
         }
         override(t)
         return false
