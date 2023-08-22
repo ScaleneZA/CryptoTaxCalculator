@@ -65,7 +65,7 @@ func sortTransactions(ts []transactions.Transaction) []transactions.Transaction 
 		if ts[i].Timestamp == ts[j].Timestamp {
 			return ts[i].DetectedType < ts[j].DetectedType
 		}
-		return ts[i].Timestamp < ts[j].Timestamp
+		return ts[i].Timestamp.Before(ts[j].Timestamp)
 	})
 
 	return ts

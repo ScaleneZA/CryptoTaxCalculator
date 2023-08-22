@@ -1,5 +1,7 @@
 package transactions
 
+import "time"
+
 type TransactionType int
 
 const (
@@ -38,6 +40,8 @@ var transactionTypeStrings = map[TransactionType]string{
 	TypeFee:             "Fee",
 	TypeSendInternal:    "Transfer (send)",
 	TypeReceiveInternal: "Transfer (receieve)",
+	TypeInterest:        "Interest",
+	TypeAirdrop:         "Airdrop",
 }
 
 func (tt TransactionType) String() string {
@@ -82,7 +86,7 @@ type Transaction struct {
 	DetectedType  TransactionType
 	OverridedType TransactionType
 	Amount        float64
-	Timestamp     int64
+	Timestamp     time.Time
 
 	WholePriceAtPoint FiatPrice
 }

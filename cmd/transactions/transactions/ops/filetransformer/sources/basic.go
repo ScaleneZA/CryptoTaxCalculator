@@ -7,6 +7,7 @@ import (
 	"math"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type BasicSource struct{}
@@ -42,7 +43,7 @@ func (s BasicSource) TransformRow(row []string) ([]transactions.Transaction, err
 		Currency:     row[1],
 		DetectedType: typ,
 		Amount:       amount,
-		Timestamp:    int64(timestamp),
+		Timestamp:    time.Unix(int64(timestamp), 0),
 		WholePriceAtPoint: transactions.FiatPrice{
 			Fiat:  row[5],
 			Price: wholePrice,

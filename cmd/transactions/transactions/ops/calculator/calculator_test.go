@@ -13,6 +13,7 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	"testing"
+	"time"
 )
 
 func TestCalculate(t *testing.T) {
@@ -30,7 +31,7 @@ func TestCalculate(t *testing.T) {
 					Currency:     "ETH",
 					DetectedType: transactions.TypeBuy,
 					Amount:       0.56,
-					Timestamp:    1519812503,
+					Timestamp:    time.Unix(1519812503, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 100,
@@ -40,7 +41,7 @@ func TestCalculate(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeBuy,
 					Amount:       0.5,
-					Timestamp:    1535450915,
+					Timestamp:    time.Unix(1535450915, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 900,
@@ -50,7 +51,7 @@ func TestCalculate(t *testing.T) {
 					Currency:     "ETH",
 					DetectedType: transactions.TypeBuy,
 					Amount:       1.2,
-					Timestamp:    1535450903,
+					Timestamp:    time.Unix(1535450903, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 200,
@@ -61,7 +62,7 @@ func TestCalculate(t *testing.T) {
 					DetectedType:  transactions.TypeBuy,
 					OverridedType: transactions.TypeSell,
 					Amount:        0.25,
-					Timestamp:     1656410903,
+					Timestamp:     time.Unix(1656410903, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 300,
@@ -71,7 +72,7 @@ func TestCalculate(t *testing.T) {
 					Currency:     "ETH",
 					DetectedType: transactions.TypeSell,
 					Amount:       1.25,
-					Timestamp:    1687946903,
+					Timestamp:    time.Unix(1687946903, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 400,
@@ -81,7 +82,7 @@ func TestCalculate(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeSell,
 					Amount:       0.4,
-					Timestamp:    1705835912,
+					Timestamp:    time.Unix(1705835912, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 2000,
@@ -242,13 +243,13 @@ func TestCalculate(t *testing.T) {
 					Currency:     "ETH",
 					DetectedType: transactions.TypeBuy,
 					Amount:       1,
-					Timestamp:    1705835901,
+					Timestamp:    time.Unix(1705835901, 0),
 				},
 				{
 					Currency:     "ETH",
 					DetectedType: transactions.TypeSell,
 					Amount:       0.4,
-					Timestamp:    1705835912,
+					Timestamp:    time.Unix(1705835912, 0),
 				},
 			},
 			rateMockCalls: []*mock.Call{
@@ -287,7 +288,7 @@ func TestCalculate(t *testing.T) {
 					Currency:     "ETH",
 					DetectedType: transactions.TypeBuy,
 					Amount:       1,
-					Timestamp:    1705835901,
+					Timestamp:    time.Unix(1705835901, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "USD",
 						Price: 2000,
@@ -297,7 +298,7 @@ func TestCalculate(t *testing.T) {
 					Currency:     "ETH",
 					DetectedType: transactions.TypeSell,
 					Amount:       0.4,
-					Timestamp:    1705835912,
+					Timestamp:    time.Unix(1705835912, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "USD",
 						Price: 2000,
@@ -340,7 +341,7 @@ func TestCalculate(t *testing.T) {
 					Currency:     "ETH",
 					DetectedType: transactions.TypeBuy,
 					Amount:       1,
-					Timestamp:    1519812502,
+					Timestamp:    time.Unix(1519812502, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "USD",
 						Price: 2000,
@@ -350,7 +351,7 @@ func TestCalculate(t *testing.T) {
 					Currency:     "ETH",
 					DetectedType: transactions.TypeSell,
 					Amount:       0.4,
-					Timestamp:    1705835912,
+					Timestamp:    time.Unix(1705835912, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "USD",
 						Price: 2000,
@@ -369,25 +370,25 @@ func TestCalculate(t *testing.T) {
 					Currency:     "ETH",
 					DetectedType: transactions.TypeBuy,
 					Amount:       1,
-					Timestamp:    1705835901,
+					Timestamp:    time.Unix(1705835901, 0),
 				},
 				{
 					Currency:     "BTC",
 					DetectedType: transactions.TypeBuy,
 					Amount:       1,
-					Timestamp:    1705835902,
+					Timestamp:    time.Unix(1705835902, 0),
 				},
 				{
 					Currency:     "ETH",
 					DetectedType: transactions.TypeSell,
 					Amount:       0.4,
-					Timestamp:    1705835912,
+					Timestamp:    time.Unix(1705835912, 0),
 				},
 				{
 					Currency:     "BTC",
 					DetectedType: transactions.TypeSell,
 					Amount:       0.4,
-					Timestamp:    1705835913,
+					Timestamp:    time.Unix(1705835913, 0),
 				},
 			},
 			rateMockCalls: []*mock.Call{
@@ -428,7 +429,7 @@ func TestCalculate(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeBuy,
 					Amount:       0.5,
-					Timestamp:    1535450915,
+					Timestamp:    time.Unix(1535450915, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 900,
@@ -438,7 +439,7 @@ func TestCalculate(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeBuy,
 					Amount:       0.56,
-					Timestamp:    1519812503,
+					Timestamp:    time.Unix(1519812503, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 100,

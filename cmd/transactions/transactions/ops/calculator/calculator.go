@@ -59,8 +59,8 @@ func mapOverrideTypes(ots []transactions.OverrideType) map[string]transactions.T
 }
 
 func Calculate(b Backends, fiat string, ts []transactions.Transaction) ([]YearEndTotal, error) {
-	firstYear := taxableYear(ts[0].Timestamp)
-	lastYear := taxableYear(ts[len(ts)-1].Timestamp)
+	firstYear := taxableYear(ts[0].Timestamp.Unix())
+	lastYear := taxableYear(ts[len(ts)-1].Timestamp.Unix())
 
 	if firstYear > lastYear {
 		return nil, errors.Wrap(transactions.ErrInvalidTransactionOrder, "", j.MKV{
@@ -76,7 +76,7 @@ func Calculate(b Backends, fiat string, ts []transactions.Transaction) ([]YearEn
 
 	for currency := range uniqueCurrencies(ts) {
 		var tally []transactions.Transaction
-		var prevTimestamp int64
+		var prevTimestamp time.Time
 
 		// TODO: Look at ways to simplify the code because now we are tracking this year.
 		for year := firstYear; year <= lastYear; year++ {
@@ -86,11 +86,11 @@ func Calculate(b Backends, fiat string, ts []transactions.Transaction) ([]YearEn
 					continue
 				}
 
-				if taxableYear(t.Timestamp) != year {
+				if taxableYear(t.Timestamp.Unix()) != year {
 					continue
 				}
 
-				if t.Timestamp < prevTimestamp {
+				if t.Timestamp.Before(prevTimestamp) {
 					return nil, errors.Wrap(transactions.ErrInvalidTransactionOrder, "", j.MKV{
 						"current_timestamp":  t.Timestamp,
 						"previous_timestamp": prevTimestamp,
@@ -107,7 +107,7 @@ func Calculate(b Backends, fiat string, ts []transactions.Transaction) ([]YearEn
 
 				if !t.FinalType().ShouldDecreaseTally() {
 					prevTimestamp = t.Timestamp
-					yearBalanceTotals[taxableYear(t.Timestamp)][t.Currency] = balanceTotals[t.Currency]
+					yearBalanceTotals[taxableYear(t.Timestamp.Unix())][t.Currency] = balanceTotals[t.Currency]
 
 					continue
 				}
@@ -170,7 +170,7 @@ func eatFromTallyUntilSatisfied(b Backends, fiat string, currentTransaction tran
 		// We only need to lookup the value when we actually bought something.
 		var fiatValueWhenBought float64
 		if tt.FinalType() == transactions.TypeBuy {
-			paid, err := fiatValue(b, tt.Timestamp, fiat, tt.Currency, actualSubtracted, tt.WholePriceAtPoint)
+			paid, err := fiatValue(b, tt.Timestamp.Unix(), fiat, tt.Currency, actualSubtracted, tt.WholePriceAtPoint)
 			if err != nil {
 				return err
 			}
@@ -179,14 +179,14 @@ func eatFromTallyUntilSatisfied(b Backends, fiat string, currentTransaction tran
 
 		fmt.Print("_")
 
-		fiatValueWhenSold, err := fiatValue(b, currentTransaction.Timestamp, fiat, tt.Currency, actualSubtracted, currentTransaction.WholePriceAtPoint)
+		fiatValueWhenSold, err := fiatValue(b, currentTransaction.Timestamp.Unix(), fiat, tt.Currency, actualSubtracted, currentTransaction.WholePriceAtPoint)
 		if err != nil {
 			return err
 		}
 
 		fmt.Print("/")
 
-		year := taxableYear(currentTransaction.Timestamp)
+		year := taxableYear(currentTransaction.Timestamp.Unix())
 
 		if ygt[year] == nil {
 			ygt[year] = make(map[string]Gain)

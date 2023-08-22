@@ -42,7 +42,7 @@ func (s LunoSource) TransformRow(row []string) ([]transactions.Transaction, erro
 		Currency:     mapCurrency(row[4]),
 		DetectedType: s.inferType(row, amount),
 		Amount:       math.Abs(amount),
-		Timestamp:    tim.Unix(),
+		Timestamp:    time.Unix(tim.Unix(), 0),
 		WholePriceAtPoint: transactions.FiatPrice{
 			Fiat:  row[11],
 			Price: wholePrice,

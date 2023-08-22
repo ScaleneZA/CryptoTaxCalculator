@@ -34,7 +34,7 @@ func (s KrakenSource) TransformRow(row []string) ([]transactions.Transaction, er
 		Currency:     mapCurrency(row[6]),
 		DetectedType: s.inferType(row, amount),
 		Amount:       math.Abs(amount),
-		Timestamp:    tim.Unix(),
+		Timestamp:    time.Unix(tim.Unix(), 0),
 	}}
 
 	feeAmnt, err := strconv.ParseFloat(row[8], 64)
@@ -52,7 +52,7 @@ func (s KrakenSource) TransformRow(row []string) ([]transactions.Transaction, er
 			Currency:     mapCurrency(row[6]),
 			DetectedType: transactions.TypeFee,
 			Amount:       math.Abs(feeAmnt),
-			Timestamp:    tim.Unix(),
+			Timestamp:    time.Unix(tim.Unix(), 0),
 		})
 	}
 

@@ -34,7 +34,7 @@ func (s BinanceSource) TransformRow(row []string) ([]transactions.Transaction, e
 		Currency:     row[4],
 		DetectedType: s.inferType(row, amount),
 		Amount:       math.Abs(amount),
-		Timestamp:    tim.Unix(),
+		Timestamp:    time.Unix(tim.Unix(), 0),
 	}}, nil
 }
 

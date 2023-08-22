@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -27,7 +28,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "ETH",
 					DetectedType: transactions.TypeBuy,
 					Amount:       0.56,
-					Timestamp:    1519812503,
+					Timestamp:    time.Unix(1519812503, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 100,
@@ -38,7 +39,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "ETH",
 					DetectedType: transactions.TypeBuy,
 					Amount:       1.2,
-					Timestamp:    1535450903,
+					Timestamp:    time.Unix(1535450903, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 200,
@@ -49,7 +50,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "ETH",
 					DetectedType: transactions.TypeSell,
 					Amount:       0.25,
-					Timestamp:    1656410903,
+					Timestamp:    time.Unix(1656410903, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 300,
@@ -60,7 +61,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "ETH",
 					DetectedType: transactions.TypeSell,
 					Amount:       1.25,
-					Timestamp:    1687946903,
+					Timestamp:    time.Unix(1687946903, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 400,
@@ -78,7 +79,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "ETH",
 					DetectedType: transactions.TypeBuy,
 					Amount:       0.56,
-					Timestamp:    1519812503,
+					Timestamp:    time.Unix(1519812503, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 100,
@@ -89,7 +90,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "ETH",
 					DetectedType: transactions.TypeBuy,
 					Amount:       1.2,
-					Timestamp:    1535450903,
+					Timestamp:    time.Unix(1535450903, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 200,
@@ -100,7 +101,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "ETH",
 					DetectedType: transactions.TypeSell,
 					Amount:       0.25,
-					Timestamp:    1656410903,
+					Timestamp:    time.Unix(1656410903, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 300,
@@ -111,7 +112,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "ETH",
 					DetectedType: transactions.TypeSell,
 					Amount:       1.25,
-					Timestamp:    1687946903,
+					Timestamp:    time.Unix(1687946903, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 400,
@@ -133,7 +134,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "ETH",
 					DetectedType: transactions.TypeBuy,
 					Amount:       0.56,
-					Timestamp:    1519812503,
+					Timestamp:    time.Unix(1519812503, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 100,
@@ -144,7 +145,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "ETH",
 					DetectedType: transactions.TypeBuy,
 					Amount:       0.56,
-					Timestamp:    1519812503,
+					Timestamp:    time.Unix(1519812503, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 100,
@@ -155,7 +156,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "ETH",
 					DetectedType: transactions.TypeBuy,
 					Amount:       1.2,
-					Timestamp:    1535450903,
+					Timestamp:    time.Unix(1535450903, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 200,
@@ -166,7 +167,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "ETH",
 					DetectedType: transactions.TypeBuy,
 					Amount:       1.2,
-					Timestamp:    1535450903,
+					Timestamp:    time.Unix(1535450903, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 200,
@@ -177,7 +178,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "ETH",
 					DetectedType: transactions.TypeSell,
 					Amount:       0.25,
-					Timestamp:    1656410903,
+					Timestamp:    time.Unix(1656410903, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 300,
@@ -188,7 +189,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "ETH",
 					DetectedType: transactions.TypeSell,
 					Amount:       0.25,
-					Timestamp:    1656410903,
+					Timestamp:    time.Unix(1656410903, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 300,
@@ -199,7 +200,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "ETH",
 					DetectedType: transactions.TypeSell,
 					Amount:       1.25,
-					Timestamp:    1687946903,
+					Timestamp:    time.Unix(1687946903, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 400,
@@ -210,7 +211,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "ETH",
 					DetectedType: transactions.TypeSell,
 					Amount:       1.25,
-					Timestamp:    1687946903,
+					Timestamp:    time.Unix(1687946903, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 400,
@@ -228,7 +229,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "ETH",
 					DetectedType: transactions.TypeBuy,
 					Amount:       0.56,
-					Timestamp:    1519812503,
+					Timestamp:    time.Unix(1519812503, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 100,
@@ -239,7 +240,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "ETH",
 					DetectedType: transactions.TypeBuy,
 					Amount:       1.2,
-					Timestamp:    1535450903,
+					Timestamp:    time.Unix(1535450903, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 200,
@@ -250,7 +251,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeBuy,
 					Amount:       1,
-					Timestamp:    1535450913,
+					Timestamp:    time.Unix(1535450913, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 1000,
@@ -261,7 +262,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "ETH",
 					DetectedType: transactions.TypeSell,
 					Amount:       0.25,
-					Timestamp:    1656410903,
+					Timestamp:    time.Unix(1656410903, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 300,
@@ -272,7 +273,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "ETH",
 					DetectedType: transactions.TypeSell,
 					Amount:       1.25,
-					Timestamp:    1687946903,
+					Timestamp:    time.Unix(1687946903, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 400,
@@ -283,7 +284,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeSell,
 					Amount:       0.5,
-					Timestamp:    1687946913,
+					Timestamp:    time.Unix(1687946913, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 2000,
@@ -301,7 +302,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeBuy,
 					Amount:       0.99579,
-					Timestamp:    1453347106,
+					Timestamp:    time.Unix(1453347106, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 7531.708492754497,
@@ -312,7 +313,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeBuy,
 					Amount:       1.37329,
-					Timestamp:    1453624978,
+					Timestamp:    time.Unix(1453624978, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 7281.783163060971,
@@ -323,7 +324,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeBuy,
 					Amount:       0.073002,
-					Timestamp:    1466570728,
+					Timestamp:    time.Unix(1466570728, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 10699.980822443222,
@@ -334,7 +335,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeBuy,
 					Amount:       0.38,
-					Timestamp:    1466571536,
+					Timestamp:    time.Unix(1466571536, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 10705,
@@ -345,7 +346,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeFee,
 					Amount:       0.0038,
-					Timestamp:    1466571536,
+					Timestamp:    time.Unix(1466571536, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 10734.21052631579,
@@ -356,7 +357,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeBuy,
 					Amount:       1.74346,
-					Timestamp:    1480915521,
+					Timestamp:    time.Unix(1480915521, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 11471.441845525564,
@@ -367,7 +368,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeSendInternal,
 					Amount:       1,
-					Timestamp:    1484542490,
+					Timestamp:    time.Unix(1484542490, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 12051,
@@ -378,7 +379,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeBuy,
 					Amount:       0.244261,
-					Timestamp:    1484714102,
+					Timestamp:    time.Unix(1484714102, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 12898.989195982984,
@@ -389,7 +390,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeFee,
 					Amount:       0.002442,
-					Timestamp:    1484714102,
+					Timestamp:    time.Unix(1484714102, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 12895.167895167893,
@@ -400,7 +401,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeSendInternal,
 					Amount:       0.0285,
-					Timestamp:    1484840347,
+					Timestamp:    time.Unix(1484840347, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 12710.877192982456,
@@ -411,7 +412,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeSendInternal,
 					Amount:       0.0283,
-					Timestamp:    1485066626,
+					Timestamp:    time.Unix(1485066626, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 12991.872791519436,
@@ -422,7 +423,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeSendInternal,
 					Amount:       1,
-					Timestamp:    1488432689,
+					Timestamp:    time.Unix(1488432689, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 16616,
@@ -433,7 +434,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeSell,
 					Amount:       0.08,
-					Timestamp:    1610107160,
+					Timestamp:    time.Unix(1610107160, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 635178.375,
@@ -444,7 +445,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeReceiveInternal,
 					Amount:       0.09034,
-					Timestamp:    1619086743,
+					Timestamp:    time.Unix(1619086743, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 800433.9163161389,
@@ -455,7 +456,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeReceiveInternal,
 					Amount:       0.09093,
-					Timestamp:    1619701433,
+					Timestamp:    time.Unix(1619701433, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 803903.9920818213,
@@ -466,7 +467,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeSell,
 					Amount:       0.76043057,
-					Timestamp:    1619796553,
+					Timestamp:    time.Unix(1619796553, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 825713.6742937623,
@@ -477,7 +478,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeSell,
 					Amount:       0.52295337,
-					Timestamp:    1621189915,
+					Timestamp:    time.Unix(1621189915, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 669275.732939631,
@@ -488,7 +489,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeSendInternal,
 					Amount:       0.00072384,
-					Timestamp:    1629962522,
+					Timestamp:    time.Unix(1629962522, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 718901.9672855879,
@@ -499,7 +500,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeSendInternal,
 					Amount:       0.00101206,
-					Timestamp:    1652554670,
+					Timestamp:    time.Unix(1652554670, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 488775.36904926586,
@@ -510,7 +511,7 @@ func TestTransform(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeFee,
 					Amount:       0.00002327,
-					Timestamp:    1652554670,
+					Timestamp:    time.Unix(1652554670, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 488611.94671250536,
@@ -567,7 +568,7 @@ func TestTransformAll(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeBuy,
 					Amount:       0.99579,
-					Timestamp:    1453347106,
+					Timestamp:    time.Unix(1453347106, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 7531.708492754497,
@@ -578,7 +579,7 @@ func TestTransformAll(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeBuy,
 					Amount:       1.37329,
-					Timestamp:    1453624978,
+					Timestamp:    time.Unix(1453624978, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 7281.783163060971,
@@ -589,7 +590,7 @@ func TestTransformAll(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeBuy,
 					Amount:       0.073002,
-					Timestamp:    1466570728,
+					Timestamp:    time.Unix(1466570728, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 10699.980822443222,
@@ -600,7 +601,7 @@ func TestTransformAll(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeBuy,
 					Amount:       0.38,
-					Timestamp:    1466571536,
+					Timestamp:    time.Unix(1466571536, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 10705,
@@ -611,7 +612,7 @@ func TestTransformAll(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeFee,
 					Amount:       0.0038,
-					Timestamp:    1466571536,
+					Timestamp:    time.Unix(1466571536, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 10734.21052631579,
@@ -622,7 +623,7 @@ func TestTransformAll(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeBuy,
 					Amount:       1.74346,
-					Timestamp:    1480915521,
+					Timestamp:    time.Unix(1480915521, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 11471.441845525564,
@@ -633,7 +634,7 @@ func TestTransformAll(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeSendInternal,
 					Amount:       1,
-					Timestamp:    1484542490,
+					Timestamp:    time.Unix(1484542490, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 12051,
@@ -644,7 +645,7 @@ func TestTransformAll(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeBuy,
 					Amount:       0.244261,
-					Timestamp:    1484714102,
+					Timestamp:    time.Unix(1484714102, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 12898.989195982984,
@@ -655,7 +656,7 @@ func TestTransformAll(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeFee,
 					Amount:       0.002442,
-					Timestamp:    1484714102,
+					Timestamp:    time.Unix(1484714102, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 12895.167895167893,
@@ -666,7 +667,7 @@ func TestTransformAll(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeSendInternal,
 					Amount:       0.0285,
-					Timestamp:    1484840347,
+					Timestamp:    time.Unix(1484840347, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 12710.877192982456,
@@ -677,7 +678,7 @@ func TestTransformAll(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeSendInternal,
 					Amount:       0.0283,
-					Timestamp:    1485066626,
+					Timestamp:    time.Unix(1485066626, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 12991.872791519436,
@@ -688,7 +689,7 @@ func TestTransformAll(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeSendInternal,
 					Amount:       1,
-					Timestamp:    1488432689,
+					Timestamp:    time.Unix(1488432689, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 16616,
@@ -699,7 +700,7 @@ func TestTransformAll(t *testing.T) {
 					Currency:     "ETH",
 					DetectedType: transactions.TypeBuy,
 					Amount:       0.56,
-					Timestamp:    1519812503,
+					Timestamp:    time.Unix(1519812503, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 100,
@@ -710,7 +711,7 @@ func TestTransformAll(t *testing.T) {
 					Currency:     "ETH",
 					DetectedType: transactions.TypeBuy,
 					Amount:       1.2,
-					Timestamp:    1535450903,
+					Timestamp:    time.Unix(1535450903, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 200,
@@ -721,7 +722,7 @@ func TestTransformAll(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeSell,
 					Amount:       0.08,
-					Timestamp:    1610107160,
+					Timestamp:    time.Unix(1610107160, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 635178.375,
@@ -732,7 +733,7 @@ func TestTransformAll(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeReceiveInternal,
 					Amount:       0.09034,
-					Timestamp:    1619086743,
+					Timestamp:    time.Unix(1619086743, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 800433.9163161389,
@@ -743,7 +744,7 @@ func TestTransformAll(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeReceiveInternal,
 					Amount:       0.09093,
-					Timestamp:    1619701433,
+					Timestamp:    time.Unix(1619701433, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 803903.9920818213,
@@ -754,7 +755,7 @@ func TestTransformAll(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeSell,
 					Amount:       0.76043057,
-					Timestamp:    1619796553,
+					Timestamp:    time.Unix(1619796553, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 825713.6742937623,
@@ -765,7 +766,7 @@ func TestTransformAll(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeSell,
 					Amount:       0.52295337,
-					Timestamp:    1621189915,
+					Timestamp:    time.Unix(1621189915, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 669275.732939631,
@@ -776,7 +777,7 @@ func TestTransformAll(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeSendInternal,
 					Amount:       0.00072384,
-					Timestamp:    1629962522,
+					Timestamp:    time.Unix(1629962522, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 718901.9672855879,
@@ -787,7 +788,7 @@ func TestTransformAll(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeSendInternal,
 					Amount:       0.00101206,
-					Timestamp:    1652554670,
+					Timestamp:    time.Unix(1652554670, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 488775.36904926586,
@@ -798,7 +799,7 @@ func TestTransformAll(t *testing.T) {
 					Currency:     "BTC",
 					DetectedType: transactions.TypeFee,
 					Amount:       0.00002327,
-					Timestamp:    1652554670,
+					Timestamp:    time.Unix(1652554670, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 488611.94671250536,
@@ -809,7 +810,7 @@ func TestTransformAll(t *testing.T) {
 					Currency:     "ETH",
 					DetectedType: transactions.TypeSell,
 					Amount:       0.25,
-					Timestamp:    1656410903,
+					Timestamp:    time.Unix(1656410903, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 300,
@@ -820,7 +821,7 @@ func TestTransformAll(t *testing.T) {
 					Currency:     "ETH",
 					DetectedType: transactions.TypeSell,
 					Amount:       1.25,
-					Timestamp:    1687946903,
+					Timestamp:    time.Unix(1687946903, 0),
 					WholePriceAtPoint: transactions.FiatPrice{
 						Fiat:  "ZAR",
 						Price: 400,
