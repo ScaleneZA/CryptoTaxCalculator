@@ -82,6 +82,10 @@ func Calculate(b Backends, fiat string, ts []transactions.Transaction) ([]YearEn
 		for year := firstYear; year <= lastYear; year++ {
 			fmt.Println(currency)
 			for _, t := range ts {
+				if t.Amount == 0 {
+					continue
+				}
+
 				if t.Currency != currency {
 					continue
 				}
@@ -210,7 +214,7 @@ func eatFromTallyUntilSatisfied(b Backends, fiat string, currentTransaction tran
 			break
 		}
 		if i+1 >= len(tally) {
-			fmt.Println(fmt.Sprintf("WARNING: Trying to sell asset that we don't have. Amount over: %f", toSubtract))
+			fmt.Println(fmt.Sprintf("WARNING: Trying to sell asset that we don't have. Amount over: %f date:%s", toSubtract, currentTransaction.Timestamp.Unix()))
 		}
 	}
 

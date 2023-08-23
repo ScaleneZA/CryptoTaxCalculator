@@ -63,10 +63,7 @@ func (tt TransactionType) ShouldIncreaseTally() bool {
 
 // Reminder: Decreasing the tally does not always affect tax.
 func (tt TransactionType) ShouldDecreaseTally() bool {
-	return tt == TypeSell || tt == TypeSendExternal
-
-	//TODO(include this when performance has increased)
-	//|| tt == TypeFee
+	return tt == TypeSell || tt == TypeSendExternal || tt == TypeFee
 }
 
 // ShouldCheck supplies types that need double-checking by the user.

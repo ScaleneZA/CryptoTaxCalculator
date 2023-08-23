@@ -43,7 +43,9 @@ func Transform(files []io.Reader, typ transactions.TransformType) ([]transaction
 		headerCount := 0
 		for i, r := range rows {
 			t, err := src.TransformRow(r)
-			if err != nil {
+			if errors.Is(err, sources.ErrSkipTransaction) {
+				continue
+			} else if err != nil {
 				if headerCount < 1 {
 					fmt.Println(fmt.Sprintf("Skipping row %d may be header", i))
 					headerCount++

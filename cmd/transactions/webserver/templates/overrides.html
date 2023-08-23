@@ -2,19 +2,21 @@
 <div class="p-2"></div>
 <div class="container">
   <div class="row">
+    <div class="col-3"><h4>Date</h4></div>
     <div class="col"><h4>Timestamp</h4></div>
-    <div class="col"><h4>Transformer</h4></div>
-    <div class="col"><h4>Currency</h4></div>
+    <div class="col-1"><h4>Src</h4></div>
+    <div class="col-1"><h4>Coin</h4></div>
     <div class="col"><h4>Amount</h4></div>
-    <div class="col"><h4>Transation Type</h4></div>
+    <div class="col-3"><h4>Transation Type</h4></div>
   </div>
   {{ range $t := .Transactions }}
     <div data-uid="{{ $t.UID }}" class="row border-top p-1 {{ if and (ne $t.OverridedType.Int 0) (ne $t.DetectedType.Int $t.OverridedType.Int) }} bg-overridden {{ else if and (.DetectedType.ShouldCheck) (eq $t.OverridedType.Int 0)  }}bg-check{{ end }}">
-      <div class="col">{{ $t.Timestamp }}</div>
-      <div class="col">{{ $t.Transformer }}</div>
-      <div class="col">{{ $t.Currency }}</div>
+      <div class="col-3">{{ $t.Timestamp.Format "2006-1-2 15:04:05 MST" }}</div>
+      <div class="col">{{ $t.Timestamp.Unix }}</div>
+      <div class="col-1">{{ $t.Transformer }}</div>
+      <div class="col-1">{{ $t.Currency }}</div>
       <div class="col">{{ $t.Amount }}</div>
-      <div class="col">
+      <div class="col-3">
 
         {{ if ne $t.OverridedType.Int 0 }}
           <select class="form-select form-select-sm override-transaction-type text-success">
@@ -22,6 +24,7 @@
                 <option {{ if eq .Int $t.OverridedType.Int }} selected {{ end }} value={{ .Int }} >{{ .String }}</option>
             {{ end }}
           </select>
+          {{ if ne $t.OverridedType $t.DetectedType }} <code>Detected: {{ $t.DetectedType }}</code> <br/> {{ end }}
         {{ else }}
           <select class="form-select form-select-sm override-transaction-type">
             {{ range $tt := $.OverrideTransactionTypes }}

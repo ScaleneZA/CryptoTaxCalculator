@@ -6,6 +6,7 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"github.com/ScaleneZA/CryptoTaxCalculator/cmd/transactions/transactions"
+	"github.com/luno/jettison/errors"
 	"math"
 	"strconv"
 	"strings"
@@ -15,6 +16,10 @@ import (
 type KrakenSource struct{}
 
 func (s KrakenSource) TransformRow(row []string) ([]transactions.Transaction, error) {
+	if row[9] == "" {
+		return nil, errors.Wrap(ErrSkipTransaction, "Balance is not affected, skip")
+	}
+
 	amount, err := strconv.ParseFloat(row[7], 64)
 	if err != nil {
 		return nil, err
@@ -25,11 +30,8 @@ func (s KrakenSource) TransformRow(row []string) ([]transactions.Transaction, er
 		return nil, err
 	}
 
-	hash := md5.Sum([]byte(strings.Join(row[:], ",")))
-	hashString := hex.EncodeToString(hash[:])
-
 	ts := []transactions.Transaction{{
-		UID:          hashString,
+		UID:          row[1],
 		Transformer:  transactions.TransformTypeKraken,
 		Currency:     mapCurrency(row[6]),
 		DetectedType: s.inferType(row, amount),
@@ -43,8 +45,8 @@ func (s KrakenSource) TransformRow(row []string) ([]transactions.Transaction, er
 		feeAmnt = 0
 	}
 	if feeAmnt > 0 {
-		hash = md5.Sum([]byte(strings.Join(row[:], ",") + "-fee"))
-		hashString = hex.EncodeToString(hash[:])
+		hash := md5.Sum([]byte(strings.Join(row[:], ",") + "-fee"))
+		hashString := hex.EncodeToString(hash[:])
 
 		ts = append(ts, transactions.Transaction{
 			UID:          hashString,
