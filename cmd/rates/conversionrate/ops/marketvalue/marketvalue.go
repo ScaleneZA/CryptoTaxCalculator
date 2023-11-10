@@ -13,7 +13,7 @@ import (
 const depthLimit = 3
 
 func ValueAtTime(b Backends, from, to string, timestamp int64) (float64, error) {
-	mps, err := closestMarketPairsAtPoint(b, timestamp)
+	mps, err := ClosestMarketPairsAtPoint(b, timestamp)
 	if err != nil {
 		return 0, err
 	}
@@ -31,7 +31,7 @@ func ValueAtTime(b Backends, from, to string, timestamp int64) (float64, error) 
 	return val, err
 }
 
-func closestMarketPairsAtPoint(b Backends, timestamp int64) ([]conversionrate.MarketPair, error) {
+func ClosestMarketPairsAtPoint(b Backends, timestamp int64) ([]conversionrate.MarketPair, error) {
 	var allRatesAtPoint []conversionrate.MarketPair
 
 	for _, p := range conversionrate.AllPairs() {

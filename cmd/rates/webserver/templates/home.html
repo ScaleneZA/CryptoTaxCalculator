@@ -1,0 +1,49 @@
+{{ define "content" }}
+<div class="container">
+    <form
+            enctype="multipart/form-data"
+            action="http://localhost:8081/closest"
+            method="post"
+            id="closestForm"
+    >
+        <input type="date" id="date" name="trip-start" />
+        <input type="submit" class="btn btn-primary" value="find closest" />
+    </form>
+
+    <div id="result"></div>
+</div>
+<script>
+    $("#closestForm").submit(function(e){
+        e.preventDefault();
+        $.ajax({
+            url: "/closest",
+            type: "POST",
+            data: JSON.stringify({
+                "date": $("#date").val(),
+            }),
+            contentType: "application/json",
+            success: function(response) {
+                if (response.message !== "success") return
+
+                $("#result").html("")
+
+                $.each(response.data, function(key, t) {
+                    $("#result").append(`<span class="badge badge-secondary">` + t["FromCurrency"] + "/" + t["ToCurrency"] + `</span>`)
+
+                    $("#result").append(`<span class="badge badge-success">` + t["Close"] + "</span>")
+                    $("#result").append(`<code>` + t["Timestamp"] + "</code>")
+
+                    $("#result").append(`<br/>`)
+
+                })
+
+                console.log(response)
+            },
+            error: function(xhr, status, error) {
+                // Handle the error
+                console.error(error)
+            }
+        })
+    });
+</script>
+{{ end }}

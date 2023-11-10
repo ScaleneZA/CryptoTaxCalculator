@@ -45,8 +45,19 @@ func findWhere(db *sql.DB, where string, vars ...any) (*conversionrate.MarketPai
 	return mp, nil
 }
 
+const listQuery = "SELECT timestamp, `from`, `to`, open, high, low, close FROM markets"
+
 func ListAll(db *sql.DB) ([]conversionrate.MarketPair, error) {
-	rows, err := db.Query("SELECT timestamp, `from`, `to`, open, high, low, close FROM markets")
+	s, err := db.Prepare(listQuery)
+	if err != nil {
+		return nil, err
+	}
+
+	return listWhere(s)
+}
+
+func listWhere(stmt *sql.Stmt, args ...any) ([]conversionrate.MarketPair, error) {
+	rows, err := stmt.Query(args...)
 	if err != nil {
 		return nil, err
 	}

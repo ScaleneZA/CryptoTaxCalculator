@@ -16,7 +16,7 @@ type JsonResponse struct {
 }
 
 type JsonRequest struct {
-	UID           string                       `json:"uid""`
+	UID           string                       `json:"uid"`
 	OverridedType transactions.TransactionType `json:"overrided_type"`
 }
 
